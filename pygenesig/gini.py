@@ -1,5 +1,7 @@
 import numpy as np
 import pandas as pd
+from pygenesig.validation import SignatureGenerator
+
 
 def gini(array):
     """
@@ -66,35 +68,20 @@ def get_gini_signatures(df_aggr, min_gini=.7, max_rk=3, min_expr=1):
     df_aggr = df_aggr[df_aggr.apply(np.max, axis=1) >= min_expr]
     expr_gini = df_aggr.apply(gini, axis=1)
     df_aggr = df_aggr[expr_gini >= min_gini]
-    df_aggr_rank = df_aggr.rank(axis=1)
+    df_aggr_rank = df_aggr.rank(axis=1, ascending=False)
     signatures = {}
     for tissue in df_aggr:
         signatures[tissue] = set(df_aggr.loc[df_aggr_rank[tissue] <= max_rk].index)
     return signatures
 
 
-def mk_gini_signature(gct, col_vars, subset=None, tissue_col="tissue",
-                      min_gini=.7, max_rk=3, min_expr=1):
-    """
-
-    Args:
-        gct (pd.DataFrame): gct expression matrix (col = sample)
-        col_vars (pd.DataFrame): annotation of the gct matrix (row = sample).
-            the samples in col_vars must be a subset of those in gct.
-        subset: list of indices of col_vars to be used to generate the signatures.
-        tissue_col: name of the column in col_vars that contains the tissue annotation.
-
-    Returns:
-        dict of list
-
-    """
-    assert all(x in list(gct.columns) for x in list(col_vars.index)), "The samples in col_vars are not a subset of gct"
-    if subset is not None:
-        col_vars = col_vars.iloc[subset, :]
-    gct = gct[list(col_vars.index)]
-    df_aggr = aggregate_dataframe(gct, col_vars[tissue_col])
-    return get_gini_signatures(df_aggr, min_gini=min_gini, max_rk=max_rk, min_expr=min_expr)
-
-
 class GiniSignatureGenerator(SignatureGenerator):
-    pass
+    def __init__(self, expr, target, min_gini=.7, max_rk=3, min_expr=1):
+        super(GiniSignatureGenerator, self).__init__(expr, target)
+        self.min_gini = min_gini
+        self.max_rk = max_rk
+        self.min_expr = min_expr
+
+    def mk_signatures(self, subset):
+        df_aggr = aggregate_dataframe(self.expr[:, subset], self.target[subset])
+        return get_gini_signatures(df_aggr, min_gini=self.min_gini, max_rk=self.max_rk, min_expr=self.min_expr)
