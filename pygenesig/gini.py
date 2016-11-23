@@ -1,3 +1,6 @@
+import numpy as np
+import pandas as pd
+
 def gini(array):
     """
     Calculate the Gini coefficient of a numpy array.
@@ -91,3 +94,7 @@ def mk_gini_signature(gct, col_vars, subset=None, tissue_col="tissue",
     gct = gct[list(col_vars.index)]
     df_aggr = aggregate_dataframe(gct, col_vars[tissue_col])
     return get_gini_signatures(df_aggr, min_gini=min_gini, max_rk=max_rk, min_expr=min_expr)
+
+
+class GiniSignatureGenerator(SignatureGenerator):
+    pass

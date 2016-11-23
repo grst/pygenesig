@@ -1,6 +1,7 @@
 import rpy2.robjects as ro
 from rpy2.robjects.packages import importr
 from rpy2.robjects import numpy2ri
+from validation import SignatureTester
 numpy2ri.activate()
 
 base = importr("base")
@@ -29,3 +30,7 @@ ro.r('''
      }
      ''')
 mk_eset = ro.r['mk_eset']
+
+
+class BioQCSignatureTester(SignatureTester):
+    pass

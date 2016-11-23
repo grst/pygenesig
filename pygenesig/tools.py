@@ -2,6 +2,11 @@ import numpy as np
 import itertools
 
 
+def which(cond):
+    """cond is boolean mask"""
+    return [i for i, b in enumerate(cond) if b]
+
+
 def write_gmt(signatures, path, description="na"):
     """
     Writes signatures to a GMT file.
@@ -15,7 +20,7 @@ def write_gmt(signatures, path, description="na"):
 
     """
     with open(path, 'w') as f:
-        for sig, genes in signatures.items():
+        for sig, genes in sorted(signatures.items()):
             f.write("\t".join(itertools.chain([sig, description], genes)) + "\n")
 
 
