@@ -7,20 +7,21 @@ def which(cond):
     return [i for i, b in enumerate(cond) if b]
 
 
-def write_gmt(signatures, path, description="na"):
+def write_gmt(signatures, file, description="na"):
     """
     Writes signatures to a GMT file.
 
     Args:
         signatures (dict of iterable): dictionary 'signature name' -> ['list', 'of', 'gene', 'names']
-        path: output file
+        file: path to output file
 
     Note:
         File format specification: http://software.broadinstitute.org/cancer/software/gsea/wiki/index.php/Data_formats#GMT:_Gene_Matrix_Transposed_file_format_.28.2A.gmt.29
 
     """
-    with open(path, 'w') as f:
+    with open(file, 'w') as f:
         for sig, genes in sorted(signatures.items()):
+            genes = [str(g) for g in genes]
             f.write("\t".join(itertools.chain([sig, description], genes)) + "\n")
 
 
