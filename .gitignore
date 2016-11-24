@@ -43,6 +43,10 @@ vignettes/*.pdf
 ##### Python
 *.pyc
 __pycache__
+*.sqp
+*.egg-info
+dist/*
+build/*
 
 #Jupyter
 .ipynb_checkpoints
