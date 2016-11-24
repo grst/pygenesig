@@ -56,3 +56,25 @@ class TestBioQC(unittest.TestCase):
         cm_expected = np.matrix("0 2;"
                                 "0 1")
         np.testing.assert_array_equal(cm_expected, cm)
+
+    def test_order_of_signatures(self):
+        signatures_all = {
+            "A": [0],
+            "B": [1],
+            "C": [3],
+            "D": [3],
+            "E": [3],
+            "F": [3]
+        }
+        tester = BioQCSignatureTester(self.expr, self.target)
+        cm_expected = np.matrix("2 0 0 0 0 0;"
+                                "0 2 0 0 0 0;"
+                                "0 0 0 0 0 0;"
+                                "0 0 0 0 0 0;"
+                                "0 0 0 0 0 0;"
+                                "0 0 0 0 0 0")
+        for i in range(10):
+            """test in loop to have random permutations of the dictionary. """
+            new_dict = {k: v for k, v in signatures_all.items()}
+            cm = tester.test_signatures(new_dict, np.array(range(4)))
+            np.testing.assert_array_equal(cm_expected, cm)

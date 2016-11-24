@@ -12,6 +12,23 @@ def sort_dict_of_lists(the_dict):
 
 
 class TestGini(unittest.TestCase):
+    def test_aggregate_expression(self):
+        expr = np.matrix("0 0 0 0;"
+                         "2 4 2 4;"
+                         "8 4 6 2")
+        target = np.array(["A", "B", "A", "B"])
+        expr_aggr = aggregate_expression(expr, target)
+        expr_aggr_expected = np.matrix("0 0;"
+                                       "2 4;"
+                                       "7 3")
+        np.testing.assert_array_equal(expr_aggr_expected, expr_aggr)
+        subset = np.array([0, 2, 3])
+        expr_aggr_subset = aggregate_expression(expr[:, subset], target[subset])
+        expr_aggr_subset_expected = np.matrix("0 0;"
+                                              "2 4;"
+                                              "7 2")
+        np.testing.assert_array_equal(expr_aggr_subset_expected, expr_aggr_subset)
+
     def test_apply_gini_to_dataset(self):
         """Check that the results are consistent with the rogini implementation up to four decimal digits. """
         df_aggr = pd.read_csv("./gini_test.tsv", index_col=0, sep="\t")

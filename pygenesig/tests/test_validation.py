@@ -21,7 +21,7 @@ class TestValidation(unittest.TestCase):
     class DummySignatureTester(SignatureTester):
         DUMMY_CONFUSION_MATRIX = np.matrix("1,2; 3,4")
 
-        def test_signatures(self, subset):
+        def test_signatures(self, signatures, subset):
             return self.DUMMY_CONFUSION_MATRIX
 
     def setUp(self):
@@ -29,7 +29,7 @@ class TestValidation(unittest.TestCase):
         target = np.array(["A" if x < .3 else "B" for x in np.random.random_sample(200)])
         self.expr_file = tempfile.NamedTemporaryFile()
         self.target_file = tempfile.NamedTemporaryFile()
-        np.savetxt(self.expr_file, expr, delimiter=",")
+        np.save(self.expr_file, expr)
         np.savetxt(self.target_file, target, delimiter=",", fmt="%s")
         self.expr_file.flush()
         self.target_file.flush()
