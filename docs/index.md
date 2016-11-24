@@ -8,17 +8,25 @@ Welcome to pygenesig's documentation!
 
 Contents:
 
+```eval_rst
 .. toctree::
    :maxdepth: 2
+
+   pygenesig.rst
+```
 
 
 
 Indices and tables
 ==================
 
+```eval_rst
+
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
+
+```
 
 ## markdown syntax
 ```python 
