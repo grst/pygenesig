@@ -70,3 +70,31 @@ def pairwise_jaccard_ind(list_of_signatures):
             pairwise_jacc[signame].append(jaccard_ind(sigset1[signame], sigset2[signame]))
     return pairwise_jacc
 
+
+def performance_per_tissue(list_of_confusion_matrices, sig_labels, perf_fun):
+    """
+    Compute per-tissue performance measures from all-against-all confusion matrices.
+
+    Args:
+        list_of_confusion_matrices (list of np.array):  list of
+        sig_labels (array-like): list of signatures in the same order as in the confusion matrices.
+        perf_fun (function): function(TP, FN, TP, TN) computing a performance measure from the binary confusion matrix.
+
+    Returns:
+        dict: signature_name -> list of performance meausures for each confusion matrix provided.
+
+    """
+    assert len(list_of_confusion_matrices) > 0, "no matrices provided."
+    res = {}
+    for i, sig in enumerate(sig_labels)
+        res[sig] = []
+        for confmat in list_of_confusion_matrices:
+            TP = confmat[i, i]
+            FN = np.sum(confmat[i, :]) - TP
+            FP = np.sum(confmat[:, i]) - TP
+            TN = np.sum(confmat) - TP - FN - FP
+            res[sig].append(perf_fun(TP, FN, FP, TN))
+    return res
+
+
+
