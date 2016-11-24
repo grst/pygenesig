@@ -97,7 +97,8 @@ class BioQCSignatureTester(SignatureTester):
         # predicted signature names for each sample
         predicted = [gmt_signature_names[i] for i in np.argmax(bioqc_res_log, axis=0)]
         actual = self.target[subset]
-        return sklearn.metrics.confusion_matrix(actual, predicted)
+        return sklearn.metrics.confusion_matrix(actual, predicted,
+                                                labels=self.sort_signatures(signatures))
 
 
 

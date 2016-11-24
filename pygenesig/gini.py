@@ -31,23 +31,24 @@ def gini(array):
     return (np.sum((2 * index - n - 1) * array)) / (n * np.sum(array))  # Gini coefficient
 
 
-def aggregate_dataframe(expr_df, group_series, aggregate_fun=np.median):
+def aggregate_expression(expr, target, aggregate_fun=np.median):
     """
-    Aggregate dataframe by annotation (collapse samples of the same tissue)
+    Aggregate expression by annotation (collapse samples of the same tissue)
 
     Args:
-        expr_df (dask.dataframe): data frame with expression data
-        group_series (pd.Series): series containing the tissue annotation for each index
+        expr (np.array): data frame with expression data
+        target (list-like): series containing the tissue annotation for each index
         aggregate_fun (function): aggregate to apply, e.g. mean, median
 
     Returns:
         pd.DataFrame: data frame with rows = rows(expr_df) = genes and cols = tissues
 
     """
+    group_series = pd.Series(target)
     group = group_series.groupby(group_series)
     df_aggr = pd.DataFrame()
     for name, series in group:
-        df_aggr[name] = expr_df.loc[:, series.index].apply(aggregate_fun, axis=1)
+        df_aggr[name] = np.apply_along_axis(aggregate_fun, 1, expr[:, series.index])
     return df_aggr
 
 
@@ -83,5 +84,5 @@ class GiniSignatureGenerator(SignatureGenerator):
         self.min_expr = min_expr
 
     def mk_signatures(self, subset):
-        df_aggr = aggregate_dataframe(self.expr[:, subset], self.target[subset])
+        df_aggr = aggregate_expression(self.expr[:, subset], self.target[subset])
         return get_gini_signatures(df_aggr, min_gini=self.min_gini, max_rk=self.max_rk, min_expr=self.min_expr)

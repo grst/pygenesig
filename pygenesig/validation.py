@@ -2,6 +2,7 @@ from abc import abstractmethod, ABCMeta
 import numpy as np
 import sklearn.model_selection
 from dask import delayed
+import os.path
 
 
 def cross_validate_signatures(expr_file, target_file,
@@ -11,26 +12,30 @@ def cross_validate_signatures(expr_file, target_file,
     Perform a crossvalidation by generating and testing signatures on a given expression matrix.
 
     Args:
-        expr_file (str): csv file containing expression matrix
-        target_file (str): csv file containin target classes
+        expr_file (str): np matrix (binary) file containing expression matrix
+        target_file (str): file containing target classes, line-by-line
         signature_generator (SignatureGenerator): SignatureGenerator used to derive the signatures
         signature_tester (SignatureTester): SignatureTester used to check the quality of signatures
         splitter (sklearn.model_selection._BaseKFold): crossvalidation method from scikit-learn.
             See [here](http://scikit-learn.org/stable/modules/classes.html#module-sklearn.model_selection).
     """
     # we need the number of samples locally for splitting in test and training sets
-    target_local = np.loadtxt(target_file, dtype=str, delimiter=",")
+    target_file = os.path.realpath(target_file)
+    expr_file = os.path.realpath(expr_file)
+    target_local = np.genfromtxt(target_file, dtype=str, delimiter=",")
 
     # the rest we can run delayed on the dask cluster
-    expr = delayed(np.loadtxt)(expr_file, delimiter=",")
-    target = delayed(np.loadtxt)(target_file, dtype=str, delimiter=",")
-    sg = delayed(signature_generator)(expr, target)
-    st = delayed(signature_tester)(expr, target)
     signatures = []
     results = []
     for train, test in splitter.split(list(enumerate(target_local)), target_local):
-        signatures.append(delayed(sg.mk_signatures)(train))
-        results.append(delayed(st.test_signatures)(test))
+        # due to some bug in dask, it's faster to load all files on every worker separately.
+        expr = delayed(np.load)(expr_file)
+        target = delayed(np.genfromtxt)(target_file, dtype=str, delimiter=",")
+        sg = delayed(signature_generator)(expr, target)
+        st = delayed(signature_tester)(expr, target)
+        signature = delayed(sg.mk_signatures)(train)
+        signatures.append(signature)
+        results.append(delayed(st.test_signatures)(signature, test))
     sig_list = delayed(list)(signatures)
     res_list = delayed(list)(results)
     return sig_list, res_list
@@ -86,6 +91,23 @@ class SignatureTester(metaclass=ABCMeta):
             "The length of target must equal the number of samples (columns) in the expr matrix. "
         self.expr = expr
         self.target = np.array(target)
+
+    @staticmethod
+    def sort_signatures(signatures):
+        """
+        Order the signatures. Same order as the rows/columns in the output matrix.
+
+        Args:
+            signatures: signature dictionary.
+
+        Returns:
+            list: sorted keys of the signature dictionary.
+
+        Note: use this method when implementing test_signatures to make sure that
+            the confusion matrix is sorted according to this order.
+
+        """
+        return sorted(signatures.keys())
 
     @abstractmethod
     def test_signatures(self, signatures, subset):
