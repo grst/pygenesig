@@ -1,5 +1,6 @@
 import unittest
 from pygenesig.bioqc import *
+from pygenesig.validation import *
 from rpy2.robjects.packages import importr
 import logging
 
@@ -68,6 +69,51 @@ class TestBioQC(unittest.TestCase):
         }
         tester = BioQCSignatureTester(self.expr, self.target)
         cm_expected = np.matrix("2 0 0 0 0 0;"
+                                "0 2 0 0 0 0;"
+                                "0 0 0 0 0 0;"
+                                "0 0 0 0 0 0;"
+                                "0 0 0 0 0 0;"
+                                "0 0 0 0 0 0")
+        for i in range(10):
+            """test in loop to have random permutations of the dictionary. """
+            new_dict = {k: v for k, v in signatures_all.items()}
+            cm = tester.test_signatures(new_dict, np.array(range(4)))
+            np.testing.assert_array_equal(cm_expected, cm)
+
+    def test_empty_signature_all(self):
+        signatures_bad = {
+            "A": [],
+            "C": [],
+            "B": []
+        }
+        tester = BioQCSignatureTester(self.expr, self.target)
+        with self.assertRaises(SignatureTesterException):
+            cm = tester.test_signatures(signatures_bad, np.array([0, 1, 3]))
+
+    def test_empty_signature1(self):
+        signatures_bad = {
+            "A": [3],
+            "C": [],
+            "B": []
+        }
+        tester = BioQCSignatureTester(self.expr, self.target)
+        cm = tester.test_signatures(signatures_bad, np.array([0, 1, 3]))
+        cm_expected = np.matrix("2 0 0;"
+                                "1 0 0;"
+                                "0 0 0")
+        np.testing.assert_array_equal(cm_expected, cm)
+
+    def test_empty_signatures_order(self):
+        signatures_all = {
+            "A": [],
+            "B": [2],
+            "C": [3],
+            "D": [],
+            "E": [],
+            "F": [3]
+        }
+        tester = BioQCSignatureTester(self.expr, self.target)
+        cm_expected = np.matrix("0 2 0 0 0 0;"
                                 "0 2 0 0 0 0;"
                                 "0 0 0 0 0 0;"
                                 "0 0 0 0 0 0;"

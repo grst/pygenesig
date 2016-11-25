@@ -86,7 +86,7 @@ def performance_per_tissue(list_of_confusion_matrices, sig_labels, perf_fun):
     """
     assert len(list_of_confusion_matrices) > 0, "no matrices provided."
     res = {}
-    for i, sig in enumerate(sig_labels)
+    for i, sig in enumerate(sig_labels):
         res[sig] = []
         for confmat in list_of_confusion_matrices:
             TP = confmat[i, i]

@@ -86,17 +86,24 @@ class BioQCSignatureTester(SignatureTester):
             np.matrix: confusion matrix (generated with sklearn.metrics.confusion_matrix())
 
         """
+        self.check_signatures(signatures)
+        actual = self.target[subset]  # standard of truth
+
         # gene symbols = indices
         gene_symbols = [str(x) for x in range(self.expr.shape[0])]
-        gmt = BioQCSignatureTester.signatures2gmt(signatures)
-        bioqc_res = self.run_bioqc(self.expr[:, subset], gene_symbols, gmt)
+        signatures_not_empty = {
+            name: genes for name, genes in signatures.items() if len(genes) > 0
+        }
+        if len(signatures_not_empty) > 1:
+            gmt = BioQCSignatureTester.signatures2gmt(signatures_not_empty)
+            bioqc_res = self.run_bioqc(self.expr[:, subset], gene_symbols, gmt)
+            bioqc_res_log = -np.log10(bioqc_res)
+            gmt_signature_names = list(base.names(gmt))
+            predicted = [gmt_signature_names[i] for i in np.argmax(bioqc_res_log, axis=0)]
+        else:
+            # all samples are predicted as the single existing signature.
+            predicted = [next(iter(signatures_not_empty.keys())) for _ in actual]
 
-        bioqc_res_log = -np.log10(bioqc_res)
-        gmt_signature_names = list(base.names(gmt))
-
-        # predicted signature names for each sample
-        predicted = [gmt_signature_names[i] for i in np.argmax(bioqc_res_log, axis=0)]
-        actual = self.target[subset]
         return sklearn.metrics.confusion_matrix(actual, predicted,
                                                 labels=self.sort_signatures(signatures))
 

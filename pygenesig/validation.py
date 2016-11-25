@@ -7,7 +7,8 @@ import os.path
 
 def cross_validate_signatures(expr_file, target_file,
                               signature_generator, signature_tester,
-                              splitter=sklearn.model_selection.StratifiedKFold(n_splits=10)):
+                              splitter=sklearn.model_selection.StratifiedKFold(n_splits=10),
+                              sg_kwargs={}, st_kwargs={}):
     """
     Perform a crossvalidation by generating and testing signatures on a given expression matrix.
 
@@ -31,8 +32,8 @@ def cross_validate_signatures(expr_file, target_file,
         # due to some bug in dask, it's faster to load all files on every worker separately.
         expr = delayed(np.load)(expr_file)
         target = delayed(np.genfromtxt)(target_file, dtype=str, delimiter=",")
-        sg = delayed(signature_generator)(expr, target)
-        st = delayed(signature_tester)(expr, target)
+        sg = delayed(signature_generator)(expr, target, **sg_kwargs)
+        st = delayed(signature_tester)(expr, target, **st_kwargs)
         signature = delayed(sg.mk_signatures)(train)
         signatures.append(signature)
         results.append(delayed(st.test_signatures)(signature, test))
@@ -81,6 +82,8 @@ class SignatureTester(metaclass=ABCMeta):
     Child classes test if a signature is able to identify the respective tissue properly,
     given an expression matrix and a list of the actual tissues. """
 
+    UNPREDICTABLE = np.nan
+
     def __init__(self, expr, target):
         """
         Args:
@@ -91,6 +94,11 @@ class SignatureTester(metaclass=ABCMeta):
             "The length of target must equal the number of samples (columns) in the expr matrix. "
         self.expr = expr
         self.target = np.array(target)
+
+    @staticmethod
+    def check_signatures(signatures):
+        if all([len(genes) == 0 for genes in signatures.values()]):
+            raise SignatureTesterException("Signature Set contains only empty signatures. ")
 
     @staticmethod
     def sort_signatures(signatures):
@@ -124,3 +132,6 @@ class SignatureTester(metaclass=ABCMeta):
 
         """
         pass
+
+class SignatureTesterException(Exception):
+    pass
