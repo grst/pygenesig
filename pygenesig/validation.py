@@ -49,22 +49,26 @@ class SignatureGenerator(metaclass=ABCMeta):
     def __init__(self, expr, target):
         """
         Args:
-            expr (np.matrix): m x n matrix with m samples and n genes
+            expr (np.ndarray): m x n matrix with m samples and n genes
             target (array-like): m-vector with true tissue for each sample
         """
-        assert expr.shape[1] == len(target), \
-            "The length of target must equal the number of samples (columns) in the expr matrix. "
+        if not expr.shape[1] == len(target):
+            raise ValueError("The length of target must equal the number of samples (columns) in the expr matrix. ")
+        if not np.issubdtype(expr.dtype, int) and not np.issubdtype(expr.dtype, float):
+            raise TypeError("Expression needs to be numeric. (dtype=int | dtype=float)")
+
         self.expr = expr
         self.target = target
 
     @abstractmethod
-    def mk_signatures(self, subset):
+    def _mk_signatures(self, expr, target):
         """
-        Make gene signatures based on the expression matrix.
+        Implement this method.
+        Generates signatures for a list of tissues given a gene expression matrix.
 
         Args:
-            subset: Sample indices (columns of expression matrix) to use for signature generation.
-                Useful for cross-validation.
+            expr: m x n matrix with m samples and n genes
+            target: vector with true tissue for each sample
 
         Returns:
             dict: tissue_name -> [list, of, enriched, genes]. The indices correspond to expr.index.
@@ -76,29 +80,41 @@ class SignatureGenerator(metaclass=ABCMeta):
         """
         pass
 
+    def mk_signatures(self, subset=None):
+        """
+        Make gene signatures based on the expression matrix.
+
+        Args:
+            subset: Sample indices (columns of expression matrix) to use for signature generation.
+                Useful for cross-validation.
+
+        Returns:
+            dict: tissue_name -> [list, of, enriched, genes]. The indices correspond to expr.index.
+
+        """
+        if subset is None:
+            subset = np.array(list(range(self.target)))
+
+        return self._mk_signatures(self.expr[:, subset], self.target[subset])
+
 
 class SignatureTester(metaclass=ABCMeta):
     """Abstract base-class for testing gene signatures.
     Child classes test if a signature is able to identify the respective tissue properly,
     given an expression matrix and a list of the actual tissues. """
 
-    UNPREDICTABLE = np.nan
-
     def __init__(self, expr, target):
         """
         Args:
-            expr (np.matrix): m x n matrix with m samples and n genes
+            expr (np.ndarray): m x n matrix with m samples and n genes
             target (array-like): m-vector with true tissue for each sample
         """
-        assert expr.shape[1] == len(target), \
-            "The length of target must equal the number of samples (columns) in the expr matrix. "
+        if not expr.shape[1] == len(target):
+            raise ValueError("The length of target must equal the number of samples (columns) in the expr matrix. ")
+        if not np.issubdtype(expr.dtype, int) and not np.issubdtype(expr.dtype, float):
+            raise TypeError("Expression needs to be numeric. (dtype=int | dtype=float)")
         self.expr = expr
         self.target = np.array(target)
-
-    @staticmethod
-    def check_signatures(signatures):
-        if all([len(genes) == 0 for genes in signatures.values()]):
-            raise SignatureTesterException("Signature Set contains only empty signatures. ")
 
     @staticmethod
     def sort_signatures(signatures):
@@ -118,20 +134,69 @@ class SignatureTester(metaclass=ABCMeta):
         return sorted(signatures.keys())
 
     @abstractmethod
-    def test_signatures(self, signatures, subset):
+    def _predict(self, expr, signatures):
         """
-        Test signatures based on the expression matrix.
+        Implement this method.
+
+        Predicts the tissue for each sample (=column) in the expression matrix
+        given a set of signatures.
 
         Args:
-            signatures (dict of list): Signatures dictionary retured by SignatureGenerator.mk_signature.
+            expr (np.array): gene expression matrix
+            signatures (dict of list): Signatures dictionary returned by SignatureGenerator.mk_signature.
                 Dictionary: tissue_name -> [list, of, enriched, genes].
-            subset: sample indices (columns of expression matrix) to use for testing. Useful for crossvalidation.
 
         Returns:
-            np.matrix: Confusion Matrix
+            list: list of names of highest scoring signature (=predicted class) for each column in expr.
 
         """
         pass
 
+    def test_signatures(self, signatures, subset=None):
+        """
+        Test signatures based on the expression matrix.
+
+        Args:
+            signatures (dict[str, list]): Signatures dictionary returned by SignatureGenerator.mk_signature.
+                Dictionary: tissue_name -> [list, of, enriched, genes].
+            subset: sample indices (columns of expression matrix) to use for testing. Useful for crossvalidation.
+
+        Returns:
+            (list, list): list of actual labels and predicted labels.
+
+        """
+        if all([len(genes) == 0 for genes in signatures.values()]):
+            raise SignatureTesterException("Signature Set contains only empty signatures. ")
+
+        if subset is None:
+            # take all
+            subset = np.array(list(range(len(self.target))))
+
+        actual = self.target[subset]  # standard of truth
+        predicted = self._predict(self.expr[:, subset], signatures)
+
+        return actual, predicted
+
+    def confusion_matrix(self, signatures, actual, predicted):
+        """
+        Make a confusion matrix.
+
+        This is a wrapper for the sklearn.metrics.confusion matrix. Makes the matrix contain all
+        labels available in the signature.
+
+        Args:
+            signatures: dict of signatures that was used to predict the labels
+            actual: list of actual labels
+            predicted: list of predicted labels
+
+        Returns:
+            np.matrix: confusion matrix
+
+        """
+        return sklearn.metrics.confusion_matrix(actual, predicted,
+                                                labels=self.sort_signatures(signatures))
+
+
 class SignatureTesterException(Exception):
     pass
+

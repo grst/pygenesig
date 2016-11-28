@@ -83,6 +83,6 @@ class GiniSignatureGenerator(SignatureGenerator):
         self.max_rk = max_rk
         self.min_expr = min_expr
 
-    def mk_signatures(self, subset):
-        df_aggr = aggregate_expression(self.expr[:, subset], self.target[subset])
+    def _mk_signatures(self, expr, target):
+        df_aggr = aggregate_expression(expr, target)
         return get_gini_signatures(df_aggr, min_gini=self.min_gini, max_rk=self.max_rk, min_expr=self.min_expr)

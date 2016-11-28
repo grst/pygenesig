@@ -15,22 +15,22 @@ class TestValidation(unittest.TestCase):
             "B": ("B", "C", "D")
         }
 
-        def mk_signatures(self, subset):
+        def _mk_signatures(self, expr, target):
             return self.DUMMY_SIGS
 
     class DummySignatureTester(SignatureTester):
-        DUMMY_CONFUSION_MATRIX = np.matrix("1,2; 3,4")
+        PREDICTED = ["A", "B"]
 
-        def test_signatures(self, signatures, subset):
-            return self.DUMMY_CONFUSION_MATRIX
+        def _predict(self, expr, signatures):
+            return self.PREDICTED
 
     def setUp(self):
         expr = np.random.random_sample((200, 200))
-        target = np.array(["A" if x < .3 else "B" for x in np.random.random_sample(200)])
+        self.target = np.array(["A" if x < .3 else "B" for x in np.random.random_sample(200)])
         self.expr_file = tempfile.NamedTemporaryFile()
         self.target_file = tempfile.NamedTemporaryFile()
         np.save(self.expr_file, expr)
-        np.savetxt(self.target_file, target, delimiter=",", fmt="%s")
+        np.savetxt(self.target_file, self.target, delimiter=",", fmt="%s")
         self.expr_file.flush()
         self.target_file.flush()
 
@@ -48,7 +48,9 @@ class TestValidation(unittest.TestCase):
         self.assertEqual(10, len(r_res))
         for i in range(10):
             self.assertEqual(self.DummySignatureGenerator.DUMMY_SIGS, r_sig[i])
-            self.assertTrue((self.DummySignatureTester.DUMMY_CONFUSION_MATRIX == r_res[i]).all())
+            actual, predicted = r_res[i]
+            # cannot test actual, since it is a subset of self.target
+            self.assertEqual(self.DummySignatureTester.PREDICTED, predicted)
 
     def test_cross_validation_parallel(self):
         sig_list, res_list = cross_validate_signatures(self.expr_file.name, self.target_file.name,
@@ -60,4 +62,6 @@ class TestValidation(unittest.TestCase):
         self.assertEqual(10, len(r_res))
         for i in range(10):
             self.assertEqual(self.DummySignatureGenerator.DUMMY_SIGS, r_sig[i])
-            self.assertTrue((self.DummySignatureTester.DUMMY_CONFUSION_MATRIX == r_res[i]).all())
+            actual, predicted = r_res[i]
+            # cannot test actual, since it is a subset of self.target
+            self.assertEqual(self.DummySignatureTester.PREDICTED, predicted)
