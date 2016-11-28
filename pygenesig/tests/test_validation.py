@@ -6,6 +6,7 @@ import dask.async
 from dask.delayed import compute
 import dask.threaded
 import sklearn.model_selection
+import logging
 
 
 class TestValidation(unittest.TestCase):
@@ -19,18 +20,16 @@ class TestValidation(unittest.TestCase):
             return self.DUMMY_SIGS
 
     class DummySignatureTester(SignatureTester):
-        PREDICTED = ["A", "B"]
-
         def _predict(self, expr, signatures):
-            return self.PREDICTED
+            return ["A"] * expr.shape[1]
 
     def setUp(self):
         expr = np.random.random_sample((200, 200))
-        self.target = np.array(["A" if x < .3 else "B" for x in np.random.random_sample(200)])
+        target = np.array(["A" if x < .3 else "B" for x in np.random.random_sample(200)])
         self.expr_file = tempfile.NamedTemporaryFile()
         self.target_file = tempfile.NamedTemporaryFile()
         np.save(self.expr_file, expr)
-        np.savetxt(self.target_file, self.target, delimiter=",", fmt="%s")
+        np.savetxt(self.target_file, target, delimiter=",", fmt="%s")
         self.expr_file.flush()
         self.target_file.flush()
 
@@ -48,9 +47,9 @@ class TestValidation(unittest.TestCase):
         self.assertEqual(10, len(r_res))
         for i in range(10):
             self.assertEqual(self.DummySignatureGenerator.DUMMY_SIGS, r_sig[i])
-            actual, predicted = r_res[i]
-            # cannot test actual, since it is a subset of self.target
-            self.assertEqual(self.DummySignatureTester.PREDICTED, predicted)
+            cm = r_res[i]
+            self.assertEqual(cm.shape, (2, 2))
+            self.assertGreater(np.sum(cm), 0)
 
     def test_cross_validation_parallel(self):
         sig_list, res_list = cross_validate_signatures(self.expr_file.name, self.target_file.name,
@@ -62,6 +61,6 @@ class TestValidation(unittest.TestCase):
         self.assertEqual(10, len(r_res))
         for i in range(10):
             self.assertEqual(self.DummySignatureGenerator.DUMMY_SIGS, r_sig[i])
-            actual, predicted = r_res[i]
-            # cannot test actual, since it is a subset of self.target
-            self.assertEqual(self.DummySignatureTester.PREDICTED, predicted)
+            cm = r_res[i]
+            self.assertEqual(cm.shape, (2, 2))
+            self.assertGreater(np.sum(cm), 0)

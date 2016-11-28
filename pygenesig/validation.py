@@ -36,7 +36,8 @@ def cross_validate_signatures(expr_file, target_file,
         st = delayed(signature_tester)(expr, target, **st_kwargs)
         signature = delayed(sg.mk_signatures)(train)
         signatures.append(signature)
-        results.append(delayed(st.test_signatures)(signature, test))
+        actual_predicted = delayed(st.test_signatures, nout=2)(signature, test)
+        results.append(delayed(st.confusion_matrix)(signature, actual_predicted[0], actual_predicted[1]))
     sig_list = delayed(list)(signatures)
     res_list = delayed(list)(results)
     return sig_list, res_list
@@ -93,7 +94,7 @@ class SignatureGenerator(metaclass=ABCMeta):
 
         """
         if subset is None:
-            subset = np.array(list(range(self.target)))
+            subset = np.array(list(range(len(self.target))))
 
         return self._mk_signatures(self.expr[:, subset], self.target[subset])
 
