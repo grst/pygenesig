@@ -3,6 +3,7 @@ from pygenesig.bioqc import *
 from pygenesig.validation import *
 from rpy2.robjects.packages import importr
 import logging
+import pickle
 
 base = importr("base")
 
@@ -29,8 +30,8 @@ class TestBioQC(unittest.TestCase):
         """check if log pvalues are identical with running BioQC in R.
         Testcase generated with test_bioqc_log_pvalue.R
         """
-        log_p_expected = np.loadtxt("./test_bioqc_log_pvalue.csv", delimiter=',', skiprows=1, usecols=range(1, 5))
-        gmt = bioqc.readGmt("./test_bioqc_log_pvalue.gmt")
+        log_p_expected = np.loadtxt("./bioqc/test_bioqc_log_pvalue.csv", delimiter=',', skiprows=1, usecols=range(1, 5))
+        gmt = bioqc.readGmt("./bioqc/test_bioqc_log_pvalue.gmt")
         gene_symbols = [str(x) for x in range(self.expr.shape[0])]
         p_actual = BioQCSignatureTester.run_bioqc(self.expr, gene_symbols, gmt)
         log_p_actual = -np.log10(p_actual)
@@ -124,3 +125,10 @@ class TestBioQC(unittest.TestCase):
             new_dict = {k: v for k, v in signatures_all.items()}
             cm = tester.test_signatures(new_dict, np.array(range(4)))
             np.testing.assert_array_equal(cm_expected, cm)
+
+    def test_mouse(self):
+        expr = pickle.load(open("bioqc/mouse_expr.pickle", 'rb'))
+        target = pickle.load(open("bioqc/mouse_target.pickle", 'rb'))
+        signatures = pickle.load(open("bioqc/mouse_signatures.pickle", 'rb'))
+        st = BioQCSignatureTester(expr, target)
+        actual, predicted = st.test_signatures(signatures, return_labels=True)
