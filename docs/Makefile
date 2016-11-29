@@ -52,7 +52,8 @@ help:
 
 .PHONY: clean
 clean:
-	rm -rf $(BUILDDIR)/*
+	# do not delete git! 
+	rm -rf $(BUILDDIR)/html/*
 
 .PHONY: html
 html:

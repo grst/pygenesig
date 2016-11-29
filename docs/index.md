@@ -23,13 +23,14 @@ Contents:
 Indices and tables
 ==================
 
-```eval_rst
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
 
 ```
+ * :ref:`genindex`
+* :ref:`modindex`
+* :ref:`search`
+```
+
+
 
 ## markdown syntax
 ```python 

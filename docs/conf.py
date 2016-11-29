@@ -15,7 +15,10 @@
 
 import sys
 import os
+import recommonmark
 from recommonmark.parser import CommonMarkParser
+from recommonmark.transform import AutoStructify
+
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
@@ -294,3 +297,15 @@ texinfo_documents = [
 source_parsers = {
         '.md': CommonMarkParser
 }
+
+
+# app setup hook
+def setup(app):
+    app.add_config_value('recommonmark_config', {
+            'url_resolver': lambda url: '/' + url,
+            'auto_toc_tree_section': 'Contents',
+            'enable_eval_rst' : True
+            }, True)
+    app.add_transform(AutoStructify)
+
+
