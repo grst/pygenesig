@@ -7,7 +7,7 @@ def which(cond):
     return [i for i, b in enumerate(cond) if b]
 
 
-def write_gmt(signatures, file, description="na", order=None):
+def write_gmt(signatures, file, description="na"):
     """
     Writes signatures to a GMT file.
 
@@ -15,9 +15,6 @@ def write_gmt(signatures, file, description="na", order=None):
         signatures (dict of iterable): dictionary 'signature name' -> ['list', 'of', 'gene', 'names']
         file: path to output file
         description: text to fill in the gmt description field.
-
-    Raises:
-        KeyError: if there is an item in order which is not in signatures.
 
     Note:
         File format specification: http://software.broadinstitute.org/cancer/software/gsea/wiki/index.php/Data_formats#GMT:_Gene_Matrix_Transposed_file_format_.28.2A.gmt.29
