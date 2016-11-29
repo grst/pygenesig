@@ -12,6 +12,9 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
+   getting_started.md
+   users_guide.md
+   developers_guide.md
    pygenesig.rst
 ```
 
