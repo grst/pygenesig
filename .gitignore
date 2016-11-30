@@ -1,5 +1,6 @@
 ##### Custom Rules
 data/*
+results/*
 .idea
 
 R/R_tmp
