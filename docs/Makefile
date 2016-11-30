@@ -54,6 +54,8 @@ help:
 clean:
 	# do not delete git! 
 	rm -rf $(BUILDDIR)/html/*
+	rm -f $(BUILDDIR)/html/.buildinfo
+	rm -rf $(BUILDDIR)/doctrees
 
 .PHONY: html
 html:

@@ -1,43 +1,30 @@
-.. pygenesig documentation master file, created by
-   sphinx-quickstart on Thu Nov 24 17:11:27 2016.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
+# pygenesig
+A python package to create and validate gene signatures. 
 
-Welcome to pygenesig's documentation!
-=====================================
+Gene signatures are sets of genes derived from gene expression data, which identify a certain tissue, cell type, pathway, etc. This package provides a framework to create and validate such signatures. The package is easily extensible to add new methods for signature creation and testing. 
 
-Contents:
+## Contents:
 
 ```eval_rst
 .. toctree::
-   :maxdepth: 2
+    :maxdepth: 2 
 
-   getting_started.md
-   users_guide.md
-   developers_guide.md
-   pygenesig.rst
+    prepare_data.md
+    pygenesig.rst
 ```
 
+## Getting started:
 
-
-Indices and tables
-==================
-
-
+First, clone the repository from github:
 ```
- * :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+git clone git@github.com:grst/gene-set-study.git
 ```
 
-
-
-## markdown syntax
-```python 
-def fun():
-    echo "Hello World!"
+Second, install the package:
 ```
+python3 setup.py develop
+```
+The `develop` keywork links the python files from the repository to the packages-folder instead of copying them. Like this, any change you make in the source code is immediately available to the python interpreter. 
 
-this is *bold*...
-this is [a link](http://example.com)
+Now you can use the package, for example from a `jupyter notebook`. 
 
