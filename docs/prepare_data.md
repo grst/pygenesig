@@ -1,6 +1,6 @@
 # Prepare data
 
-## Creating signatures
+## for creating signatures
 For creating signatures, we essentially need two pieces of information: The gene expression data and the target annotation (e.g. tissue). Depending on the method, we may need additional covariates, but let's focus on the simple case here: 
 
 ### Gene expression matrix
@@ -53,7 +53,7 @@ target = np.array(meta.tissue)
 
 
 
-## Testing signatures
+## for testing signatures
 For testing signatures, we again need the [target annotation](#target-annotation) as *standard of truth*. Additionally we need to provide the signatures we want to test. 
 
 ### Signature Dictionary

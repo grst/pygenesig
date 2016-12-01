@@ -10,10 +10,35 @@ Gene signatures are sets of genes derived from gene expression data, which ident
     :maxdepth: 2 
 
     prepare_data.md
+    use_pygenesig.md
     pygenesig.rst
 ```
 
 ## Getting started:
+
+### Dependencies
+The following python packages are required (install with `pip install`)
+```
+rpy2
+dask
+numpy
+pandas
+scikit-learn
+```
+
+**rpy2**
+
+Signature testing is based on [BioQC](https://accio.github.io/BioQC) which is an `R` package. Pygenesig relies on [rpy2](http://rpy2.bitbucket.org/) to use the R package. If you don't have a working R installation on your system, you can get one through [Anaconda](https://www.continuum.io/conda-for-r). 
+
+For pygenesig to work, you need to install the BioQC package in R. You can do this by running `install.packages("BioQC")` in R or getting the development version from [github](https://github.com/Accio/BioQC). 
+
+
+**dask**
+
+Crossvalidation can be comutationally intensive. [Dask](http://dask.readthedocs.io/en/latest/) provides an easy interface for running code in parallel. Depending on your setup, you can run code with multi threading on a single PC or on multiple nodes on a high performance cluster. 
+
+
+### Installing pygenesig
 
 First, clone the repository from github:
 ```
