@@ -34,7 +34,7 @@ st = BioQCSignatureTester(expr, target)
 actual, predicted = st.test_signatures(signatures)
 ```
 
-With the actual and predicted labels, we can create a confusion matrix to understand the quality of the prediction. Pygenesig comes with a convenient wrapper method to create the confusion matrix, but essentially you can use whatever performance measure from [scikit-learn](http://scikit-learn.org/stable/modules/classes.html#sklearn-metrics-metrics). 
+From the list of actual and predicted labels, we can for example create a confusion matrix. *Pygenesig* provides a convenient wrapper method to create the confusion matrix, but essentially you can use whatever performance measure from [scikit-learn](http://scikit-learn.org/stable/modules/classes.html#sklearn-metrics-metrics). 
 
 
 ```python
@@ -48,7 +48,7 @@ sns.heatmap(confmat, xticklabels=sig_labels, yticklabels=sig_labels
 
 ```eval_rst
 .. Note::
-    As python dictionaries have no particular order you can use `SignatureTester.sort_signatures` to obtain a reproducable order of the signatures. 
+    As python dictionaries have no particular order you can use ``SignatureTester.sort_signatures()`` to obtain a reproducable order of the signatures. 
 ```
 
 # Putting it together: crossvalidation 

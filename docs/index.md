@@ -30,12 +30,17 @@ scikit-learn
 
 Signature testing is based on [BioQC](https://accio.github.io/BioQC) which is an `R` package. Pygenesig relies on [rpy2](http://rpy2.bitbucket.org/) to use the R package. If you don't have a working R installation on your system, you can get one through [Anaconda](https://www.continuum.io/conda-for-r). 
 
-For pygenesig to work, you need to install the BioQC package in R. You can do this by running `install.packages("BioQC")` in R or getting the development version from [github](https://github.com/Accio/BioQC). 
+For pygenesig to work, you need to install the BioQC package in R. You can get the package from [bioconductor](https://bioconductor.org/packages/release/bioc/html/BioQC.html) or the development version from [github](https://github.com/Accio/BioQC):
+
+```r
+source("http://bioconductor.org/biocLite.R")
+biocLite("BioQC")
+```
 
 
 **dask**
 
-Crossvalidation can be comutationally intensive. [Dask](http://dask.readthedocs.io/en/latest/) provides an easy interface for running code in parallel. Depending on your setup, you can run code with multi threading on a single PC or on multiple nodes on a high performance cluster. 
+Crossvalidation can be comutationally intensive. Pygenesig uses [dask](http://dask.readthedocs.io/en/latest/) to support parallel cross-validation. Depending on your setup, you can run code with multi threading on a single PC or on multiple nodes on a high performance cluster. 
 
 
 ### Installing pygenesig

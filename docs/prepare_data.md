@@ -7,7 +7,7 @@ For creating signatures, we essentially need two pieces of information: The gene
 A `$m \times n$` gene expression matrix with `$m$` genes and `$n$` samples. 
 Depending on the method you may want to use either RPKM or raw counts. 
 
-The object needs to be a 2d `numpy.array`. You can easily derive that matrix from a gct file using `pandas`
+The object needs to be a 2d `numpy.array`. You can easily derive that matrix from a gct file using `pandas`.
 
 ```python
 import pandas as pd
@@ -47,8 +47,8 @@ target = np.array(meta.tissue)
 .. Important::
     Make sure that
 
-    - the number of columns in the gene expression matrix equals the length of the target annotation array. You can check that with ```expr.shape[1] == target.shape[0]```
-    - the elements in `target` are in the same order as the columns in `exprs`
+    - the number of columns in the gene expression matrix equals the length of the target annotation array. You can check that with ``expr.shape[1] == target.shape[0]``
+    - the elements in ``target`` are in the same order as the columns in ``exprs``
 ```
 
 
@@ -57,7 +57,7 @@ target = np.array(meta.tissue)
 For testing signatures, we again need the [target annotation](#target-annotation) as *standard of truth*. Additionally we need to provide the signatures we want to test. 
 
 ### Signature Dictionary
-Signatures are represented as a simple dictionary, mapping the signature name to a list of gene indices, for example:
+Signatures are represented as a simple dictionary, mapping the signature name to a list of genes. A gene is represented by it's row-index in the gene expression matrix:
 
 ```python
 signatures = {
@@ -74,4 +74,6 @@ signatures = {
     ...
 }
 ```
+
+If you use *pygenesig* for generating the signatures, you will get such a dictionary by default. 
 
