@@ -61,4 +61,9 @@ To avoid overfitting we can use *crossvalidation* to create and test signatures.
 * aggretate the results. 
 
 # Case studies
+We have performed several case studies using *pygenesig* on the [GTEx] dataset. The studies serve as extended examples and are available as jupyter notebooks on github. 
+
+* Signature generation and cross-validation
+* Grid search for parameter optimization: We systematically tested different values for the gini parameters `min_gini` and `max_rk`. We found, that gini-index is a robust methods over a wide range of parameters. 
+* Cross-platform and cross-species validation: In order to demonstrate, that the gini-method is robust over different organisms and platforms, we generated gene signatures on the GTEx dataset (human, next generation sequenceing) and applied them to a mouse dataset (Affymetrics microarray). For most of the tissues, the signatures are still able to identify their respective tissue.  
 
