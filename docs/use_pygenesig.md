@@ -52,18 +52,16 @@ sns.heatmap(confmat, xticklabels=sig_labels, yticklabels=sig_labels
 ```
 
 # Putting it together: crossvalidation 
-To avoid overfitting we can use *crossvalidation* to create and test signatures. The basic concept is to
+To avoid overfitting sample specific noise, we can use *crossvalidation* to create and test signatures. To this end, we divide our data into 10 independent, *stratified* folds (*i.e.* every fold contains about the same amount of items from every class). We always use 9 of the 10 folds for generating the signatures and apply them to the remaining fold for testing. This procedure is illustrated in the following flowchart:
 
-* create 10 independet, *stratified* folds (*i.e.* every fold contains about the same amount of items from every class)
-* run a `SignatureGenerator` on 9 of the 10 folds to generate signatures
-* run a `SignatureTester` on the remaining fold
-* repeat this such that every fold has been used for testing once
-* aggretate the results. 
+<!-- edit flowchart on https://www.draw.io/?chrome=0&lightbox=1&edit=https%3A%2F%2Fwww.draw.io%2F%23G0BxECzhdeMGwJQXB5ZjNHckRWRzQ&nav=1#G0BxECzhdeMGwJQXB5ZjNHckRWRzQ --> 
+
+![flowchart](_static/img/pygenesig_xval.svg)
 
 # Case studies
-We have performed several case studies using *pygenesig* on the [GTEx] dataset. The studies serve as extended examples and are available as jupyter notebooks on github. 
+We have performed several case studies using *pygenesig* on the [GTEx](http://www.gtexportal.org/home/) dataset. These studies can be understood as 'extended examples' of how to use *pygenesig* and are available on [github](https://github.com/grst/gene-set-study/tree/master/notebooks). 
 
-* Signature generation and cross-validation
-* Grid search for parameter optimization: We systematically tested different values for the gini parameters `min_gini` and `max_rk`. We found, that gini-index is a robust methods over a wide range of parameters. 
-* Cross-platform and cross-species validation: In order to demonstrate, that the gini-method is robust over different organisms and platforms, we generated gene signatures on the GTEx dataset (human, next generation sequenceing) and applied them to a mouse dataset (Affymetrics microarray). For most of the tissues, the signatures are still able to identify their respective tissue.  
+* [Signature generation and cross-validation](https://github.com/grst/gene-set-study/blob/master/notebooks/validate_gini.ipynb)
+* [Grid search for parameter optimization](https://github.com/grst/gene-set-study/blob/master/notebooks/gini-gridsearch.ipynb): We systematically tested different values for the gini parameters `min_gini` and `max_rk`. We found, that gini-index is a robust method for signature generation over a wide range of parameters. 
+* [Cross-platform and cross-species validation](https://github.com/grst/gene-set-study/blob/master/notebooks/validate-mouse.ipynb): In order to demonstrate, that the gini-method is robust over different organisms and platforms, we generated gene signatures on the GTEx dataset (human, next generation sequenceing) and applied them to a mouse dataset (Affymetrics microarray). For most of the tissues, the signatures are still able to identify their respective tissue.  
 
