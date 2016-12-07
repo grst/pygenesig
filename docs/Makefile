@@ -63,6 +63,9 @@ html:
 	@echo
 	@echo "Build finished. The HTML pages are in $(BUILDDIR)/html."
 
+upload: html
+	cd _build/html && git add . && git add -u :/ && git commit -m "Update docs" && git push
+
 .PHONY: dirhtml
 dirhtml:
 	$(SPHINXBUILD) -b dirhtml $(ALLSPHINXOPTS) $(BUILDDIR)/dirhtml

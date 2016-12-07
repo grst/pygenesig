@@ -1,3 +1,10 @@
+"""
+The Gini-coefficient (gini index) measures the inequality among values of
+a frequency distribution. Originally applied to measure income inequality
+we can also use in on gene expression data to find genes that are
+over-represented in certain samples.
+"""
+
 import numpy as np
 import pandas as pd
 from pygenesig.validation import SignatureGenerator
@@ -7,7 +14,13 @@ def gini(array):
     """
     Calculate the Gini coefficient of a numpy array.
 
-    based on: https://github.com/oliviaguest/gini
+    Based on: https://github.com/oliviaguest/gini
+
+    Args:
+        array (array-like): input array
+
+    Returns:
+        float: gini-index of ``array``
 
     >>> a = np.zeros((10000))
     >>> a[0] = 1.0
@@ -36,12 +49,12 @@ def aggregate_expression(expr, target, aggregate_fun=np.median):
     Aggregate expression by annotation (collapse samples of the same tissue)
 
     Args:
-        expr (np.array): data frame with expression data
-        target (list-like): series containing the tissue annotation for each index
-        aggregate_fun (function): aggregate to apply, e.g. mean, median
+        expr (np.array): m x n gene expression matrix with m genes and n samples.
+        target (list-like): list of length n, containing the target annotation for each sample (e.g. tissue)
+        aggregate_fun (function): aggregate to apply, defaults to ``numpy.median``
 
     Returns:
-        pd.DataFrame: data frame with rows = rows(expr_df) = genes and cols = tissues
+        pd.DataFrame: m x n pandas dataframe with m = #Genes and n = #target labels
 
     """
     group_series = pd.Series(target)
@@ -54,16 +67,26 @@ def aggregate_expression(expr, target, aggregate_fun=np.median):
 
 def get_gini_signatures(df_aggr, min_gini=.7, max_rk=3, min_expr=1):
     """
-    Retreive gene signatures from an aggregated data frame
+    Generate gene signatures using gini index.
+
+    Finds over-represented genes for each sample group, given the specified thresholds.
 
     Args:
-        df_aggr (dask.dataframe): Dataframe rows = genenames, cols = tissue aggregates
+        df_aggr (pd.DataFrame): m x n pandas DataFrame with m Genes and n tissues
         min_gini (float): gini cutoff, genes need to have a gini index larger than this value.
-        max_rk (int): rank cutoff
+        max_rk (int): rank cutoff, include genes if they rank <= max_rank among all tissues.
         min_expr (float): minimal expression
 
     Returns:
-        dict of list: tissue -> [list, of, gene, ids]
+        dict of list: A signature dictionary.
+
+        Example::
+
+            {
+                "tissue1" : [list, of, gene, ids],
+                "tissue2" : [list, of, other, genes],
+                ...
+            }
 
     """
     df_aggr = df_aggr[df_aggr.apply(np.max, axis=1) >= min_expr]
@@ -77,6 +100,22 @@ def get_gini_signatures(df_aggr, min_gini=.7, max_rk=3, min_expr=1):
 
 
 class GiniSignatureGenerator(SignatureGenerator):
+    """
+    Use gini index to generate gene signatures.
+
+    Genes, which are specific for a tissue result in a high gini index,
+    whereas genes equally present in all tissues have a gini index close to zero.
+
+    The idea is, that using genes with a high gini index will reliably identify
+    their tissue of origin.
+
+    Args:
+        expr (np.ndarray): m x n matrix with m samples and n genes
+        target (array-like): m-vector with true tissue for each sample
+        min_gini (float): gini cutoff, genes need to have a gini index larger than this value.
+        max_rk (int): rank cutoff, include genes if they rank <= max_rank among all tissues.
+        min_expr (float): genes need to have at least an expression >= min_expr to be included.
+    """
     def __init__(self, expr, target, min_gini=.7, max_rk=3, min_expr=1):
         super(GiniSignatureGenerator, self).__init__(expr, target)
         self.min_gini = min_gini

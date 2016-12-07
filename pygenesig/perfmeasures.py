@@ -1,3 +1,11 @@
+"""
+Collection of functions to compute various performance measures from a 2x2 confusion matrix.
+As an introduction to evaluating classificators, we recommend reading this `paper`_ about ROC analysis.
+
+.. _paper: http://dx.doi.org/10.1016/j.patrec.2005.10.010.
+"""
+
+
 import numpy as np
 from math import sqrt
 

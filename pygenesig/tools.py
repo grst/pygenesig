@@ -1,23 +1,17 @@
 import numpy as np
 import itertools
 
-
-def which(cond):
-    """cond is boolean mask"""
-    return [i for i, b in enumerate(cond) if b]
-
-
 def write_gmt(signatures, file, description="na"):
     """
-    Writes signatures to a GMT file.
+    Writes signatures to a `GMT file`_.
 
     Args:
         signatures (dict of iterable): dictionary 'signature name' -> ['list', 'of', 'gene', 'names']
         file: path to output file
         description: text to fill in the gmt description field.
 
-    Note:
-        File format specification: http://software.broadinstitute.org/cancer/software/gsea/wiki/index.php/Data_formats#GMT:_Gene_Matrix_Transposed_file_format_.28.2A.gmt.29
+    .. _GMT file:
+        http://software.broadinstitute.org/cancer/software/gsea/wiki/index.php/Data_formats#GMT:_Gene_Matrix_Transposed_file_format_.28.2A.gmt.29
 
     """
     with open(file, 'w') as f:
@@ -56,7 +50,8 @@ def pairwise_jaccard_ind(list_of_signatures):
     Returns:
         dict: signature_name -> [list, of, jaccard, indices]
 
-    Note: takes the signature names from the first dict in list_of_signatures
+    Note:
+        takes the signature names from the first dict in list_of_signatures
         to build the output dictionary.
     """
     assert len(list_of_signatures) > 0, "no signatures provided."

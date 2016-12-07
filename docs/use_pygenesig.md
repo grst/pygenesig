@@ -1,5 +1,5 @@
 # Creating signatures
-*pygenesig* shippes with two classes for signature generation. The GiniSignatureGenerator and the LimmaSignatureGenerator. The two methods are described...
+*pygenesig* shippes with two classes for signature generation. The [GiniSignatureGenerator](apidoc.html#module-pygenesig.gini) and the [LimmaSignatureGenerator](apidoc.html#module-pygenesig.limma). The two methods are described in the [API documentation](apidoc.html). 
 
 First, we load the expression data and target annotation we [prepared earlier](prepare_data.html):
 ```python
@@ -26,7 +26,7 @@ Which will result in something like
 ```
 
 # Testing signatures
-*pygenesig* shippes with the `BioQCSignatureTester`. The method is described in more detail [here].
+*pygenesig* shippes with the `BioQCSignatureTester`. The method is described in more detail [here](apidoc.html#module-pygenesig.bioqc).
 
 To test signatures, we initalize the tester with the gene expression data and the target labels. Then, we can test different signature sets on the data:
 
@@ -54,7 +54,7 @@ sns.heatmap(confmat, xticklabels=sig_labels, yticklabels=sig_labels
 ```
 
 # Putting it together: crossvalidation 
-To avoid overfitting sample specific noise, we can use *crossvalidation* to create and test signatures. To this end, we divide our data into 10 independent, *stratified* folds (*i.e.* every fold contains about the same amount of items from every class). We always use 9 of the 10 folds for generating the signatures and apply them to the remaining fold for testing. This procedure is illustrated in the following flowchart:
+To avoid overfitting sample-specific noise, we can use *crossvalidation* to create and test signatures. To this end, we divide our data into 10 independent, *stratified* folds (*i.e.* every fold contains about the same amount of items from every class). We always use 9 of the 10 folds for generating the signatures and apply them to the remaining fold for testing. This procedure is illustrated in the following flowchart:
 
 <!-- edit flowchart on https://www.draw.io/?chrome=0&lightbox=1&edit=https%3A%2F%2Fwww.draw.io%2F%23G0BxECzhdeMGwJQXB5ZjNHckRWRzQ&nav=1#G0BxECzhdeMGwJQXB5ZjNHckRWRzQ --> 
 
@@ -67,7 +67,7 @@ In *pygenesig* this is already implemented in `cross_validate_signatures` ([docu
 ```python
 from pygenesig.validation import cross_validate_signatures
 from pygenesig.gini import GiniSignatureGenerator
-from pygenesig.bioqc import BioQCSignatureGenerator
+from pygenesig.bioqc import BioQCSignatureTester
 
 expr_file = "exprs.npy"
 target_file = "target.csv"
@@ -80,9 +80,9 @@ signature_list, result_list = cross_validate_signatures(expr_file,
 
 The cross-validation function uses [dask](http://dask.pydata.org) for multiprocessing. It returns a list of [dask graphs](http://dask.pydata.org/en/latest/custom-graphs.html) to compute the signatures and confusion matrices.  
 
-Dask supports a [bunch of schedulers](http://dask.pydata.org/en/latest/scheduler-overview.html). The [distributed](https://distributed.readthedocs.io/en/latest/quickstart.html) scheduler, for instance, allows you to run the cross-validation on a high performance cluster. To keep it simple, we use the `multiprocessing` scheduler here to compute the dask-graphs.  
+Dask supports a [bunch of schedulers](http://dask.pydata.org/en/latest/scheduler-overview.html). The [distributed](https://distributed.readthedocs.io/en/latest/quickstart.html) scheduler, for instance, allows you to run the cross-validation on a high performance cluster. To keep it simple, we use the `multiprocessing` scheduler here to compute the dask-graphs. Note, that for large gene expression matrices, this can be memory-intensive! 
 ```python
-import dask
+import dask.multiprocessing
 from dask.base import compute
 
 signature_futures, result_futures = compute([signature_list, result_list],

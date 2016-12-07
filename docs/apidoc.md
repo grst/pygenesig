@@ -1,6 +1,7 @@
 # API documentation
 
-## validation
+## pygenesig core
+### abstract classes and cross validation (`pygenesig.validation`)
 ```eval_rst
 .. automodule:: pygenesig.validation
     :members:
@@ -39,7 +40,7 @@
 ```
 
 ## Tools
-### Auxilary function related to gene signatures (`pygenesig.tools`) 
+### Auxilary functions related to gene signatures (`pygenesig.tools`) 
 ```eval_rst
 .. automodule:: pygenesig.tools
     :members:

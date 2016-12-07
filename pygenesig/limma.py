@@ -1,3 +1,19 @@
+"""
+With Differential Expression (DE)-Analysis one can find genes that
+are significantly differentially expressed between different conditions.
+
+This module provides a python bridge to the R packages `limma`_ and `edgeR`_
+using ``rpy2`` and implements a ``SignatureGenerator`` based on DE.
+
+.. _limma:
+    https://bioconductor.org/packages/release/bioc/html/limma.html
+
+.. _edgeR:
+    https://www.bioconductor.org/packages/release/bioc/html/edgeR.html
+
+
+"""
+
 import readline
 import rpy2.robjects as ro
 from rpy2.robjects.packages import importr
@@ -19,17 +35,25 @@ limma = importr("limma")
 
 
 class LimmaSignatureGenerator(SignatureGenerator):
+    """
+    Use Differntial Expression (DE) Analysis to generate signatures.
+
+    The LimmaSignatureGenerator uses `Limma` and `voom` to find significantly differentially
+    expressed genes. Genes, which are specific for a tissue have a high fold-change and a low
+    p-value, whereas genes equally present in all tissues will not be significant.
+
+    The idea is, that genes which are significantly different between different tissues
+    will reliably identify their tissue of origin.
+
+    Args:
+        expr (np.ndarray): m x n matrix with m samples and n genes
+        target (array-like): m-vector with true tissue for each sample
+        fold_change (int): minimal fold change for a gene to be considered as `differentially expressed`.
+    """
+
     TARGET_COL = "target"
 
     def __init__(self, expr, target, covariates, fold_change=100):
-        """
-
-        Args:
-            expr:
-            target:
-            covariates (pd.DataFrame):
-            fold_change:
-        """
         super(LimmaSignatureGenerator, self).__init__(expr, target)
         assert covariates.shape[0] == expr.shape[1], "nrow(covariates) must equal ncol(expr)"
         self.fold_change = fold_change

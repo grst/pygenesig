@@ -1,3 +1,9 @@
+"""
+pygenesig's main module: Contains the abstract base classes for signature
+generation and testing and provides tools for cross-validation.
+"""
+
+
 from abc import abstractmethod, ABCMeta
 import numpy as np
 import sklearn.model_selection
@@ -44,15 +50,28 @@ def cross_validate_signatures(expr_file, target_file,
 
 
 class SignatureGenerator(metaclass=ABCMeta):
-    """Abstract base-class for generating gene signatures.
-    Child classes build gene signatures for a given gene expression matrix and tissue list. """
+    """
+    Abstract base-class for generating gene signatures.
+    Child classes build gene signatures for a given gene expression matrix and tissue list.
+
+    Initialize the SignatureGenerator with a gene expression matrix and the target labels.
+    Checks the consistency of the input data and saves them as class attributes.
+
+    You can override this method in your implementation of a SignatureGenerator
+    to pass additional parameters, however, make always sure to call this method
+    in your `__init__` function to take advantage of the consistency check::
+
+        def __init__(self, expr, target, your_param):
+            super(YourSignatureTester, self).__init__(expr, target)
+            # your code goes here
+
+
+    Args:
+        expr (np.ndarray): m x n matrix with m samples and n genes
+        target (array-like): m-vector with true tissue for each sample
+    """
 
     def __init__(self, expr, target):
-        """
-        Args:
-            expr (np.ndarray): m x n matrix with m samples and n genes
-            target (array-like): m-vector with true tissue for each sample
-        """
         if not expr.shape[1] == len(target):
             raise ValueError("The length of target must equal the number of samples (columns) in the expr matrix. ")
         if not np.issubdtype(expr.dtype, int) and not np.issubdtype(expr.dtype, float):
@@ -66,6 +85,8 @@ class SignatureGenerator(metaclass=ABCMeta):
         """
         Implement this method.
         Generates signatures for a list of tissues given a gene expression matrix.
+        This method is called internally by the public method `mk_signatures`, which
+        takes care of subsetting the expression data.
 
         Args:
             expr: m x n matrix with m samples and n genes
@@ -83,11 +104,11 @@ class SignatureGenerator(metaclass=ABCMeta):
 
     def mk_signatures(self, subset=None):
         """
-        Make gene signatures based on the expression matrix.
+        Make gene signatures on a subset of the samples in the gene expression matrix.
 
         Args:
             subset: Sample indices (columns of expression matrix) to use for signature generation.
-                Useful for cross-validation.
+                Useful for cross-validation. If omitted, all samples will be used.
 
         Returns:
             dict: tissue_name -> [list, of, enriched, genes]. The indices correspond to expr.index.
@@ -100,16 +121,31 @@ class SignatureGenerator(metaclass=ABCMeta):
 
 
 class SignatureTester(metaclass=ABCMeta):
-    """Abstract base-class for testing gene signatures.
+    """
+    Abstract base-class for testing gene signatures.
     Child classes test if a signature is able to identify the respective tissue properly,
-    given an expression matrix and a list of the actual tissues. """
+    given an expression matrix and a list of the actual tissues.
+
+    Initialize the SignatureTester with a gene expression matrix and the
+    target labels (=standard of truth).
+    Checks the consistency of the input data and saves them as class attributes.
+
+    You can override this method in your implementation of a SignatureTester
+    to pass additional parameters, however, make always sure to call this method
+    in your `__init__` function to take advantage of the consistency check:
+
+    ```
+    def __init__(self, expr, target, your_param):
+        super(YourSignatureTester, self).__init__(expr, target)
+        # your code goes here
+    ```
+
+    Args:
+        expr (np.ndarray): m x n matrix with m samples and n genes
+        target (array-like): m-vector with true tissue for each sample
+    """
 
     def __init__(self, expr, target):
-        """
-        Args:
-            expr (np.ndarray): m x n matrix with m samples and n genes
-            target (array-like): m-vector with true tissue for each sample
-        """
         if not expr.shape[1] == len(target):
             raise ValueError("The length of target must equal the number of samples (columns) in the expr matrix. ")
         if not np.issubdtype(expr.dtype, int) and not np.issubdtype(expr.dtype, float):
@@ -120,7 +156,9 @@ class SignatureTester(metaclass=ABCMeta):
     @staticmethod
     def sort_signatures(signatures):
         """
-        Order the signatures. Same order as the rows/columns in the output matrix.
+        Retrieve the signatures in a consistent order.
+        The rows/columns in the confusion matrix generated with `confusion_matrix` will
+        be in this order.
 
         Args:
             signatures: signature dictionary.
