@@ -160,7 +160,7 @@ html_static_path = ['_static']
 
 # If true, SmartyPants will be used to convert quotes and dashes to
 # typographically correct entities.
-#html_use_smartypants = True
+html_use_smartypants = True
 
 # Custom sidebar templates, maps document names to template names.
 #html_sidebars = {}
@@ -302,7 +302,7 @@ source_parsers = {
 # app setup hook
 def setup(app):
     app.add_config_value('recommonmark_config', {
-            'url_resolver': lambda url: '/' + url,
+            'url_resolver': lambda url: '' + url,
             'auto_toc_tree_section': 'Contents',
             'enable_eval_rst' : True,
             'enable_inline_math' : True,

@@ -41,6 +41,7 @@ You can again use `pandas` to extract the target annotation:
 ```python
 meta = pd.read_csv("meta.tsv", sep="\t", index_col=0)
 target = np.array(meta.tissue)
+np.savetxt("target.csv", target, delimiter=",", fmt="%s")
 ```
 
 ```eval_rst
@@ -54,7 +55,7 @@ target = np.array(meta.tissue)
 
 
 ## for testing signatures
-For testing signatures, we again need the [target annotation](#target-annotation) as *standard of truth*. Additionally we need to provide the signatures we want to test. 
+For testing signatures, we again need the [target annotation](#target-annotation) as *ground truth*. Additionally we need to provide the signatures we want to test. 
 
 ### Signature Dictionary
 Signatures are represented as a simple dictionary, mapping the signature name to a list of genes. A gene is represented by it's row-index in the gene expression matrix:

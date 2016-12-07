@@ -10,6 +10,7 @@ target = np.genfromtxt("target.csv", delimiter=",", dtype=str)
 
 Now, we can generate signatures with the signature generator of our choice:
 ```python
+from pygenesig.gini import GiniSignatureGenerator
 sg = GiniSignatureGenerator(expr, target)
 signatures = sg.mk_signatures()
 ```
@@ -30,6 +31,7 @@ Which will result in something like
 To test signatures, we initalize the tester with the gene expression data and the target labels. Then, we can test different signature sets on the data:
 
 ```python
+from pygenesig.bioqc import BioQCSignatureTester
 st = BioQCSignatureTester(expr, target)
 actual, predicted = st.test_signatures(signatures)
 ```
@@ -58,10 +60,56 @@ To avoid overfitting sample specific noise, we can use *crossvalidation* to crea
 
 ![flowchart](_static/img/pygenesig_xval.svg)
 
+You can use using scikit-learn [StratifiedKFold](http://scikit-learn.org/stable/modules/generated/sklearn.model_selection.StratifiedKFold.html#sklearn.model_selection.StratifiedKFold) to split your data into folds and then apply a `SignatureGenerator` and a `SignatureTester` on the resulting testing and training sets. 
+
+In *pygenesig* this is already implemented in `cross_validate_signatures` ([documentation](apidoc.html#pygenesig.validation.cross_validate_signatures)). The method automatically performs the cross validation, given a gene expression matrix and target annotation: 
+
+```python
+from pygenesig.validation import cross_validate_signatures
+from pygenesig.gini import GiniSignatureGenerator
+from pygenesig.bioqc import BioQCSignatureGenerator
+
+expr_file = "exprs.npy"
+target_file = "target.csv"
+
+signature_list, result_list = cross_validate_signatures(expr_file,
+                                                        target_file,
+                                                        GiniSignatureGenerator,
+                                                        BioQCSignatureTester)
+```
+
+The cross-validation function uses [dask](http://dask.pydata.org) for multiprocessing. It returns a list of [dask graphs](http://dask.pydata.org/en/latest/custom-graphs.html) to compute the signatures and confusion matrices.  
+
+Dask supports a [bunch of schedulers](http://dask.pydata.org/en/latest/scheduler-overview.html). The [distributed](https://distributed.readthedocs.io/en/latest/quickstart.html) scheduler, for instance, allows you to run the cross-validation on a high performance cluster. To keep it simple, we use the `multiprocessing` scheduler here to compute the dask-graphs.  
+```python
+import dask
+from dask.base import compute
+
+signature_futures, result_futures = compute([signature_list, result_list],
+                                            get=dask.multiprocessing.get)
+
+signatures = [f.result() for f in signature_futures]
+confusion_matrices = [f.result() for f in result_futures]
+```
+
+Now, we can easily compute and display the average confusion matrix of the 10 folds: 
+```python
+import numpy as np
+import seaborn as sns
+
+conf_mat_mean = np.mean(np.array(confusion_matrices), axis=0)
+sig_labels = BioQCSignatureTester.sort_signatures(signatures[0])
+fig, ax = subplots(figsize=(9, 9))
+sns.heatmap(conf_mat_mean, ax=ax, 
+            xticklabels=sig_labels, yticklabels=sig_labels,
+            annot=True,annot_kws={"size": 9})
+```
+![xval heatmap](_static/img/xval_heatmap.png)
+
 # Case studies
 We have performed several case studies using *pygenesig* on the [GTEx](http://www.gtexportal.org/home/) dataset. These studies can be understood as 'extended examples' of how to use *pygenesig* and are available on [github](https://github.com/grst/gene-set-study/tree/master/notebooks). 
 
-* [Signature generation and cross-validation](https://github.com/grst/gene-set-study/blob/master/notebooks/validate_gini.ipynb)
-* [Grid search for parameter optimization](https://github.com/grst/gene-set-study/blob/master/notebooks/gini-gridsearch.ipynb): We systematically tested different values for the gini parameters `min_gini` and `max_rk`. We found, that gini-index is a robust method for signature generation over a wide range of parameters. 
-* [Cross-platform and cross-species validation](https://github.com/grst/gene-set-study/blob/master/notebooks/validate-mouse.ipynb): In order to demonstrate, that the gini-method is robust over different organisms and platforms, we generated gene signatures on the GTEx dataset (human, next generation sequenceing) and applied them to a mouse dataset (Affymetrics microarray). For most of the tissues, the signatures are still able to identify their respective tissue.  
+* [Cross validation](https://github.com/grst/gene-set-study/blob/master/notebooks/validate_gini.ipynb): Full working example of cross-validation on GTEx data. 
+* [Grid search for parameter optimization](https://github.com/grst/gene-set-study/blob/master/notebooks/gini-gridsearch.ipynb): Systematic test of different parameters for the GiniSignatureGenerator. We found, that gini-index is a robust method for signature generation over a wide range of parameters. 
+* [Cross-platform and cross-species validation](https://github.com/grst/gene-set-study/blob/master/notebooks/validate-mouse.ipynb): Validation of signatures on a different platform and organism. We generated gene signatures on the GTEx dataset (human, next generation sequenceing) and applied them to a mouse dataset (Affymetrics microarray). For most of the tissues, the signatures are still able to identify their respective tissue.  
 

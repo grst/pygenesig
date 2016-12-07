@@ -11,7 +11,8 @@ Gene signatures are sets of genes derived from gene expression data, which ident
 
     prepare_data.md
     use_pygenesig.md
-    pygenesig.rst
+    developers_guide.md
+    apidoc.md
 ```
 
 ## Getting started:
@@ -33,8 +34,8 @@ Signature testing is based on [BioQC](https://accio.github.io/BioQC) which is an
 For pygenesig to work, you need to install the BioQC package in R. You can get the package from [bioconductor](https://bioconductor.org/packages/release/bioc/html/BioQC.html) or the development version from [github](https://github.com/Accio/BioQC):
 
 ```r
-source("http://bioconductor.org/biocLite.R")
-biocLite("BioQC")
+R> source("http://bioconductor.org/biocLite.R")
+R> biocLite("BioQC")
 ```
 
 
