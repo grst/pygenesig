@@ -1,0 +1,283 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pygenesig.limma &mdash; pygenesig 0.1.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="pygenesig 0.1.0 documentation" href="../../index.html"/>
+        <link rel="up" title="Module code" href="../index.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> pygenesig
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../prepare_data.html">Prepare data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../use_pygenesig.html">Creating signatures</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../use_pygenesig.html#testing-signatures">Testing signatures</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../use_pygenesig.html#putting-it-together-crossvalidation">Putting it together: crossvalidation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../use_pygenesig.html#case-studies">Case studies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../developers_guide.html">Implement own methods</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../apidoc.html">API documentation</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../index.html">pygenesig</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+      
+    <li>pygenesig.limma</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for pygenesig.limma</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">readline</span>
+<span class="kn">import</span> <span class="nn">rpy2.robjects</span> <span class="kn">as</span> <span class="nn">ro</span>
+<span class="kn">from</span> <span class="nn">rpy2.robjects.packages</span> <span class="kn">import</span> <span class="n">importr</span>
+<span class="kn">from</span> <span class="nn">rpy2.robjects</span> <span class="kn">import</span> <span class="n">numpy2ri</span><span class="p">,</span> <span class="n">pandas2ri</span><span class="p">,</span> <span class="n">Formula</span>
+<span class="kn">from</span> <span class="nn">pygenesig.validation</span> <span class="kn">import</span> <span class="n">SignatureTester</span>
+<span class="kn">from</span> <span class="nn">pygenesig.tools</span> <span class="kn">import</span> <span class="n">write_gmt</span>
+<span class="kn">import</span> <span class="nn">sklearn.metrics</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">pygenesig.validation</span> <span class="kn">import</span> <span class="n">SignatureGenerator</span>
+<span class="kn">import</span> <span class="nn">tempfile</span>
+<span class="n">numpy2ri</span><span class="o">.</span><span class="n">activate</span><span class="p">()</span>
+<span class="n">pandas2ri</span><span class="o">.</span><span class="n">activate</span><span class="p">()</span>
+
+<span class="n">base</span> <span class="o">=</span> <span class="n">importr</span><span class="p">(</span><span class="s2">&quot;base&quot;</span><span class="p">)</span>
+<span class="n">stats</span> <span class="o">=</span> <span class="n">importr</span><span class="p">(</span><span class="s2">&quot;stats&quot;</span><span class="p">)</span>
+<span class="n">edge_r</span> <span class="o">=</span> <span class="n">importr</span><span class="p">(</span><span class="s2">&quot;edgeR&quot;</span><span class="p">)</span>
+<span class="n">stats</span> <span class="o">=</span> <span class="n">importr</span><span class="p">(</span><span class="s2">&quot;stats&quot;</span><span class="p">)</span>
+<span class="n">limma</span> <span class="o">=</span> <span class="n">importr</span><span class="p">(</span><span class="s2">&quot;limma&quot;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="LimmaSignatureGenerator"><a class="viewcode-back" href="../../apidoc.html#pygenesig.limma.LimmaSignatureGenerator">[docs]</a><span class="k">class</span> <span class="nc">LimmaSignatureGenerator</span><span class="p">(</span><span class="n">SignatureGenerator</span><span class="p">):</span>
+    <span class="n">TARGET_COL</span> <span class="o">=</span> <span class="s2">&quot;target&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">covariates</span><span class="p">,</span> <span class="n">fold_change</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            expr:</span>
+<span class="sd">            target:</span>
+<span class="sd">            covariates (pd.DataFrame):</span>
+<span class="sd">            fold_change:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">LimmaSignatureGenerator</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">covariates</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">expr</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;nrow(covariates) must equal ncol(expr)&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fold_change</span> <span class="o">=</span> <span class="n">fold_change</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">covariates</span> <span class="o">=</span> <span class="n">covariates</span>
+
+    <span class="k">def</span> <span class="nf">_mk_signatures</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
+        <span class="c1"># genenames = indices</span>
+        <span class="n">genes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">expr</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])])</span>
+        <span class="n">dg_list</span> <span class="o">=</span> <span class="n">edge_r</span><span class="o">.</span><span class="n">DGEList</span><span class="p">(</span><span class="n">counts</span><span class="o">=</span><span class="n">expr</span><span class="p">,</span> <span class="n">genes</span><span class="o">=</span><span class="n">genes</span><span class="p">)</span>
+
+        <span class="k">assert</span> <span class="nb">all</span><span class="p">([</span><span class="bp">True</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">col</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">TARGET_COL</span><span class="p">)</span> <span class="k">else</span> <span class="bp">False</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">covariates</span><span class="o">.</span><span class="n">columns</span><span class="p">]),</span> \
+            <span class="s2">&quot;covariates must not contain a column named target. &quot;</span>
+        <span class="n">fmla</span> <span class="o">=</span> <span class="n">Formula</span><span class="p">(</span><span class="s2">&quot;~ target + &quot;</span> <span class="o">+</span> <span class="s2">&quot; + &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">covariates</span><span class="o">.</span><span class="n">columns</span><span class="p">))</span>
+        <span class="n">env</span> <span class="o">=</span> <span class="n">fmla</span><span class="o">.</span><span class="n">environment</span>
+        <span class="n">env</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">TARGET_COL</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">target</span>
+        <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">covariates</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+            <span class="n">env</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">covariates</span><span class="p">[</span><span class="n">col</span><span class="p">]</span>
+        <span class="n">design_mat</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">model_matrix</span><span class="p">(</span><span class="n">fmla</span><span class="p">)</span>
+
+        <span class="n">cpm</span> <span class="o">=</span> <span class="n">edge_r</span><span class="o">.</span><span class="n">cpm</span><span class="p">(</span><span class="n">dg_list</span><span class="p">)</span>
+        <span class="n">cpm_cnt</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">cpm</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">cpm_inds</span> <span class="o">=</span> <span class="n">cpm_cnt</span> <span class="o">&gt;=</span> <span class="mi">10</span>
+
+        <span class="n">expr_fil</span> <span class="o">=</span> <span class="n">expr</span><span class="p">[</span><span class="n">cpm_inds</span><span class="p">,</span> <span class="p">:]</span>
+        <span class="n">genes_fil</span> <span class="o">=</span> <span class="n">genes</span><span class="p">[</span><span class="n">cpm_inds</span><span class="p">]</span>
+
+        <span class="c1"># overwrite with filtered dglist</span>
+        <span class="n">dg_list</span> <span class="o">=</span> <span class="n">edge_r</span><span class="o">.</span><span class="n">DGEList</span><span class="p">(</span><span class="n">counts</span><span class="o">=</span><span class="n">expr_fil</span><span class="p">,</span> <span class="n">genes</span><span class="o">=</span><span class="n">genes_fil</span><span class="p">)</span>
+        <span class="n">dg_list</span> <span class="o">=</span> <span class="n">edge_r</span><span class="o">.</span><span class="n">calcNormFactors</span><span class="p">(</span><span class="n">dg_list</span><span class="p">)</span>
+
+        <span class="c1"># run voom</span>
+        <span class="n">voom_res</span> <span class="o">=</span> <span class="n">limma</span><span class="o">.</span><span class="n">voom</span><span class="p">(</span><span class="n">dg_list</span><span class="p">,</span> <span class="n">design_mat</span><span class="p">,</span> <span class="n">plot</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+
+        <span class="c1"># run limma</span>
+        <span class="n">lm_fit</span> <span class="o">=</span> <span class="n">limma</span><span class="o">.</span><span class="n">lmFit</span><span class="p">(</span><span class="n">voom_res</span><span class="p">,</span> <span class="n">design_mat</span><span class="p">)</span>
+
+        <span class="c1"># filter based on pvalue and logfoldchange</span>
+        <span class="n">p_adj</span> <span class="o">=</span> <span class="o">.</span><span class="mo">01</span> <span class="o">/</span> <span class="n">base</span><span class="o">.</span><span class="n">nrow</span><span class="p">(</span><span class="n">lm_fit</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">fit_e</span> <span class="o">=</span> <span class="n">limma</span><span class="o">.</span><span class="n">treat</span><span class="p">(</span><span class="n">lm_fit</span><span class="p">,</span> <span class="n">lfc</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fold_change</span><span class="p">))</span>
+        <span class="n">rslt</span> <span class="o">=</span> <span class="n">limma</span><span class="o">.</span><span class="n">decideTests</span><span class="p">(</span><span class="n">fit_e</span><span class="p">,</span> <span class="n">p_value</span><span class="o">=</span><span class="n">p_adj</span><span class="p">)</span>
+
+        <span class="c1"># make signatures</span>
+        <span class="n">colnames</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">base</span><span class="o">.</span><span class="n">colnames</span><span class="p">(</span><span class="n">rslt</span><span class="p">))</span>
+        <span class="n">np_rslt</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">rslt</span><span class="p">)</span>
+        <span class="n">tissue_cols</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="bp">True</span> <span class="k">if</span> <span class="n">col</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;target&#39;</span><span class="p">)</span> <span class="k">else</span> <span class="bp">False</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">colnames</span><span class="p">])</span>
+        <span class="n">np_rslt</span> <span class="o">=</span> <span class="n">np_rslt</span><span class="p">[:,</span> <span class="n">tissue_cols</span><span class="p">]</span>
+        <span class="n">tissues</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">col</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">TARGET_COL</span><span class="p">):]</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">colnames</span><span class="p">[</span><span class="n">tissue_cols</span><span class="p">]])</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">tissues</span><span class="p">)</span> <span class="o">==</span> <span class="n">np_rslt</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">row_inds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">cpm_inds</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">signatures</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">tissue</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">tissues</span><span class="p">):</span>
+            <span class="n">signatures</span><span class="p">[</span><span class="n">tissue</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">row_inds</span><span class="p">[</span><span class="n">np_rslt</span><span class="p">[:,</span> <span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">])</span>
+
+        <span class="k">return</span> <span class="n">signatures</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Gregor Sturm.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'0.1.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

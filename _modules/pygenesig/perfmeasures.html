@@ -1,0 +1,246 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pygenesig.perfmeasures &mdash; pygenesig 0.1.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="pygenesig 0.1.0 documentation" href="../../index.html"/>
+        <link rel="up" title="Module code" href="../index.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> pygenesig
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../prepare_data.html">Prepare data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../use_pygenesig.html">Creating signatures</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../use_pygenesig.html#testing-signatures">Testing signatures</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../use_pygenesig.html#putting-it-together-crossvalidation">Putting it together: crossvalidation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../use_pygenesig.html#case-studies">Case studies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../developers_guide.html">Implement own methods</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../apidoc.html">API documentation</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../index.html">pygenesig</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+      
+    <li>pygenesig.perfmeasures</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for pygenesig.perfmeasures</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">sqrt</span>
+
+
+<div class="viewcode-block" id="mcc"><a class="viewcode-back" href="../../apidoc.html#pygenesig.perfmeasures.mcc">[docs]</a><span class="k">def</span> <span class="nf">mcc</span><span class="p">(</span><span class="n">TP</span><span class="p">,</span> <span class="n">FN</span><span class="p">,</span> <span class="n">FP</span><span class="p">,</span> <span class="n">TN</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Matthews Correlation Coefficient&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">divide</span><span class="p">(</span><span class="n">TP</span> <span class="o">*</span> <span class="n">TN</span> <span class="o">+</span> <span class="n">FP</span> <span class="o">*</span> <span class="n">FN</span><span class="p">,</span> <span class="n">sqrt</span><span class="p">((</span><span class="n">TP</span><span class="o">+</span><span class="n">FP</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">TP</span><span class="o">+</span><span class="n">FN</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">TN</span><span class="o">+</span><span class="n">FP</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">TN</span><span class="o">+</span><span class="n">FN</span><span class="p">)))</span></div>
+
+
+<div class="viewcode-block" id="sens"><a class="viewcode-back" href="../../apidoc.html#pygenesig.perfmeasures.sens">[docs]</a><span class="k">def</span> <span class="nf">sens</span><span class="p">(</span><span class="n">TP</span><span class="p">,</span> <span class="n">FN</span><span class="p">,</span> <span class="n">FP</span><span class="p">,</span> <span class="n">TN</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Sensitivity&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">divide</span><span class="p">(</span><span class="n">TP</span><span class="p">,</span> <span class="p">(</span><span class="n">TP</span> <span class="o">+</span> <span class="n">FN</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="spec"><a class="viewcode-back" href="../../apidoc.html#pygenesig.perfmeasures.spec">[docs]</a><span class="k">def</span> <span class="nf">spec</span><span class="p">(</span><span class="n">TP</span><span class="p">,</span> <span class="n">FN</span><span class="p">,</span> <span class="n">FP</span><span class="p">,</span> <span class="n">TN</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Specificity&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">divide</span><span class="p">(</span><span class="n">TN</span><span class="p">,</span> <span class="p">(</span><span class="n">TN</span> <span class="o">+</span> <span class="n">FP</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="prec_pos"><a class="viewcode-back" href="../../apidoc.html#pygenesig.perfmeasures.prec_pos">[docs]</a><span class="k">def</span> <span class="nf">prec_pos</span><span class="p">(</span><span class="n">TP</span><span class="p">,</span> <span class="n">FN</span><span class="p">,</span> <span class="n">FP</span><span class="p">,</span> <span class="n">TN</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Posivitve Precision&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">divide</span><span class="p">(</span><span class="n">TP</span><span class="p">,</span> <span class="p">(</span><span class="n">TP</span> <span class="o">+</span> <span class="n">FP</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="recall_pos"><a class="viewcode-back" href="../../apidoc.html#pygenesig.perfmeasures.recall_pos">[docs]</a><span class="k">def</span> <span class="nf">recall_pos</span><span class="p">(</span><span class="n">TP</span><span class="p">,</span> <span class="n">FN</span><span class="p">,</span> <span class="n">FP</span><span class="p">,</span> <span class="n">TN</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Positive recall&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">divide</span><span class="p">(</span><span class="n">TP</span><span class="p">,</span> <span class="p">(</span><span class="n">TP</span> <span class="o">+</span> <span class="n">FN</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="prec_neg"><a class="viewcode-back" href="../../apidoc.html#pygenesig.perfmeasures.prec_neg">[docs]</a><span class="k">def</span> <span class="nf">prec_neg</span><span class="p">(</span><span class="n">TP</span><span class="p">,</span> <span class="n">FN</span><span class="p">,</span> <span class="n">FP</span><span class="p">,</span> <span class="n">TN</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Negative Precision&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">divide</span><span class="p">(</span><span class="n">TN</span><span class="p">,</span> <span class="p">(</span><span class="n">TN</span> <span class="o">+</span> <span class="n">FN</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="recall_neg"><a class="viewcode-back" href="../../apidoc.html#pygenesig.perfmeasures.recall_neg">[docs]</a><span class="k">def</span> <span class="nf">recall_neg</span><span class="p">(</span><span class="n">TP</span><span class="p">,</span> <span class="n">FN</span><span class="p">,</span> <span class="n">FP</span><span class="p">,</span> <span class="n">TN</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Negative recall&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">divide</span><span class="p">(</span><span class="n">TN</span><span class="p">,</span> <span class="p">(</span><span class="n">TN</span> <span class="o">+</span> <span class="n">FP</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="f1_pos"><a class="viewcode-back" href="../../apidoc.html#pygenesig.perfmeasures.f1_pos">[docs]</a><span class="k">def</span> <span class="nf">f1_pos</span><span class="p">(</span><span class="n">TP</span><span class="p">,</span> <span class="n">FN</span><span class="p">,</span> <span class="n">FP</span><span class="p">,</span> <span class="n">TN</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;f1-measure on positive instances&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">divide</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">prec_pos</span><span class="p">(</span><span class="n">TP</span><span class="p">,</span> <span class="n">FN</span><span class="p">,</span> <span class="n">FP</span><span class="p">,</span> <span class="n">TN</span><span class="p">)</span> <span class="o">*</span> <span class="n">recall_pos</span><span class="p">(</span><span class="n">TP</span><span class="p">,</span> <span class="n">FN</span><span class="p">,</span> <span class="n">FP</span><span class="p">,</span> <span class="n">TN</span><span class="p">),</span>
+                     <span class="p">(</span><span class="n">prec_pos</span><span class="p">(</span><span class="n">TP</span><span class="p">,</span> <span class="n">FN</span><span class="p">,</span> <span class="n">FP</span><span class="p">,</span> <span class="n">TN</span><span class="p">)</span> <span class="o">+</span> <span class="n">recall_pos</span><span class="p">(</span><span class="n">TP</span><span class="p">,</span> <span class="n">FN</span><span class="p">,</span> <span class="n">FP</span><span class="p">,</span> <span class="n">TN</span><span class="p">)))</span></div>
+
+
+<div class="viewcode-block" id="f1_neg"><a class="viewcode-back" href="../../apidoc.html#pygenesig.perfmeasures.f1_neg">[docs]</a><span class="k">def</span> <span class="nf">f1_neg</span><span class="p">(</span><span class="n">TP</span><span class="p">,</span> <span class="n">FN</span><span class="p">,</span> <span class="n">FP</span><span class="p">,</span> <span class="n">TN</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;f1-measure on negative instances. &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">divide</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">prec_neg</span><span class="p">(</span><span class="n">TP</span><span class="p">,</span> <span class="n">FN</span><span class="p">,</span> <span class="n">FP</span><span class="p">,</span> <span class="n">TN</span><span class="p">)</span> <span class="o">*</span> <span class="n">recall_neg</span><span class="p">(</span><span class="n">TP</span><span class="p">,</span> <span class="n">FN</span><span class="p">,</span> <span class="n">FP</span><span class="p">,</span> <span class="n">TN</span><span class="p">),</span>
+                     <span class="p">(</span><span class="n">prec_neg</span><span class="p">(</span><span class="n">TP</span><span class="p">,</span> <span class="n">FN</span><span class="p">,</span> <span class="n">FP</span><span class="p">,</span> <span class="n">TN</span><span class="p">)</span> <span class="o">+</span> <span class="n">recall_neg</span><span class="p">(</span><span class="n">TP</span><span class="p">,</span> <span class="n">FN</span><span class="p">,</span> <span class="n">FP</span><span class="p">,</span> <span class="n">TN</span><span class="p">)))</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Gregor Sturm.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'0.1.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

@@ -1,0 +1,294 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pygenesig.tools &mdash; pygenesig 0.1.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="pygenesig 0.1.0 documentation" href="../../index.html"/>
+        <link rel="up" title="Module code" href="../index.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> pygenesig
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../prepare_data.html">Prepare data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../use_pygenesig.html">Creating signatures</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../use_pygenesig.html#testing-signatures">Testing signatures</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../use_pygenesig.html#putting-it-together-crossvalidation">Putting it together: crossvalidation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../use_pygenesig.html#case-studies">Case studies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../developers_guide.html">Implement own methods</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../apidoc.html">API documentation</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../index.html">pygenesig</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+      
+    <li>pygenesig.tools</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for pygenesig.tools</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">itertools</span>
+
+
+<div class="viewcode-block" id="which"><a class="viewcode-back" href="../../apidoc.html#pygenesig.tools.which">[docs]</a><span class="k">def</span> <span class="nf">which</span><span class="p">(</span><span class="n">cond</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;cond is boolean mask&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">cond</span><span class="p">)</span> <span class="k">if</span> <span class="n">b</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="write_gmt"><a class="viewcode-back" href="../../apidoc.html#pygenesig.tools.write_gmt">[docs]</a><span class="k">def</span> <span class="nf">write_gmt</span><span class="p">(</span><span class="n">signatures</span><span class="p">,</span> <span class="nb">file</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;na&quot;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Writes signatures to a GMT file.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        signatures (dict of iterable): dictionary &#39;signature name&#39; -&gt; [&#39;list&#39;, &#39;of&#39;, &#39;gene&#39;, &#39;names&#39;]</span>
+<span class="sd">        file: path to output file</span>
+<span class="sd">        description: text to fill in the gmt description field.</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        File format specification: http://software.broadinstitute.org/cancer/software/gsea/wiki/index.php/Data_formats#GMT:_Gene_Matrix_Transposed_file_format_.28.2A.gmt.29</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="nb">file</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">sig</span><span class="p">,</span> <span class="n">genes</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">signatures</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
+            <span class="n">genes</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">g</span><span class="p">)</span> <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">signatures</span><span class="p">[</span><span class="n">sig</span><span class="p">]]</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">itertools</span><span class="o">.</span><span class="n">chain</span><span class="p">([</span><span class="n">sig</span><span class="p">,</span> <span class="n">description</span><span class="p">],</span> <span class="n">genes</span><span class="p">))</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="jaccard_ind"><a class="viewcode-back" href="../../apidoc.html#pygenesig.tools.jaccard_ind">[docs]</a><span class="k">def</span> <span class="nf">jaccard_ind</span><span class="p">(</span><span class="n">set1</span><span class="p">,</span> <span class="n">set2</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Computes the Jaccard-Index of two or more sets.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        set1 (set):</span>
+<span class="sd">        set2 (set):</span>
+<span class="sd">        *args: arbitrary number of more sets.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        float: jaccard index of all sets</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">i</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">set1</span><span class="p">,</span> <span class="n">set2</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">))</span>
+    <span class="n">u</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">set1</span><span class="p">,</span> <span class="n">set2</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">divide</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">u</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="pairwise_jaccard_ind"><a class="viewcode-back" href="../../apidoc.html#pygenesig.tools.pairwise_jaccard_ind">[docs]</a><span class="k">def</span> <span class="nf">pairwise_jaccard_ind</span><span class="p">(</span><span class="n">list_of_signatures</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute the pairwise jaccard index for a list</span>
+<span class="sd">    of signature sets. Useful for calculating the pariwise overlap</span>
+<span class="sd">    between the different crossvalidation folds.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        list_of_signatures: list of signature dicts.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        dict: signature_name -&gt; [list, of, jaccard, indices]</span>
+
+<span class="sd">    Note: takes the signature names from the first dict in list_of_signatures</span>
+<span class="sd">        to build the output dictionary.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">list_of_signatures</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;no signatures provided.&quot;</span>
+    <span class="n">pairwise_jacc</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">signame</span> <span class="ow">in</span> <span class="n">list_of_signatures</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+        <span class="n">pairwise_jacc</span><span class="p">[</span><span class="n">signame</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">sigset1</span><span class="p">,</span> <span class="n">sigset2</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="n">list_of_signatures</span><span class="p">,</span> <span class="n">list_of_signatures</span><span class="p">):</span>
+            <span class="n">pairwise_jacc</span><span class="p">[</span><span class="n">signame</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">jaccard_ind</span><span class="p">(</span><span class="n">sigset1</span><span class="p">[</span><span class="n">signame</span><span class="p">],</span> <span class="n">sigset2</span><span class="p">[</span><span class="n">signame</span><span class="p">]))</span>
+    <span class="k">return</span> <span class="n">pairwise_jacc</span></div>
+
+
+<div class="viewcode-block" id="performance_per_tissue"><a class="viewcode-back" href="../../apidoc.html#pygenesig.tools.performance_per_tissue">[docs]</a><span class="k">def</span> <span class="nf">performance_per_tissue</span><span class="p">(</span><span class="n">list_of_confusion_matrices</span><span class="p">,</span> <span class="n">sig_labels</span><span class="p">,</span> <span class="n">perf_fun</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute per-tissue performance measures from all-against-all confusion matrices.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        list_of_confusion_matrices (list of np.array):  list of</span>
+<span class="sd">        sig_labels (array-like): list of signatures in the same order as in the confusion matrices.</span>
+<span class="sd">        perf_fun (function): function(TP, FN, TP, TN) computing a performance measure from the binary confusion matrix.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        dict: signature_name -&gt; list of performance meausures for each confusion matrix provided.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">list_of_confusion_matrices</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;no matrices provided.&quot;</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">sig</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">sig_labels</span><span class="p">):</span>
+        <span class="n">res</span><span class="p">[</span><span class="n">sig</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">confmat</span> <span class="ow">in</span> <span class="n">list_of_confusion_matrices</span><span class="p">:</span>
+            <span class="n">TP</span> <span class="o">=</span> <span class="n">confmat</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span>
+            <span class="n">FN</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">confmat</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:])</span> <span class="o">-</span> <span class="n">TP</span>
+            <span class="n">FP</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">confmat</span><span class="p">[:,</span> <span class="n">i</span><span class="p">])</span> <span class="o">-</span> <span class="n">TP</span>
+            <span class="n">TN</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">confmat</span><span class="p">)</span> <span class="o">-</span> <span class="n">TP</span> <span class="o">-</span> <span class="n">FN</span> <span class="o">-</span> <span class="n">FP</span>
+            <span class="n">res</span><span class="p">[</span><span class="n">sig</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">perf_fun</span><span class="p">(</span><span class="n">TP</span><span class="p">,</span> <span class="n">FN</span><span class="p">,</span> <span class="n">FP</span><span class="p">,</span> <span class="n">TN</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">res</span></div>
+
+
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Gregor Sturm.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'0.1.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

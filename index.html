@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Welcome to pygenesig’s documentation! &mdash; pygenesig 0.1.0 documentation</title>
+  <title>pygenesig &mdash; pygenesig 0.1.0 documentation</title>
   
 
   
@@ -30,7 +30,8 @@
   
 
   
-    <link rel="top" title="pygenesig 0.1.0 documentation" href="#"/> 
+    <link rel="top" title="pygenesig 0.1.0 documentation" href="#"/>
+        <link rel="next" title="Prepare data" href="prepare_data.html"/> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -79,15 +80,16 @@
           
             
             
-                <!-- Local TOC -->
-                <div class="local-toc"><ul>
-<li><a class="reference internal" href="#">Welcome to pygenesig&#8217;s documentation!</a></li>
-<li><a class="reference internal" href="#indices-and-tables">Indices and tables</a><ul>
-<li><a class="reference internal" href="#markdown-syntax">markdown syntax</a></li>
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="prepare_data.html">Prepare data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="use_pygenesig.html">Creating signatures</a></li>
+<li class="toctree-l1"><a class="reference internal" href="use_pygenesig.html#testing-signatures">Testing signatures</a></li>
+<li class="toctree-l1"><a class="reference internal" href="use_pygenesig.html#putting-it-together-crossvalidation">Putting it together: crossvalidation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="use_pygenesig.html#case-studies">Case studies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developers_guide.html">Implement own methods</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apidoc.html">API documentation</a></li>
 </ul>
-</li>
-</ul>
-</div>
+
             
           
         </div>
@@ -116,7 +118,7 @@
   <ul class="wy-breadcrumbs">
     <li><a href="#">Docs</a> &raquo;</li>
       
-    <li>Welcome to pygenesig&#8217;s documentation!</li>
+    <li>pygenesig</li>
       <li class="wy-breadcrumbs-aside">
         
           
@@ -130,31 +132,74 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <p>.. pygenesig documentation master file, created by
-sphinx-quickstart on Thu Nov 24 17:11:27 2016.
-You can adapt this file completely to your liking, but it should at least
-contain the root <code class="docutils literal"><span class="pre">toctree</span></code> directive.</p>
-<div class="section" id="welcome-to-pygenesig-s-documentation">
-<span id="welcome-to-pygenesig-s-documentation"></span><h1>Welcome to pygenesig&#8217;s documentation!<a class="headerlink" href="#welcome-to-pygenesig-s-documentation" title="Permalink to this headline">¶</a></h1>
-<p>Contents:</p>
-<p>.. toctree::
-:maxdepth: 2</p>
-</div>
-<div class="section" id="indices-and-tables">
-<span id="indices-and-tables"></span><h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
-<ul class="simple">
-<li>:ref:<code class="docutils literal"><span class="pre">genindex</span></code></li>
-<li>:ref:<code class="docutils literal"><span class="pre">modindex</span></code></li>
-<li>:ref:<code class="docutils literal"><span class="pre">search</span></code></li>
+  <div class="section" id="pygenesig">
+<span id="pygenesig"></span><h1>pygenesig<a class="headerlink" href="#pygenesig" title="Permalink to this headline">¶</a></h1>
+<p>A python package to create and validate gene signatures.</p>
+<p>Gene signatures are sets of genes derived from gene expression data, which identify a certain tissue, cell type, pathway, etc. This package provides a framework to create and validate such signatures. The package is easily extensible to add new methods for signature creation and testing.</p>
+<div class="section" id="contents">
+<span id="contents"></span><h2>Contents:<a class="headerlink" href="#contents" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="prepare_data.html">Prepare data</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="prepare_data.html#for-creating-signatures">for creating signatures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="prepare_data.html#for-testing-signatures">for testing signatures</a></li>
 </ul>
-<div class="section" id="markdown-syntax">
-<span id="markdown-syntax"></span><h2>markdown syntax<a class="headerlink" href="#markdown-syntax" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">fun</span><span class="p">():</span>
-    <span class="n">echo</span> <span class="s2">&quot;Hello World!&quot;</span>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="use_pygenesig.html">Creating signatures</a></li>
+<li class="toctree-l1"><a class="reference internal" href="use_pygenesig.html#testing-signatures">Testing signatures</a></li>
+<li class="toctree-l1"><a class="reference internal" href="use_pygenesig.html#putting-it-together-crossvalidation">Putting it together: crossvalidation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="use_pygenesig.html#case-studies">Case studies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developers_guide.html">Implement own methods</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="developers_guide.html#implement-a-signaturegenerator">Implement a SignatureGenerator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developers_guide.html#implement-a-signaturetester">Implement a SignatureTester</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developers_guide.html#beyond-signatures">Beyond signatures</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="apidoc.html">API documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="apidoc.html#module-pygenesig.validation">validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="apidoc.html#signature-generators">Signature Generators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="apidoc.html#signature-testers">Signature Testers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="apidoc.html#tools">Tools</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="getting-started">
+<span id="getting-started"></span><h2>Getting started:<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="dependencies">
+<span id="dependencies"></span><h3>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this headline">¶</a></h3>
+<p>The following python packages are required (install with <code class="docutils literal"><span class="pre">pip</span> <span class="pre">install</span></code>)</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">rpy2</span>
+<span class="n">dask</span>
+<span class="n">numpy</span>
+<span class="n">pandas</span>
+<span class="n">scikit</span><span class="o">-</span><span class="n">learn</span>
 </pre></div>
 </div>
-<p>this is <em>bold</em>...
-this is <a class="reference external" href="http://example.com">a link</a></p>
+<p><strong>rpy2</strong></p>
+<p>Signature testing is based on <a class="reference external" href="https://accio.github.io/BioQC">BioQC</a> which is an <code class="docutils literal"><span class="pre">R</span></code> package. Pygenesig relies on <a class="reference external" href="http://rpy2.bitbucket.org/">rpy2</a> to use the R package. If you don&#8217;t have a working R installation on your system, you can get one through <a class="reference external" href="https://www.continuum.io/conda-for-r">Anaconda</a>.</p>
+<p>For pygenesig to work, you need to install the BioQC package in R. You can get the package from <a class="reference external" href="https://bioconductor.org/packages/release/bioc/html/BioQC.html">bioconductor</a> or the development version from <a class="reference external" href="https://github.com/Accio/BioQC">github</a>:</p>
+<div class="highlight-r"><div class="highlight"><pre><span></span>R<span class="o">&gt;</span> <span class="kn">source</span><span class="p">(</span><span class="s">&quot;http://bioconductor.org/biocLite.R&quot;</span><span class="p">)</span>
+R<span class="o">&gt;</span> biocLite<span class="p">(</span><span class="s">&quot;BioQC&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>dask</strong></p>
+<p>Crossvalidation can be comutationally intensive. Pygenesig uses <a class="reference external" href="http://dask.readthedocs.io/en/latest/">dask</a> to support parallel cross-validation. Depending on your setup, you can run code with multi threading on a single PC or on multiple nodes on a high performance cluster.</p>
+</div>
+<div class="section" id="installing-pygenesig">
+<span id="installing-pygenesig"></span><h3>Installing pygenesig<a class="headerlink" href="#installing-pygenesig" title="Permalink to this headline">¶</a></h3>
+<p>First, clone the repository from github:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">clone</span> <span class="n">git</span><span class="nd">@github</span><span class="o">.</span><span class="n">com</span><span class="p">:</span><span class="n">grst</span><span class="o">/</span><span class="n">gene</span><span class="o">-</span><span class="nb">set</span><span class="o">-</span><span class="n">study</span><span class="o">.</span><span class="n">git</span>
+</pre></div>
+</div>
+<p>Second, install the package:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">python3</span> <span class="n">setup</span><span class="o">.</span><span class="n">py</span> <span class="n">develop</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal"><span class="pre">develop</span></code> keywork links the python files from the repository to the packages-folder instead of copying them. Like this, any change you make in the source code is immediately available to the python interpreter.</p>
+<p>Now you can use the package, for example from a <code class="docutils literal"><span class="pre">jupyter</span> <span class="pre">notebook</span></code>.</p>
+</div>
 </div>
 </div>
 
@@ -162,6 +207,13 @@ this is <a class="reference external" href="http://example.com">a link</a></p>
            </div>
           </div>
           <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="prepare_data.html" class="btn btn-neutral float-right" title="Prepare data" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+    </div>
   
 
   <hr/>

@@ -1,0 +1,301 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pygenesig.bioqc &mdash; pygenesig 0.1.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="pygenesig 0.1.0 documentation" href="../../index.html"/>
+        <link rel="up" title="Module code" href="../index.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> pygenesig
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../prepare_data.html">Prepare data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../use_pygenesig.html">Creating signatures</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../use_pygenesig.html#testing-signatures">Testing signatures</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../use_pygenesig.html#putting-it-together-crossvalidation">Putting it together: crossvalidation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../use_pygenesig.html#case-studies">Case studies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../developers_guide.html">Implement own methods</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../apidoc.html">API documentation</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../index.html">pygenesig</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+      
+    <li>pygenesig.bioqc</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for pygenesig.bioqc</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">readline</span>
+<span class="kn">import</span> <span class="nn">rpy2.robjects</span> <span class="kn">as</span> <span class="nn">ro</span>
+<span class="kn">from</span> <span class="nn">rpy2.robjects.packages</span> <span class="kn">import</span> <span class="n">importr</span>
+<span class="kn">from</span> <span class="nn">rpy2.robjects</span> <span class="kn">import</span> <span class="n">numpy2ri</span>
+<span class="kn">from</span> <span class="nn">pygenesig.validation</span> <span class="kn">import</span> <span class="n">SignatureTester</span>
+<span class="kn">from</span> <span class="nn">pygenesig.tools</span> <span class="kn">import</span> <span class="n">write_gmt</span>
+<span class="kn">import</span> <span class="nn">sklearn.metrics</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">tempfile</span>
+<span class="n">numpy2ri</span><span class="o">.</span><span class="n">activate</span><span class="p">()</span>
+
+<span class="n">base</span> <span class="o">=</span> <span class="n">importr</span><span class="p">(</span><span class="s2">&quot;base&quot;</span><span class="p">)</span>
+<span class="n">bioqc</span> <span class="o">=</span> <span class="n">importr</span><span class="p">(</span><span class="s2">&quot;BioQC&quot;</span><span class="p">)</span>
+<span class="n">biobase</span> <span class="o">=</span> <span class="n">importr</span><span class="p">(</span><span class="s2">&quot;Biobase&quot;</span><span class="p">)</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">See R vignette.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="n">wmw_test</span> <span class="o">=</span> <span class="n">bioqc</span><span class="o">.</span><span class="n">wmwTest</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">See R vignette.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="n">read_gmt</span> <span class="o">=</span> <span class="n">bioqc</span><span class="o">.</span><span class="n">readGmt</span>
+
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generate an R Expression set with exprs() and fData() annotation.</span>
+<span class="sd">    fData will contain one single column named GeneSymbol.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        exprs: numpy.array m x n expression matrix. np.matrix does NOT work!</span>
+<span class="sd">        gene_symbols: numpy.array m vector containing gene symbols.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="n">ro</span><span class="o">.</span><span class="n">r</span><span class="p">(</span><span class="s1">&#39;&#39;&#39;</span>
+<span class="s1">    mk_eset = function(exprs, gene_symbols) {</span>
+<span class="s1">        return(new(&quot;ExpressionSet&quot;,</span>
+<span class="s1">            exprs=exprs,</span>
+<span class="s1">            featureData=new(&quot;AnnotatedDataFrame&quot;,</span>
+<span class="s1">                            data.frame(GeneSymbol=gene_symbols))))</span>
+<span class="s1">     }</span>
+<span class="s1">     &#39;&#39;&#39;</span><span class="p">)</span>
+<span class="n">mk_eset</span> <span class="o">=</span> <span class="n">ro</span><span class="o">.</span><span class="n">r</span><span class="p">[</span><span class="s1">&#39;mk_eset&#39;</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="BioQCSignatureTester"><a class="viewcode-back" href="../../apidoc.html#pygenesig.bioqc.BioQCSignatureTester">[docs]</a><span class="k">class</span> <span class="nc">BioQCSignatureTester</span><span class="p">(</span><span class="n">SignatureTester</span><span class="p">):</span>
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="BioQCSignatureTester.signatures2gmt"><a class="viewcode-back" href="../../apidoc.html#pygenesig.bioqc.BioQCSignatureTester.signatures2gmt">[docs]</a>    <span class="k">def</span> <span class="nf">signatures2gmt</span><span class="p">(</span><span class="n">signatures</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;convert signature dictionary into an R GMTList object. &quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">NamedTemporaryFile</span><span class="p">()</span> <span class="k">as</span> <span class="n">gmt_file</span><span class="p">:</span>
+            <span class="n">write_gmt</span><span class="p">(</span><span class="n">signatures</span><span class="p">,</span> <span class="n">gmt_file</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+            <span class="n">gmt</span> <span class="o">=</span> <span class="n">read_gmt</span><span class="p">(</span><span class="n">gmt_file</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">gmt</span></div>
+
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="BioQCSignatureTester.run_bioqc"><a class="viewcode-back" href="../../apidoc.html#pygenesig.bioqc.BioQCSignatureTester.run_bioqc">[docs]</a>    <span class="k">def</span> <span class="nf">run_bioqc</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="n">gene_symbols</span><span class="p">,</span> <span class="n">gmt</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            expr: m x n gene expression matrix with m genes and n samples.</span>
+<span class="sd">            gene_symbols: m vector containing gene symbols</span>
+<span class="sd">            gmt: GMTList object containing k signatures. Generate with signatures2gmt().</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            np.array: k x n p-value matrix.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># although BioQC does support testing on a matrix and</span>
+        <span class="c1"># list of signatures, I decided to go with the</span>
+        <span class="c1"># gmt/eset solution. This is easier to debug and it&#39;s less easy to confuse things.</span>
+        <span class="n">eset</span> <span class="o">=</span> <span class="n">mk_eset</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">expr</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">gene_symbols</span><span class="p">))</span>
+        <span class="n">bioqc_res</span> <span class="o">=</span> <span class="n">wmw_test</span><span class="p">(</span><span class="n">eset</span><span class="p">,</span> <span class="n">gmt</span><span class="p">,</span> <span class="n">valType</span><span class="o">=</span><span class="s2">&quot;p.greater&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">bioqc_res</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="n">signatures</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Test Signatures with BioQC. A sample is considered to be</span>
+<span class="sd">        &#39;true-positive&#39; if the highest scoring signature is the one</span>
+<span class="sd">        generated from the actual tissue.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            expr:</span>
+<span class="sd">            signatures:</span>
+
+<span class="sd">        Returns:</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">gene_symbols</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">expr</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])]</span>
+        <span class="n">signatures_not_empty</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">name</span><span class="p">:</span> <span class="n">genes</span> <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">genes</span> <span class="ow">in</span> <span class="n">signatures</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">genes</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">signatures_not_empty</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">gmt</span> <span class="o">=</span> <span class="n">BioQCSignatureTester</span><span class="o">.</span><span class="n">signatures2gmt</span><span class="p">(</span><span class="n">signatures_not_empty</span><span class="p">)</span>
+            <span class="n">bioqc_res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_bioqc</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="n">gene_symbols</span><span class="p">,</span> <span class="n">gmt</span><span class="p">)</span>
+            <span class="n">bioqc_res_log</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">bioqc_res</span><span class="p">)</span>
+            <span class="n">gmt_signature_names</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">base</span><span class="o">.</span><span class="n">names</span><span class="p">(</span><span class="n">gmt</span><span class="p">))</span>
+            <span class="k">return</span> <span class="p">[</span><span class="n">gmt_signature_names</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">bioqc_res_log</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># all samples are predicted as the single existing signature.</span>
+            <span class="k">return</span> <span class="p">[</span><span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">signatures_not_empty</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">expr</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])]</span></div>
+
+
+
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Gregor Sturm.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'0.1.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
