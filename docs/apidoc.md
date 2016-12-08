@@ -1,7 +1,7 @@
 # API documentation
 
 ## pygenesig core
-### abstract classes and cross validation (`pygenesig.validation`)
+### Abstract classes and cross validation (`pygenesig.validation`)
 ```eval_rst
 .. automodule:: pygenesig.validation
     :members:

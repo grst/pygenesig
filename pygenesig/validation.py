@@ -19,12 +19,19 @@ def cross_validate_signatures(expr_file, target_file,
     Perform a crossvalidation by generating and testing signatures on a given expression matrix.
 
     Args:
-        expr_file (str): np matrix (binary) file containing expression matrix
-        target_file (str): file containing target classes, line-by-line
-        signature_generator (SignatureGenerator): SignatureGenerator used to derive the signatures
-        signature_tester (SignatureTester): SignatureTester used to check the quality of signatures
-        splitter (sklearn.model_selection._BaseKFold): crossvalidation method from scikit-learn.
-            See [here](http://scikit-learn.org/stable/modules/classes.html#module-sklearn.model_selection).
+        expr_file (str): path to numpy.array (binary) file containing expression matrix saved with ``numpy.save()``
+        target_file (str): path to plaintext file containing target classes, line-by-line
+        signature_generator (SignatureGenerator): ``SignatureGenerator`` used to derive the signatures
+        signature_tester (SignatureTester): ``SignatureTester`` used to check the quality of signatures
+        splitter (sklearn.model_selection._BaseKFold): crossvalidation method from `scikit-learn`_.
+
+    Returns:
+        (list, list): list of signature dictionaries containing the signatures generated
+        on each fold, list of confusion matrices containing the confusion matrices calculated on each fold.
+
+    .. _scikit-learn:
+        http://scikit-learn.org/stable/modules/classes.html#module-sklearn.model_selection
+
     """
     # we need the number of samples locally for splitting in test and training sets
     target_file = os.path.realpath(target_file)
@@ -52,17 +59,15 @@ def cross_validate_signatures(expr_file, target_file,
 class SignatureGenerator(metaclass=ABCMeta):
     """
     Abstract base-class for generating gene signatures.
-    Child classes build gene signatures for a given gene expression matrix and tissue list.
+    Child classes build gene signatures from a gene expression matrix and target labels.
 
-    Initialize the SignatureGenerator with a gene expression matrix and the target labels.
-    Checks the consistency of the input data and saves them as class attributes.
-
-    You can override this method in your implementation of a SignatureGenerator
+    When initializing ``SignatureGenerator`` the input data is checked for consistency.
+    You can override the ``__init__`` method in your implementation of ``SignatureGenerator``
     to pass additional parameters, however, make always sure to call this method
-    in your `__init__` function to take advantage of the consistency check::
+    in your ``__init__`` function to take advantage of the consistency check::
 
         def __init__(self, expr, target, your_param):
-            super(YourSignatureTester, self).__init__(expr, target)
+            super(YourSignatureGenerator, self).__init__(expr, target)
             # your code goes here
 
 
@@ -111,7 +116,25 @@ class SignatureGenerator(metaclass=ABCMeta):
                 Useful for cross-validation. If omitted, all samples will be used.
 
         Returns:
-            dict: tissue_name -> [list, of, enriched, genes]. The indices correspond to expr.index.
+            dict: signature dictionary. Maps target labels to a list of row-indices of the gene
+            expression matrix.
+
+            Example::
+
+                signatures = {
+                    'adipose tissue' : [
+                        42,
+                        124,
+                        256,
+                        1038,
+                        ... ],
+                    'skeletal muscle' : [
+                        52,
+                        679,
+                        ... ],
+                    ...
+                }
+
 
         """
         if subset is None:
@@ -123,26 +146,21 @@ class SignatureGenerator(metaclass=ABCMeta):
 class SignatureTester(metaclass=ABCMeta):
     """
     Abstract base-class for testing gene signatures.
-    Child classes test if a signature is able to identify the respective tissue properly,
+    Child classes test if signatures are able to identify their respective samples,
     given an expression matrix and a list of the actual tissues.
 
-    Initialize the SignatureTester with a gene expression matrix and the
-    target labels (=standard of truth).
-    Checks the consistency of the input data and saves them as class attributes.
-
-    You can override this method in your implementation of a SignatureTester
+    When initializing ``SignatureTester`` the input data is checked for consistency.
+    You can override the ``__init__`` method in your implementation of ``SignatureTester``
     to pass additional parameters, however, make always sure to call this method
-    in your `__init__` function to take advantage of the consistency check:
+    in your ``__init__`` function to take advantage of the consistency check::
 
-    ```
-    def __init__(self, expr, target, your_param):
-        super(YourSignatureTester, self).__init__(expr, target)
-        # your code goes here
-    ```
+        def __init__(self, expr, target, your_param):
+            super(YourSignatureTester, self).__init__(expr, target)
+            # your code goes here
 
     Args:
-        expr (np.ndarray): m x n matrix with m samples and n genes
-        target (array-like): m-vector with true tissue for each sample
+        expr (np.ndarray): m x n gene expression matrix with m samples and n genes
+        target (array-like): m-vector with true tissue for each sample (`ground truth`)
     """
 
     def __init__(self, expr, target):
@@ -157,17 +175,24 @@ class SignatureTester(metaclass=ABCMeta):
     def sort_signatures(signatures):
         """
         Retrieve the signatures in a consistent order.
-        The rows/columns in the confusion matrix generated with `confusion_matrix` will
-        be in this order.
+
+        The signature dictionary is a python default dict, which is unordered.
+        However, when displaying results, it is desirable to display the
+        signatures in a consistent order.
+
+        You can use this method to iterate over the signature dictionary::
+
+            for tissue in sort_signatures(signatures):
+                print(tissue, signatures[tissue])
+
+        Confusion matrices generated with ``SignatureTester.confusion_matrix`` are
+        also sorted with ``sort_signatures``.
 
         Args:
             signatures: signature dictionary.
 
         Returns:
             list: sorted keys of the signature dictionary.
-
-        Note: use this method when implementing test_signatures to make sure that
-            the confusion matrix is sorted according to this order.
 
         """
         return sorted(signatures.keys())
@@ -186,7 +211,7 @@ class SignatureTester(metaclass=ABCMeta):
                 Dictionary: tissue_name -> [list, of, enriched, genes].
 
         Returns:
-            list: list of names of highest scoring signature (=predicted class) for each column in expr.
+            list: list of names (dict keys) of highest scoring signature (=predicted class) for each column in expr.
 
         """
         pass
@@ -196,8 +221,7 @@ class SignatureTester(metaclass=ABCMeta):
         Test signatures based on the expression matrix.
 
         Args:
-            signatures (dict[str, list]): Signatures dictionary returned by SignatureGenerator.mk_signature.
-                Dictionary: tissue_name -> [list, of, enriched, genes].
+            signatures (dict[str, list]): Signatures dictionary returned by ``SignatureGenerator.mk_signature``.
             subset: sample indices (columns of expression matrix) to use for testing. Useful for crossvalidation.
 
         Returns:
@@ -220,8 +244,12 @@ class SignatureTester(metaclass=ABCMeta):
         """
         Make a confusion matrix.
 
-        This is a wrapper for the sklearn.metrics.confusion matrix. Makes the matrix contain all
+        This is a wrapper for the ``sklearn.metrics.confusion_matrix``. Makes the matrix contain all
         labels available in the signature.
+
+        Note:
+            The rows and columns are sorted with ``SignatureTester.sort_signatures``.
+            You can therefore use ``sort_signatures`` to label you confusion matrix.
 
         Args:
             signatures: dict of signatures that was used to predict the labels
@@ -229,7 +257,7 @@ class SignatureTester(metaclass=ABCMeta):
             predicted: list of predicted labels
 
         Returns:
-            np.matrix: confusion matrix
+            numpy.matrix: confusion matrix
 
         """
         return sklearn.metrics.confusion_matrix(actual, predicted,

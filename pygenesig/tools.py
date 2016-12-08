@@ -1,12 +1,13 @@
 import numpy as np
 import itertools
 
+
 def write_gmt(signatures, file, description="na"):
     """
     Writes signatures to a `GMT file`_.
 
     Args:
-        signatures (dict of iterable): dictionary 'signature name' -> ['list', 'of', 'gene', 'names']
+        signatures (dict of list): signature dictionary
         file: path to output file
         description: text to fill in the gmt description field.
 
@@ -70,7 +71,8 @@ def performance_per_tissue(list_of_confusion_matrices, sig_labels, perf_fun):
     Args:
         list_of_confusion_matrices (list of np.array):  list of
         sig_labels (array-like): list of signatures in the same order as in the confusion matrices.
-        perf_fun (function): function(TP, FN, TP, TN) computing a performance measure from the binary confusion matrix.
+        perf_fun (function): ``(TP, FN, TP, TN)`` computing a performance measure from the binary confusion matrix.
+            See ``perfmeasures`` module.
 
     Returns:
         dict: signature_name -> list of performance meausures for each confusion matrix provided.

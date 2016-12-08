@@ -51,7 +51,7 @@ class LimmaSignatureGenerator(SignatureGenerator):
         fold_change (int): minimal fold change for a gene to be considered as `differentially expressed`.
     """
 
-    TARGET_COL = "target"
+    _TARGET_COL = "target"
 
     def __init__(self, expr, target, covariates, fold_change=100):
         super(LimmaSignatureGenerator, self).__init__(expr, target)
@@ -64,11 +64,11 @@ class LimmaSignatureGenerator(SignatureGenerator):
         genes = np.array([str(i) for i in range(expr.shape[0])])
         dg_list = edge_r.DGEList(counts=expr, genes=genes)
 
-        assert all([True if not col.startswith(self.TARGET_COL) else False for col in self.covariates.columns]), \
+        assert all([True if not col.startswith(self._TARGET_COL) else False for col in self.covariates.columns]), \
             "covariates must not contain a column named target. "
         fmla = Formula("~ target + " + " + ".join(self.covariates.columns))
         env = fmla.environment
-        env[self.TARGET_COL] = self.target
+        env[self._TARGET_COL] = self.target
         for col in self.covariates.columns:
             env[col] = self.covariates[col]
         design_mat = stats.model_matrix(fmla)
@@ -100,7 +100,7 @@ class LimmaSignatureGenerator(SignatureGenerator):
         np_rslt = np.array(rslt)
         tissue_cols = np.array([True if col.startswith('target') else False for col in colnames])
         np_rslt = np_rslt[:, tissue_cols]
-        tissues = np.array([col[len(self.TARGET_COL):] for col in colnames[tissue_cols]])
+        tissues = np.array([col[len(self._TARGET_COL):] for col in colnames[tissue_cols]])
         assert len(tissues) == np_rslt.shape[1]
         row_inds = np.where(cpm_inds)[0]
         signatures = {}

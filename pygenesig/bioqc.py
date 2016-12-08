@@ -66,8 +66,8 @@ Generate an R ExpressionSet with ``exprs()`` and ``fData()`` annotation.
 fData will contain one single column named GeneSymbol.
 
 Args:
-    exprs: numpy.array m x n expression matrix. ``np.matrix`` does NOT work!
-    gene_symbols: numpy.array m vector containing gene symbols.
+    exprs: ``numpy.array`` m x n expression matrix. ``np.matrix`` does NOT work!
+    gene_symbols: ``numpy.array`` m vector containing gene symbols.
 """
 
 
@@ -111,7 +111,7 @@ class BioQCSignatureTester(SignatureTester):
         Args:
             expr: m x n gene expression matrix with m genes and n samples.
             gene_symbols: m vector containing gene symbols
-            gmt: GMTList object containing k signatures. Generate with signatures2gmt().
+            gmt: GMTList object containing k signatures. Generate with ``signatures2gmt()``.
 
         Returns:
             np.array: k x n p-value matrix.

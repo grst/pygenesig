@@ -2,6 +2,14 @@
 Collection of functions to compute various performance measures from a 2x2 confusion matrix.
 As an introduction to evaluating classificators, we recommend reading this `paper`_ about ROC analysis.
 
+TP = true positive
+
+FP = false positive
+
+TN = true negative
+
+FN = false negative
+
 .. _paper: http://dx.doi.org/10.1016/j.patrec.2005.10.010.
 """
 

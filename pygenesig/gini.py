@@ -1,7 +1,7 @@
 """
 The Gini-coefficient (gini index) measures the inequality among values of
 a frequency distribution. Originally applied to measure income inequality
-we can also use in on gene expression data to find genes that are
+we can also use it on gene expression data to find genes that are
 over-represented in certain samples.
 """
 
@@ -106,15 +106,15 @@ class GiniSignatureGenerator(SignatureGenerator):
     Genes, which are specific for a tissue result in a high gini index,
     whereas genes equally present in all tissues have a gini index close to zero.
 
-    The idea is, that using genes with a high gini index will reliably identify
+    The idea is, that genes with a high gini index will reliably identify
     their tissue of origin.
 
     Args:
         expr (np.ndarray): m x n matrix with m samples and n genes
         target (array-like): m-vector with true tissue for each sample
         min_gini (float): gini cutoff, genes need to have a gini index larger than this value.
-        max_rk (int): rank cutoff, include genes if they rank <= max_rank among all tissues.
-        min_expr (float): genes need to have at least an expression >= min_expr to be included.
+        max_rk (int): rank cutoff, include genes if they rank ``<= max_rank`` among all tissues.
+        min_expr (float): genes need to have at least an expression ``>= min_expr`` to be included.
     """
     def __init__(self, expr, target, min_gini=.7, max_rk=3, min_expr=1):
         super(GiniSignatureGenerator, self).__init__(expr, target)

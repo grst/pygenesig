@@ -1,23 +1,29 @@
-# pygenesig
-A python package to create and validate gene signatures. 
+# Getting started with pygenesig
+*Pygenesig* is a python package to create and validate gene signatures. 
 
 Gene signatures are sets of genes derived from gene expression data, which identify a certain tissue, cell type, pathway, etc. This package provides a framework to create and validate such signatures. The package is easily extensible to add new methods for signature creation and testing. 
 
-## Contents:
 
 ```eval_rst
 .. toctree::
     :maxdepth: 2 
+    :caption: User's Guide
+    :hidden:
 
+    self
     prepare_data.md
     use_pygenesig.md
+
+.. toctree::
+    :maxdepth: 2
+    :caption: Developer's Guide
+    :hidden:
+
     developers_guide.md
     apidoc.md
 ```
 
-## Getting started:
-
-### Dependencies
+## Dependencies
 The following python packages are required (install with `pip install`)
 ```
 rpy2
@@ -44,7 +50,7 @@ R> biocLite("BioQC")
 Crossvalidation can be comutationally intensive. Pygenesig uses [dask](http://dask.readthedocs.io/en/latest/) to support parallel cross-validation. Depending on your setup, you can run code with multi threading on a single PC or on multiple nodes on a high performance cluster. 
 
 
-### Installing pygenesig
+## Installing pygenesig
 
 First, clone the repository from github:
 ```
