@@ -80,12 +80,17 @@
           
             
             
-                <ul>
+                <p class="caption"><span class="caption-text">User&#8217;s Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">Getting started with pygenesig</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../prepare_data.html">Prepare data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../use_pygenesig.html">Creating signatures</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../use_pygenesig.html#testing-signatures">Testing signatures</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../use_pygenesig.html#putting-it-together-crossvalidation">Putting it together: crossvalidation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../use_pygenesig.html#case-studies">Case studies</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Developer&#8217;s Guide</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../../developers_guide.html">Implement own methods</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../apidoc.html">API documentation</a></li>
 </ul>
@@ -133,7 +138,23 @@
            <div itemprop="articleBody">
             
   <h1>Source code for pygenesig.perfmeasures</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Collection of functions to compute various performance measures from a 2x2 confusion matrix.</span>
+<span class="sd">As an introduction to evaluating classificators, we recommend reading this `paper`_ about ROC analysis.</span>
+
+<span class="sd">TP = true positive</span>
+
+<span class="sd">FP = false positive</span>
+
+<span class="sd">TN = true negative</span>
+
+<span class="sd">FN = false negative</span>
+
+<span class="sd">.. _paper: http://dx.doi.org/10.1016/j.patrec.2005.10.010.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">sqrt</span>
 
 

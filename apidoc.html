@@ -80,15 +80,23 @@
           
             
             
-                <ul class="current">
+                <p class="caption"><span class="caption-text">User&#8217;s Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="index.html">Getting started with pygenesig</a></li>
 <li class="toctree-l1"><a class="reference internal" href="prepare_data.html">Prepare data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="use_pygenesig.html">Creating signatures</a></li>
 <li class="toctree-l1"><a class="reference internal" href="use_pygenesig.html#testing-signatures">Testing signatures</a></li>
 <li class="toctree-l1"><a class="reference internal" href="use_pygenesig.html#putting-it-together-crossvalidation">Putting it together: crossvalidation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="use_pygenesig.html#case-studies">Case studies</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Developer&#8217;s Guide</span></p>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="developers_guide.html">Implement own methods</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">API documentation</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#module-pygenesig.validation">validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pygenesig-core">pygenesig core</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#module-pygenesig.validation">Abstract classes and cross validation (<code class="docutils literal"><span class="pre">pygenesig.validation</span></code>)</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="#signature-generators">Signature Generators</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#module-pygenesig.gini">Gini Index</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-pygenesig.limma">Differential Expression (Limma)</a></li>
@@ -99,7 +107,7 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#tools">Tools</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#module-pygenesig.tools">Auxilary function related to gene signatures (<code class="docutils literal"><span class="pre">pygenesig.tools</span></code>)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-pygenesig.tools">Auxilary functions related to gene signatures (<code class="docutils literal"><span class="pre">pygenesig.tools</span></code>)</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-pygenesig.perfmeasures">Performance Measures (<code class="docutils literal"><span class="pre">pygenesig.perfmeasures</span></code>)</a></li>
 </ul>
 </li>
@@ -151,8 +159,10 @@
             
   <div class="section" id="api-documentation">
 <span id="api-documentation"></span><h1>API documentation<a class="headerlink" href="#api-documentation" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="pygenesig-core">
+<span id="pygenesig-core"></span><h2>pygenesig core<a class="headerlink" href="#pygenesig-core" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="module-pygenesig.validation">
-<span id="validation"></span><span id="validation"></span><h2>validation<a class="headerlink" href="#module-pygenesig.validation" title="Permalink to this headline">¶</a></h2>
+<span id="abstract-classes-and-cross-validation-pygenesig-validation"></span><span id="abstract-classes-and-cross-validation-pygenesig-validation"></span><h3>Abstract classes and cross validation (<code class="docutils literal"><span class="pre">pygenesig.validation</span></code>)<a class="headerlink" href="#module-pygenesig.validation" title="Permalink to this headline">¶</a></h3>
 <p>pygenesig&#8217;s main module: Contains the abstract base classes for signature
 generation and testing and provides tools for cross-validation.</p>
 <dl class="class">
@@ -160,21 +170,62 @@ generation and testing and provides tools for cross-validation.</p>
 <em class="property">class </em><code class="descclassname">pygenesig.validation.</code><code class="descname">SignatureGenerator</code><span class="sig-paren">(</span><em>expr</em>, <em>target</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pygenesig/validation.html#SignatureGenerator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pygenesig.validation.SignatureGenerator" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
 <p>Abstract base-class for generating gene signatures.
-Child classes build gene signatures for a given gene expression matrix and tissue list.</p>
+Child classes build gene signatures from a gene expression matrix and target labels.</p>
+<p>When initializing <code class="docutils literal"><span class="pre">SignatureGenerator</span></code> the input data is checked for consistency.
+You can override the <code class="docutils literal"><span class="pre">__init__</span></code> method in your implementation of <code class="docutils literal"><span class="pre">SignatureGenerator</span></code>
+to pass additional parameters, however, make always sure to call this method
+in your <code class="docutils literal"><span class="pre">__init__</span></code> function to take advantage of the consistency check:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">your_param</span><span class="p">):</span>
+    <span class="nb">super</span><span class="p">(</span><span class="n">YourSignatureGenerator</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
+    <span class="c1"># your code goes here</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>expr</strong> (<em>np.ndarray</em>) &#8211; m x n matrix with m samples and n genes</li>
+<li><strong>target</strong> (<em>array-like</em>) &#8211; m-vector with true tissue for each sample</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 <dl class="method">
 <dt id="pygenesig.validation.SignatureGenerator.mk_signatures">
 <code class="descname">mk_signatures</code><span class="sig-paren">(</span><em>subset=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pygenesig/validation.html#SignatureGenerator.mk_signatures"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pygenesig.validation.SignatureGenerator.mk_signatures" title="Permalink to this definition">¶</a></dt>
 <dd><p>Make gene signatures on a subset of the samples in the gene expression matrix.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd><dl class="first last docutils">
-<dt>subset: Sample indices (columns of expression matrix) to use for signature generation.</dt>
-<dd>Useful for cross-validation. If omitted, all samples will be used.</dd>
-</dl>
-</dd>
-<dt>Returns:</dt>
-<dd>dict: tissue_name -&gt; [list, of, enriched, genes]. The indices correspond to expr.index.</dd>
-</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>subset</strong> &#8211; Sample indices (columns of expression matrix) to use for signature generation.
+Useful for cross-validation. If omitted, all samples will be used.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">signature dictionary. Maps target labels to a list of row-indices of the gene
+expression matrix.<p>Example:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">signatures</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;adipose tissue&#39;</span> <span class="p">:</span> <span class="p">[</span>
+        <span class="mi">42</span><span class="p">,</span>
+        <span class="mi">124</span><span class="p">,</span>
+        <span class="mi">256</span><span class="p">,</span>
+        <span class="mi">1038</span><span class="p">,</span>
+        <span class="o">...</span> <span class="p">],</span>
+    <span class="s1">&#39;skeletal muscle&#39;</span> <span class="p">:</span> <span class="p">[</span>
+        <span class="mi">52</span><span class="p">,</span>
+        <span class="mi">679</span><span class="p">,</span>
+        <span class="o">...</span> <span class="p">],</span>
+    <span class="o">...</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">dict</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </dd></dl>
@@ -184,55 +235,111 @@ Child classes build gene signatures for a given gene expression matrix and tissu
 <em class="property">class </em><code class="descclassname">pygenesig.validation.</code><code class="descname">SignatureTester</code><span class="sig-paren">(</span><em>expr</em>, <em>target</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pygenesig/validation.html#SignatureTester"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pygenesig.validation.SignatureTester" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
 <p>Abstract base-class for testing gene signatures.
-Child classes test if a signature is able to identify the respective tissue properly,
+Child classes test if signatures are able to identify their respective samples,
 given an expression matrix and a list of the actual tissues.</p>
+<p>When initializing <code class="docutils literal"><span class="pre">SignatureTester</span></code> the input data is checked for consistency.
+You can override the <code class="docutils literal"><span class="pre">__init__</span></code> method in your implementation of <code class="docutils literal"><span class="pre">SignatureTester</span></code>
+to pass additional parameters, however, make always sure to call this method
+in your <code class="docutils literal"><span class="pre">__init__</span></code> function to take advantage of the consistency check:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">your_param</span><span class="p">):</span>
+    <span class="nb">super</span><span class="p">(</span><span class="n">YourSignatureTester</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
+    <span class="c1"># your code goes here</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>expr</strong> (<em>np.ndarray</em>) &#8211; m x n gene expression matrix with m samples and n genes</li>
+<li><strong>target</strong> (<em>array-like</em>) &#8211; m-vector with true tissue for each sample (<cite>ground truth</cite>)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 <dl class="method">
 <dt id="pygenesig.validation.SignatureTester.confusion_matrix">
 <code class="descname">confusion_matrix</code><span class="sig-paren">(</span><em>signatures</em>, <em>actual</em>, <em>predicted</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pygenesig/validation.html#SignatureTester.confusion_matrix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pygenesig.validation.SignatureTester.confusion_matrix" title="Permalink to this definition">¶</a></dt>
 <dd><p>Make a confusion matrix.</p>
-<p>This is a wrapper for the sklearn.metrics.confusion matrix. Makes the matrix contain all
+<p>This is a wrapper for the <code class="docutils literal"><span class="pre">sklearn.metrics.confusion_matrix</span></code>. Makes the matrix contain all
 labels available in the signature.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd>signatures: dict of signatures that was used to predict the labels
-actual: list of actual labels
-predicted: list of predicted labels</dd>
-<dt>Returns:</dt>
-<dd>np.matrix: confusion matrix</dd>
-</dl>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The rows and columns are sorted with <code class="docutils literal"><span class="pre">SignatureTester.sort_signatures</span></code>.
+You can therefore use <code class="docutils literal"><span class="pre">sort_signatures</span></code> to label you confusion matrix.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>signatures</strong> &#8211; dict of signatures that was used to predict the labels</li>
+<li><strong>actual</strong> &#8211; list of actual labels</li>
+<li><strong>predicted</strong> &#8211; list of predicted labels</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">confusion matrix</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">numpy.matrix</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="staticmethod">
 <dt id="pygenesig.validation.SignatureTester.sort_signatures">
 <em class="property">static </em><code class="descname">sort_signatures</code><span class="sig-paren">(</span><em>signatures</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pygenesig/validation.html#SignatureTester.sort_signatures"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pygenesig.validation.SignatureTester.sort_signatures" title="Permalink to this definition">¶</a></dt>
-<dd><p>Retrieve the signatures in a consistent order.
-The rows/columns in the confusion matrix generated with <cite>confusion_matrix</cite> will
-be in this order.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd>signatures: signature dictionary.</dd>
-<dt>Returns:</dt>
-<dd>list: sorted keys of the signature dictionary.</dd>
-<dt>Note: use this method when implementing test_signatures to make sure that</dt>
-<dd>the confusion matrix is sorted according to this order.</dd>
-</dl>
+<dd><p>Retrieve the signatures in a consistent order.</p>
+<p>The signature dictionary is a python default dict, which is unordered.
+However, when displaying results, it is desirable to display the
+signatures in a consistent order.</p>
+<p>You can use this method to iterate over the signature dictionary:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">tissue</span> <span class="ow">in</span> <span class="n">sort_signatures</span><span class="p">(</span><span class="n">signatures</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">tissue</span><span class="p">,</span> <span class="n">signatures</span><span class="p">[</span><span class="n">tissue</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>Confusion matrices generated with <code class="docutils literal"><span class="pre">SignatureTester.confusion_matrix</span></code> are
+also sorted with <code class="docutils literal"><span class="pre">sort_signatures</span></code>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>signatures</strong> &#8211; signature dictionary.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">sorted keys of the signature dictionary.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">list</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
 <dt id="pygenesig.validation.SignatureTester.test_signatures">
 <code class="descname">test_signatures</code><span class="sig-paren">(</span><em>signatures</em>, <em>subset=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pygenesig/validation.html#SignatureTester.test_signatures"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pygenesig.validation.SignatureTester.test_signatures" title="Permalink to this definition">¶</a></dt>
 <dd><p>Test signatures based on the expression matrix.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd><dl class="first docutils">
-<dt>signatures (dict[str, list]): Signatures dictionary returned by SignatureGenerator.mk_signature.</dt>
-<dd>Dictionary: tissue_name -&gt; [list, of, enriched, genes].</dd>
-</dl>
-<p class="last">subset: sample indices (columns of expression matrix) to use for testing. Useful for crossvalidation.</p>
-</dd>
-<dt>Returns:</dt>
-<dd>(list, list): list of actual labels and predicted labels.</dd>
-</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>signatures</strong> (<em>dict[str, list]</em>) &#8211; Signatures dictionary returned by <code class="docutils literal"><span class="pre">SignatureGenerator.mk_signature</span></code>.</li>
+<li><strong>subset</strong> &#8211; sample indices (columns of expression matrix) to use for testing. Useful for crossvalidation.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">list of actual labels and predicted labels.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">(list, list)</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </dd></dl>
@@ -247,64 +354,144 @@ be in this order.</p>
 <dt id="pygenesig.validation.cross_validate_signatures">
 <code class="descclassname">pygenesig.validation.</code><code class="descname">cross_validate_signatures</code><span class="sig-paren">(</span><em>expr_file</em>, <em>target_file</em>, <em>signature_generator</em>, <em>signature_tester</em>, <em>splitter=StratifiedKFold(n_splits=10</em>, <em>random_state=None</em>, <em>shuffle=False)</em>, <em>sg_kwargs={}</em>, <em>st_kwargs={}</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pygenesig/validation.html#cross_validate_signatures"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pygenesig.validation.cross_validate_signatures" title="Permalink to this definition">¶</a></dt>
 <dd><p>Perform a crossvalidation by generating and testing signatures on a given expression matrix.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd><p class="first">expr_file (str): np matrix (binary) file containing expression matrix
-target_file (str): file containing target classes, line-by-line
-signature_generator (SignatureGenerator): SignatureGenerator used to derive the signatures
-signature_tester (SignatureTester): SignatureTester used to check the quality of signatures
-splitter (sklearn.model_selection._BaseKFold): crossvalidation method from scikit-learn.</p>
-<blockquote class="last">
-<div>See [here](<a class="reference external" href="http://scikit-learn.org/stable/modules/classes.html#module-sklearn.model_selection">http://scikit-learn.org/stable/modules/classes.html#module-sklearn.model_selection</a>).</div></blockquote>
-</dd>
-</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>expr_file</strong> (<em>str</em>) &#8211; path to numpy.array (binary) file containing expression matrix saved with <code class="docutils literal"><span class="pre">numpy.save()</span></code></li>
+<li><strong>target_file</strong> (<em>str</em>) &#8211; path to plaintext file containing target classes, line-by-line</li>
+<li><strong>signature_generator</strong> (<a class="reference internal" href="#pygenesig.validation.SignatureGenerator" title="pygenesig.validation.SignatureGenerator"><em>SignatureGenerator</em></a>) &#8211; <code class="docutils literal"><span class="pre">SignatureGenerator</span></code> used to derive the signatures</li>
+<li><strong>signature_tester</strong> (<a class="reference internal" href="#pygenesig.validation.SignatureTester" title="pygenesig.validation.SignatureTester"><em>SignatureTester</em></a>) &#8211; <code class="docutils literal"><span class="pre">SignatureTester</span></code> used to check the quality of signatures</li>
+<li><strong>splitter</strong> (<em>sklearn.model_selection._BaseKFold</em>) &#8211; crossvalidation method from <a class="reference external" href="http://scikit-learn.org/stable/modules/classes.html#module-sklearn.model_selection">scikit-learn</a>.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">list of signature dictionaries containing the signatures generated
+on each fold, list of confusion matrices containing the confusion matrices calculated on each fold.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">(list, list)</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
+</div>
 </div>
 <div class="section" id="signature-generators">
 <span id="signature-generators"></span><h2>Signature Generators<a class="headerlink" href="#signature-generators" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="module-pygenesig.gini">
 <span id="gini-index"></span><span id="gini-index"></span><h3>Gini Index<a class="headerlink" href="#module-pygenesig.gini" title="Permalink to this headline">¶</a></h3>
+<p>The Gini-coefficient (gini index) measures the inequality among values of
+a frequency distribution. Originally applied to measure income inequality
+we can also use it on gene expression data to find genes that are
+over-represented in certain samples.</p>
 <dl class="class">
 <dt id="pygenesig.gini.GiniSignatureGenerator">
 <em class="property">class </em><code class="descclassname">pygenesig.gini.</code><code class="descname">GiniSignatureGenerator</code><span class="sig-paren">(</span><em>expr</em>, <em>target</em>, <em>min_gini=0.7</em>, <em>max_rk=3</em>, <em>min_expr=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pygenesig/gini.html#GiniSignatureGenerator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pygenesig.gini.GiniSignatureGenerator" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pygenesig.validation.SignatureGenerator" title="pygenesig.validation.SignatureGenerator"><code class="xref py py-class docutils literal"><span class="pre">pygenesig.validation.SignatureGenerator</span></code></a></p>
+<p>Use gini index to generate gene signatures.</p>
+<p>Genes, which are specific for a tissue result in a high gini index,
+whereas genes equally present in all tissues have a gini index close to zero.</p>
+<p>The idea is, that genes with a high gini index will reliably identify
+their tissue of origin.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>expr</strong> (<em>np.ndarray</em>) &#8211; m x n matrix with m samples and n genes</li>
+<li><strong>target</strong> (<em>array-like</em>) &#8211; m-vector with true tissue for each sample</li>
+<li><strong>min_gini</strong> (<em>float</em>) &#8211; gini cutoff, genes need to have a gini index larger than this value.</li>
+<li><strong>max_rk</strong> (<em>int</em>) &#8211; rank cutoff, include genes if they rank <code class="docutils literal"><span class="pre">&lt;=</span> <span class="pre">max_rank</span></code> among all tissues.</li>
+<li><strong>min_expr</strong> (<em>float</em>) &#8211; genes need to have at least an expression <code class="docutils literal"><span class="pre">&gt;=</span> <span class="pre">min_expr</span></code> to be included.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
 <dt id="pygenesig.gini.aggregate_expression">
 <code class="descclassname">pygenesig.gini.</code><code class="descname">aggregate_expression</code><span class="sig-paren">(</span><em>expr</em>, <em>target</em>, <em>aggregate_fun=&lt;function median&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pygenesig/gini.html#aggregate_expression"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pygenesig.gini.aggregate_expression" title="Permalink to this definition">¶</a></dt>
 <dd><p>Aggregate expression by annotation (collapse samples of the same tissue)</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd>expr (np.array): data frame with expression data
-target (list-like): series containing the tissue annotation for each index
-aggregate_fun (function): aggregate to apply, e.g. mean, median</dd>
-<dt>Returns:</dt>
-<dd>pd.DataFrame: data frame with rows = rows(expr_df) = genes and cols = tissues</dd>
-</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>expr</strong> (<em>np.array</em>) &#8211; m x n gene expression matrix with m genes and n samples.</li>
+<li><strong>target</strong> (<em>list-like</em>) &#8211; list of length n, containing the target annotation for each sample (e.g. tissue)</li>
+<li><strong>aggregate_fun</strong> (<em>function</em>) &#8211; aggregate to apply, defaults to <code class="docutils literal"><span class="pre">numpy.median</span></code></li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">m x n pandas dataframe with m = #Genes and n = #target labels</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">pd.DataFrame</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
 <dt id="pygenesig.gini.get_gini_signatures">
 <code class="descclassname">pygenesig.gini.</code><code class="descname">get_gini_signatures</code><span class="sig-paren">(</span><em>df_aggr</em>, <em>min_gini=0.7</em>, <em>max_rk=3</em>, <em>min_expr=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pygenesig/gini.html#get_gini_signatures"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pygenesig.gini.get_gini_signatures" title="Permalink to this definition">¶</a></dt>
-<dd><p>Retreive gene signatures from an aggregated data frame</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd>df_aggr (dask.dataframe): Dataframe rows = genenames, cols = tissue aggregates
-min_gini (float): gini cutoff, genes need to have a gini index larger than this value.
-max_rk (int): rank cutoff
-min_expr (float): minimal expression</dd>
-<dt>Returns:</dt>
-<dd>dict of list: tissue -&gt; [list, of, gene, ids]</dd>
-</dl>
+<dd><p>Generate gene signatures using gini index.</p>
+<p>Finds over-represented genes for each sample group, given the specified thresholds.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>df_aggr</strong> (<em>pd.DataFrame</em>) &#8211; m x n pandas DataFrame with m Genes and n tissues</li>
+<li><strong>min_gini</strong> (<em>float</em>) &#8211; gini cutoff, genes need to have a gini index larger than this value.</li>
+<li><strong>max_rk</strong> (<em>int</em>) &#8211; rank cutoff, include genes if they rank &lt;= max_rank among all tissues.</li>
+<li><strong>min_expr</strong> (<em>float</em>) &#8211; minimal expression</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><p>A signature dictionary.</p>
+<p>Example:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;tissue1&quot;</span> <span class="p">:</span> <span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="n">of</span><span class="p">,</span> <span class="n">gene</span><span class="p">,</span> <span class="n">ids</span><span class="p">],</span>
+    <span class="s2">&quot;tissue2&quot;</span> <span class="p">:</span> <span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="n">of</span><span class="p">,</span> <span class="n">other</span><span class="p">,</span> <span class="n">genes</span><span class="p">],</span>
+    <span class="o">...</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">dict of list</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
 <dt id="pygenesig.gini.gini">
 <code class="descclassname">pygenesig.gini.</code><code class="descname">gini</code><span class="sig-paren">(</span><em>array</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pygenesig/gini.html#gini"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pygenesig.gini.gini" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate the Gini coefficient of a numpy array.</p>
-<p>based on: <a class="reference external" href="https://github.com/oliviaguest/gini">https://github.com/oliviaguest/gini</a></p>
+<p>Based on: <a class="reference external" href="https://github.com/oliviaguest/gini">https://github.com/oliviaguest/gini</a></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>array</strong> (<em>array-like</em>) &#8211; input array</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">gini-index of <code class="docutils literal"><span class="pre">array</span></code></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">float</td>
+</tr>
+</tbody>
+</table>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">10000</span><span class="p">))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="s1">&#39;</span><span class="si">%.3f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">gini</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
@@ -322,15 +509,33 @@ min_expr (float): minimal expression</dd>
 </div>
 <div class="section" id="module-pygenesig.limma">
 <span id="differential-expression-limma"></span><span id="differential-expression-limma"></span><h3>Differential Expression (Limma)<a class="headerlink" href="#module-pygenesig.limma" title="Permalink to this headline">¶</a></h3>
+<p>With Differential Expression (DE)-Analysis one can find genes that
+are significantly differentially expressed between different conditions.</p>
+<p>This module provides a python bridge to the R packages <a class="reference external" href="https://bioconductor.org/packages/release/bioc/html/limma.html">limma</a> and <a class="reference external" href="https://www.bioconductor.org/packages/release/bioc/html/edgeR.html">edgeR</a>
+using <code class="docutils literal"><span class="pre">rpy2</span></code> and implements a <code class="docutils literal"><span class="pre">SignatureGenerator</span></code> based on DE.</p>
 <dl class="class">
 <dt id="pygenesig.limma.LimmaSignatureGenerator">
 <em class="property">class </em><code class="descclassname">pygenesig.limma.</code><code class="descname">LimmaSignatureGenerator</code><span class="sig-paren">(</span><em>expr</em>, <em>target</em>, <em>covariates</em>, <em>fold_change=100</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pygenesig/limma.html#LimmaSignatureGenerator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pygenesig.limma.LimmaSignatureGenerator" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pygenesig.validation.SignatureGenerator" title="pygenesig.validation.SignatureGenerator"><code class="xref py py-class docutils literal"><span class="pre">pygenesig.validation.SignatureGenerator</span></code></a></p>
-<dl class="attribute">
-<dt id="pygenesig.limma.LimmaSignatureGenerator.TARGET_COL">
-<code class="descname">TARGET_COL</code><em class="property"> = 'target'</em><a class="headerlink" href="#pygenesig.limma.LimmaSignatureGenerator.TARGET_COL" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
+<p>Use Differntial Expression (DE) Analysis to generate signatures.</p>
+<p>The LimmaSignatureGenerator uses <cite>Limma</cite> and <cite>voom</cite> to find significantly differentially
+expressed genes. Genes, which are specific for a tissue have a high fold-change and a low
+p-value, whereas genes equally present in all tissues will not be significant.</p>
+<p>The idea is, that genes which are significantly different between different tissues
+will reliably identify their tissue of origin.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>expr</strong> (<em>np.ndarray</em>) &#8211; m x n matrix with m samples and n genes</li>
+<li><strong>target</strong> (<em>array-like</em>) &#8211; m-vector with true tissue for each sample</li>
+<li><strong>fold_change</strong> (<em>int</em>) &#8211; minimal fold change for a gene to be considered as <cite>differentially expressed</cite>.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </div>
@@ -339,53 +544,113 @@ min_expr (float): minimal expression</dd>
 <span id="signature-testers"></span><h2>Signature Testers<a class="headerlink" href="#signature-testers" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="module-pygenesig.bioqc">
 <span id="bioqc"></span><span id="bioqc"></span><h3>BioQC<a class="headerlink" href="#module-pygenesig.bioqc" title="Permalink to this headline">¶</a></h3>
+<p><a class="reference external" href="https://accio.github.io/BioQC">BioQC</a> is a R/Bioconductor package to detect tissue heterogeneity in gene expression data. It ships with a set
+of 150 tissue signatures and implements a computationally efficient Wilcoxon-Mann-Whitney (WMW) test.</p>
+<p>The WMW-test can be applied to check for an over-representation of an arbitrary gene set
+in a gene expression sample.</p>
+<p>This module implements a python bridge to the R package using <code class="docutils literal"><span class="pre">rpy2</span></code> and implements a
+<code class="docutils literal"><span class="pre">SignatureTester</span></code> based on BioQC.</p>
 <dl class="class">
 <dt id="pygenesig.bioqc.BioQCSignatureTester">
 <em class="property">class </em><code class="descclassname">pygenesig.bioqc.</code><code class="descname">BioQCSignatureTester</code><span class="sig-paren">(</span><em>expr</em>, <em>target</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pygenesig/bioqc.html#BioQCSignatureTester"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pygenesig.bioqc.BioQCSignatureTester" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pygenesig.validation.SignatureTester" title="pygenesig.validation.SignatureTester"><code class="xref py py-class docutils literal"><span class="pre">pygenesig.validation.SignatureTester</span></code></a></p>
+<p>Use BioQC to check the validity of gene signatures.</p>
+<p>We use the WMW-test implemented by BioQC to generate a p-value for
+each signature in each sample. If a signature is enriched in a specific sample
+the WMW-test will result in a small p-value.</p>
+<p>We define a sample as <cite>correctly classified</cite> by the signature
+if the signature corresponding to the <cite>true tissue of origin</cite>
+has the lowest p-value of all tested signatures.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>expr</strong> (<em>np.ndarray</em>) &#8211; m x n matrix with m samples and n genes</li>
+<li><strong>target</strong> (<em>array-like</em>) &#8211; m-vector with true tissue for each sample</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 <dl class="staticmethod">
 <dt id="pygenesig.bioqc.BioQCSignatureTester.run_bioqc">
 <em class="property">static </em><code class="descname">run_bioqc</code><span class="sig-paren">(</span><em>expr</em>, <em>gene_symbols</em>, <em>gmt</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pygenesig/bioqc.html#BioQCSignatureTester.run_bioqc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pygenesig.bioqc.BioQCSignatureTester.run_bioqc" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="docutils">
-<dt>Args:</dt>
-<dd>expr: m x n gene expression matrix with m genes and n samples.
-gene_symbols: m vector containing gene symbols
-gmt: GMTList object containing k signatures. Generate with signatures2gmt().</dd>
-<dt>Returns:</dt>
-<dd>np.array: k x n p-value matrix.</dd>
-</dl>
+<dd><p>Apply BioQC to a gene expression matrix.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>expr</strong> &#8211; m x n gene expression matrix with m genes and n samples.</li>
+<li><strong>gene_symbols</strong> &#8211; m vector containing gene symbols</li>
+<li><strong>gmt</strong> &#8211; GMTList object containing k signatures. Generate with <code class="docutils literal"><span class="pre">signatures2gmt()</span></code>.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">k x n p-value matrix.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">np.array</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="staticmethod">
 <dt id="pygenesig.bioqc.BioQCSignatureTester.signatures2gmt">
 <em class="property">static </em><code class="descname">signatures2gmt</code><span class="sig-paren">(</span><em>signatures</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pygenesig/bioqc.html#BioQCSignatureTester.signatures2gmt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pygenesig.bioqc.BioQCSignatureTester.signatures2gmt" title="Permalink to this definition">¶</a></dt>
-<dd><p>convert signature dictionary into an R GMTList object.</p>
+<dd><p>Convert signature dictionary into an R GMTList object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>signatures</strong> (<em>dict</em>) &#8211; signature dictionary</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">R GMTList object containing the signatures.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">GMTList</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </dd></dl>
 
 <dl class="data">
-<dt id="pygenesig.bioqc.biobase">
-<code class="descclassname">pygenesig.bioqc.</code><code class="descname">biobase</code><em class="property"> = rpy2.robjects.packages.Package as a &lt;module 'Biobase'&gt;</em><a class="headerlink" href="#pygenesig.bioqc.biobase" title="Permalink to this definition">¶</a></dt>
-<dd><p>See R vignette.</p>
+<dt id="pygenesig.bioqc.mk_eset">
+<code class="descclassname">pygenesig.bioqc.</code><code class="descname">mk_eset</code><em class="property"> = R object with classes: ('function',) mapped to: &lt;SignatureTranslatedFunction - Python:0x2aab70d56648 / R:0x86637c0&gt;</em><a class="headerlink" href="#pygenesig.bioqc.mk_eset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate an R ExpressionSet with <code class="docutils literal"><span class="pre">exprs()</span></code> and <code class="docutils literal"><span class="pre">fData()</span></code> annotation.
+fData will contain one single column named GeneSymbol.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>exprs</strong> &#8211; <code class="docutils literal"><span class="pre">numpy.array</span></code> m x n expression matrix. <code class="docutils literal"><span class="pre">np.matrix</span></code> does NOT work!</li>
+<li><strong>gene_symbols</strong> &#8211; <code class="docutils literal"><span class="pre">numpy.array</span></code> m vector containing gene symbols.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="data">
 <dt id="pygenesig.bioqc.read_gmt">
-<code class="descclassname">pygenesig.bioqc.</code><code class="descname">read_gmt</code><em class="property"> = R object with classes: ('function',) mapped to: &lt;DocumentedSTFunction - Python:0x2aaba337ec48 / R:0x83381c0&gt;</em><a class="headerlink" href="#pygenesig.bioqc.read_gmt" title="Permalink to this definition">¶</a></dt>
-<dd><p>Generate an R Expression set with exprs() and fData() annotation.
-fData will contain one single column named GeneSymbol.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd>exprs: numpy.array m x n expression matrix. np.matrix does NOT work!
-gene_symbols: numpy.array m vector containing gene symbols.</dd>
-</dl>
+<code class="descclassname">pygenesig.bioqc.</code><code class="descname">read_gmt</code><em class="property"> = R object with classes: ('function',) mapped to: &lt;DocumentedSTFunction - Python:0x2aaba3471b08 / R:0x8459cb8&gt;</em><a class="headerlink" href="#pygenesig.bioqc.read_gmt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias to R function <code class="docutils literal"><span class="pre">BioQC::readGmt</span></code> using rpy2.</p>
+<p>Check the <a class="reference external" href="https://bioconductor.org/packages/release/bioc/manuals/BioQC/man/BioQC.pdf">BioQC Documentation</a>
+for more details.</p>
 </dd></dl>
 
 <dl class="data">
 <dt id="pygenesig.bioqc.wmw_test">
-<code class="descclassname">pygenesig.bioqc.</code><code class="descname">wmw_test</code><em class="property"> = R object with classes: ('standardGeneric',) mapped to: &lt;DocumentedSTFunction - Python:0x2aaba337e748 / R:0x71c3a60&gt;</em><a class="headerlink" href="#pygenesig.bioqc.wmw_test" title="Permalink to this definition">¶</a></dt>
-<dd><p>See R vignette.</p>
+<code class="descclassname">pygenesig.bioqc.</code><code class="descname">wmw_test</code><em class="property"> = R object with classes: ('standardGeneric',) mapped to: &lt;DocumentedSTFunction - Python:0x2aaaff9af548 / R:0x7278970&gt;</em><a class="headerlink" href="#pygenesig.bioqc.wmw_test" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias to R function <code class="docutils literal"><span class="pre">BioQC::wmwTest</span></code> using rpy2.</p>
+<p>Check the <a class="reference external" href="https://bioconductor.org/packages/release/bioc/manuals/BioQC/man/BioQC.pdf">BioQC Documentation</a>
+for more details.</p>
 </dd></dl>
 
 </div>
@@ -393,19 +658,30 @@ gene_symbols: numpy.array m vector containing gene symbols.</dd>
 <div class="section" id="tools">
 <span id="tools"></span><h2>Tools<a class="headerlink" href="#tools" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="module-pygenesig.tools">
-<span id="auxilary-function-related-to-gene-signatures-pygenesig-tools"></span><span id="auxilary-function-related-to-gene-signatures-pygenesig-tools"></span><h3>Auxilary function related to gene signatures (<code class="docutils literal"><span class="pre">pygenesig.tools</span></code>)<a class="headerlink" href="#module-pygenesig.tools" title="Permalink to this headline">¶</a></h3>
+<span id="auxilary-functions-related-to-gene-signatures-pygenesig-tools"></span><span id="auxilary-functions-related-to-gene-signatures-pygenesig-tools"></span><h3>Auxilary functions related to gene signatures (<code class="docutils literal"><span class="pre">pygenesig.tools</span></code>)<a class="headerlink" href="#module-pygenesig.tools" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="pygenesig.tools.jaccard_ind">
 <code class="descclassname">pygenesig.tools.</code><code class="descname">jaccard_ind</code><span class="sig-paren">(</span><em>set1</em>, <em>set2</em>, <em>*args</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pygenesig/tools.html#jaccard_ind"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pygenesig.tools.jaccard_ind" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the Jaccard-Index of two or more sets.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd>set1 (set):
-set2 (set):
-<a href="#id1"><span class="problematic" id="id2">*</span></a>args: arbitrary number of more sets.</dd>
-<dt>Returns:</dt>
-<dd>float: jaccard index of all sets</dd>
-</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>set1</strong> (<em>set</em>) &#8211; </li>
+<li><strong>set2</strong> (<em>set</em>) &#8211; </li>
+<li><strong>*args</strong> &#8211; arbitrary number of more sets.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">jaccard index of all sets</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">float</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
@@ -414,53 +690,79 @@ set2 (set):
 <dd><p>Compute the pairwise jaccard index for a list
 of signature sets. Useful for calculating the pariwise overlap
 between the different crossvalidation folds.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd>list_of_signatures: list of signature dicts.</dd>
-<dt>Returns:</dt>
-<dd>dict: signature_name -&gt; [list, of, jaccard, indices]</dd>
-<dt>Note: takes the signature names from the first dict in list_of_signatures</dt>
-<dd>to build the output dictionary.</dd>
-</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>list_of_signatures</strong> &#8211; list of signature dicts.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">signature_name -&gt; [list, of, jaccard, indices]</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">dict</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">takes the signature names from the first dict in list_of_signatures
+to build the output dictionary.</p>
+</div>
 </dd></dl>
 
 <dl class="function">
 <dt id="pygenesig.tools.performance_per_tissue">
 <code class="descclassname">pygenesig.tools.</code><code class="descname">performance_per_tissue</code><span class="sig-paren">(</span><em>list_of_confusion_matrices</em>, <em>sig_labels</em>, <em>perf_fun</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pygenesig/tools.html#performance_per_tissue"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pygenesig.tools.performance_per_tissue" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute per-tissue performance measures from all-against-all confusion matrices.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd>list_of_confusion_matrices (list of np.array):  list of
-sig_labels (array-like): list of signatures in the same order as in the confusion matrices.
-perf_fun (function): function(TP, FN, TP, TN) computing a performance measure from the binary confusion matrix.</dd>
-<dt>Returns:</dt>
-<dd>dict: signature_name -&gt; list of performance meausures for each confusion matrix provided.</dd>
-</dl>
-</dd></dl>
-
-<dl class="function">
-<dt id="pygenesig.tools.which">
-<code class="descclassname">pygenesig.tools.</code><code class="descname">which</code><span class="sig-paren">(</span><em>cond</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pygenesig/tools.html#which"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pygenesig.tools.which" title="Permalink to this definition">¶</a></dt>
-<dd><p>cond is boolean mask</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>list_of_confusion_matrices</strong> (<em>list of np.array</em>) &#8211; list of</li>
+<li><strong>sig_labels</strong> (<em>array-like</em>) &#8211; list of signatures in the same order as in the confusion matrices.</li>
+<li><strong>perf_fun</strong> (<em>function</em>) &#8211; <code class="docutils literal"><span class="pre">(TP,</span> <span class="pre">FN,</span> <span class="pre">TP,</span> <span class="pre">TN)</span></code> computing a performance measure from the binary confusion matrix.
+See <code class="docutils literal"><span class="pre">perfmeasures</span></code> module.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">signature_name -&gt; list of performance meausures for each confusion matrix provided.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">dict</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
 <dt id="pygenesig.tools.write_gmt">
 <code class="descclassname">pygenesig.tools.</code><code class="descname">write_gmt</code><span class="sig-paren">(</span><em>signatures</em>, <em>file</em>, <em>description='na'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pygenesig/tools.html#write_gmt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pygenesig.tools.write_gmt" title="Permalink to this definition">¶</a></dt>
-<dd><p>Writes signatures to a GMT file.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd>signatures (dict of iterable): dictionary &#8216;signature name&#8217; -&gt; [&#8216;list&#8217;, &#8216;of&#8217;, &#8216;gene&#8217;, &#8216;names&#8217;]
-file: path to output file
-description: text to fill in the gmt description field.</dd>
-<dt>Note:</dt>
-<dd>File format specification: <a class="reference external" href="http://software.broadinstitute.org/cancer/software/gsea/wiki/index.php/Data_formats#GMT:_Gene_Matrix_Transposed_file_format_.28.2A.gmt.29">http://software.broadinstitute.org/cancer/software/gsea/wiki/index.php/Data_formats#GMT:_Gene_Matrix_Transposed_file_format_.28.2A.gmt.29</a></dd>
-</dl>
+<dd><p>Writes signatures to a <a class="reference external" href="http://software.broadinstitute.org/cancer/software/gsea/wiki/index.php/Data_formats#GMT:_Gene_Matrix_Transposed_file_format_.28.2A.gmt.29">GMT file</a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>signatures</strong> (<em>dict of list</em>) &#8211; signature dictionary</li>
+<li><strong>file</strong> &#8211; path to output file</li>
+<li><strong>description</strong> &#8211; text to fill in the gmt description field.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </div>
 <div class="section" id="module-pygenesig.perfmeasures">
 <span id="performance-measures-pygenesig-perfmeasures"></span><span id="performance-measures-pygenesig-perfmeasures"></span><h3>Performance Measures (<code class="docutils literal"><span class="pre">pygenesig.perfmeasures</span></code>)<a class="headerlink" href="#module-pygenesig.perfmeasures" title="Permalink to this headline">¶</a></h3>
+<p>Collection of functions to compute various performance measures from a 2x2 confusion matrix.
+As an introduction to evaluating classificators, we recommend reading this <a class="reference external" href="http://dx.doi.org/10.1016/j.patrec.2005.10.010.">paper</a> about ROC analysis.</p>
+<p>TP = true positive</p>
+<p>FP = false positive</p>
+<p>TN = true negative</p>
+<p>FN = false negative</p>
 <dl class="function">
 <dt id="pygenesig.perfmeasures.f1_neg">
 <code class="descclassname">pygenesig.perfmeasures.</code><code class="descname">f1_neg</code><span class="sig-paren">(</span><em>TP</em>, <em>FN</em>, <em>FP</em>, <em>TN</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pygenesig/perfmeasures.html#f1_neg"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pygenesig.perfmeasures.f1_neg" title="Permalink to this definition">¶</a></dt>

@@ -5,7 +5,7 @@ A major strength of *pygenesig* is its flexibility. Here, we show how you can im
 To standardize the API for creating and testing signatures, pygenesig provides two abstract classes, `SignatureGenerator` and `SignatureTester` which serve as template for the different methods. 
 
 ## Implement a SignatureGenerator
-To get started, read the [apidoc](apidoc.html) of SignatureGenerator. Essentially, all you have to do is creating a child class of `SignatureGenerator` and implement the method `_mk_signatures(expr, target)`. 
+To get started, read the [apidoc](apidoc.html#pygenesig.validation.SignatureGenerator) of `SignatureGenerator`. Essentially, all you have to do is creating a child class of `SignatureGenerator` and implement the method `_mk_signatures(expr, target)`. 
 The method needs to return a signature dictionary as described in the [data preparation tutorial](prepare_data.html).
 
 For example:
@@ -27,7 +27,7 @@ Make always sure to call the parent constructor, though, as it performs some con
 class MySignatureGenerator(SignatureGenerator):
     def __init__(self, expr, target, param1=42):
         super(MySignatureGenerator, self).__init__(expr, target)
-        self.param1 = 42
+        self.param1 = param1 
 
     def _mk_signatures(self, expr, target):
         # ...
@@ -52,7 +52,7 @@ class GiniSignatureGenerator(SignatureGenerator):
 ```
 
 ## Implement a SignatureTester
-To get started, read the [apidoc](apidoc.html) of SignatureTester. Essentially, all you have to do is creating a child class of `SignatureTester` and implement the method `_predict(expr, signatures)`. 
+To get started, read the [apidoc](apidoc.html#pygenesig.validation.SignatureTester) of `SignatureTester`. Essentially, all you have to do is creating a child class of `SignatureTester` and implement the method `_predict(expr, signatures)`. 
 The method returns a list of the predicted labels for each samples. 
 
 For example, a random predictor, being agnostic of the signatures could look like:

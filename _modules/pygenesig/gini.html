@@ -80,12 +80,17 @@
           
             
             
-                <ul>
+                <p class="caption"><span class="caption-text">User&#8217;s Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">Getting started with pygenesig</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../prepare_data.html">Prepare data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../use_pygenesig.html">Creating signatures</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../use_pygenesig.html#testing-signatures">Testing signatures</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../use_pygenesig.html#putting-it-together-crossvalidation">Putting it together: crossvalidation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../use_pygenesig.html#case-studies">Case studies</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Developer&#8217;s Guide</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../../developers_guide.html">Implement own methods</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../apidoc.html">API documentation</a></li>
 </ul>
@@ -133,7 +138,14 @@
            <div itemprop="articleBody">
             
   <h1>Source code for pygenesig.gini</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">The Gini-coefficient (gini index) measures the inequality among values of</span>
+<span class="sd">a frequency distribution. Originally applied to measure income inequality</span>
+<span class="sd">we can also use it on gene expression data to find genes that are</span>
+<span class="sd">over-represented in certain samples.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="kn">as</span> <span class="nn">pd</span>
 <span class="kn">from</span> <span class="nn">pygenesig.validation</span> <span class="kn">import</span> <span class="n">SignatureGenerator</span>
 
@@ -142,7 +154,13 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate the Gini coefficient of a numpy array.</span>
 
-<span class="sd">    based on: https://github.com/oliviaguest/gini</span>
+<span class="sd">    Based on: https://github.com/oliviaguest/gini</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        array (array-like): input array</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        float: gini-index of ``array``</span>
 
 <span class="sd">    &gt;&gt;&gt; a = np.zeros((10000))</span>
 <span class="sd">    &gt;&gt;&gt; a[0] = 1.0</span>
@@ -171,12 +189,12 @@
 <span class="sd">    Aggregate expression by annotation (collapse samples of the same tissue)</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        expr (np.array): data frame with expression data</span>
-<span class="sd">        target (list-like): series containing the tissue annotation for each index</span>
-<span class="sd">        aggregate_fun (function): aggregate to apply, e.g. mean, median</span>
+<span class="sd">        expr (np.array): m x n gene expression matrix with m genes and n samples.</span>
+<span class="sd">        target (list-like): list of length n, containing the target annotation for each sample (e.g. tissue)</span>
+<span class="sd">        aggregate_fun (function): aggregate to apply, defaults to ``numpy.median``</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        pd.DataFrame: data frame with rows = rows(expr_df) = genes and cols = tissues</span>
+<span class="sd">        pd.DataFrame: m x n pandas dataframe with m = #Genes and n = #target labels</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">group_series</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
@@ -189,16 +207,26 @@
 
 <div class="viewcode-block" id="get_gini_signatures"><a class="viewcode-back" href="../../apidoc.html#pygenesig.gini.get_gini_signatures">[docs]</a><span class="k">def</span> <span class="nf">get_gini_signatures</span><span class="p">(</span><span class="n">df_aggr</span><span class="p">,</span> <span class="n">min_gini</span><span class="o">=.</span><span class="mi">7</span><span class="p">,</span> <span class="n">max_rk</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">min_expr</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Retreive gene signatures from an aggregated data frame</span>
+<span class="sd">    Generate gene signatures using gini index.</span>
+
+<span class="sd">    Finds over-represented genes for each sample group, given the specified thresholds.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        df_aggr (dask.dataframe): Dataframe rows = genenames, cols = tissue aggregates</span>
+<span class="sd">        df_aggr (pd.DataFrame): m x n pandas DataFrame with m Genes and n tissues</span>
 <span class="sd">        min_gini (float): gini cutoff, genes need to have a gini index larger than this value.</span>
-<span class="sd">        max_rk (int): rank cutoff</span>
+<span class="sd">        max_rk (int): rank cutoff, include genes if they rank &lt;= max_rank among all tissues.</span>
 <span class="sd">        min_expr (float): minimal expression</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        dict of list: tissue -&gt; [list, of, gene, ids]</span>
+<span class="sd">        dict of list: A signature dictionary.</span>
+
+<span class="sd">        Example::</span>
+
+<span class="sd">            {</span>
+<span class="sd">                &quot;tissue1&quot; : [list, of, gene, ids],</span>
+<span class="sd">                &quot;tissue2&quot; : [list, of, other, genes],</span>
+<span class="sd">                ...</span>
+<span class="sd">            }</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">df_aggr</span> <span class="o">=</span> <span class="n">df_aggr</span><span class="p">[</span><span class="n">df_aggr</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">min_expr</span><span class="p">]</span>
@@ -212,6 +240,22 @@
 
 
 <div class="viewcode-block" id="GiniSignatureGenerator"><a class="viewcode-back" href="../../apidoc.html#pygenesig.gini.GiniSignatureGenerator">[docs]</a><span class="k">class</span> <span class="nc">GiniSignatureGenerator</span><span class="p">(</span><span class="n">SignatureGenerator</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Use gini index to generate gene signatures.</span>
+
+<span class="sd">    Genes, which are specific for a tissue result in a high gini index,</span>
+<span class="sd">    whereas genes equally present in all tissues have a gini index close to zero.</span>
+
+<span class="sd">    The idea is, that genes with a high gini index will reliably identify</span>
+<span class="sd">    their tissue of origin.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        expr (np.ndarray): m x n matrix with m samples and n genes</span>
+<span class="sd">        target (array-like): m-vector with true tissue for each sample</span>
+<span class="sd">        min_gini (float): gini cutoff, genes need to have a gini index larger than this value.</span>
+<span class="sd">        max_rk (int): rank cutoff, include genes if they rank ``&lt;= max_rank`` among all tissues.</span>
+<span class="sd">        min_expr (float): genes need to have at least an expression ``&gt;= min_expr`` to be included.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">min_gini</span><span class="o">=.</span><span class="mi">7</span><span class="p">,</span> <span class="n">max_rk</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">min_expr</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">GiniSignatureGenerator</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">min_gini</span> <span class="o">=</span> <span class="n">min_gini</span>

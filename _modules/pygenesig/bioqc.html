@@ -80,12 +80,17 @@
           
             
             
-                <ul>
+                <p class="caption"><span class="caption-text">User&#8217;s Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">Getting started with pygenesig</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../prepare_data.html">Prepare data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../use_pygenesig.html">Creating signatures</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../use_pygenesig.html#testing-signatures">Testing signatures</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../use_pygenesig.html#putting-it-together-crossvalidation">Putting it together: crossvalidation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../use_pygenesig.html#case-studies">Case studies</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Developer&#8217;s Guide</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../../developers_guide.html">Implement own methods</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../apidoc.html">API documentation</a></li>
 </ul>
@@ -133,7 +138,22 @@
            <div itemprop="articleBody">
             
   <h1>Source code for pygenesig.bioqc</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">readline</span>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">`BioQC`_ is a R/Bioconductor package to detect tissue heterogeneity in gene expression data. It ships with a set</span>
+<span class="sd">of 150 tissue signatures and implements a computationally efficient Wilcoxon-Mann-Whitney (WMW) test.</span>
+
+<span class="sd">The WMW-test can be applied to check for an over-representation of an arbitrary gene set</span>
+<span class="sd">in a gene expression sample.</span>
+
+<span class="sd">This module implements a python bridge to the R package using ``rpy2`` and implements a</span>
+<span class="sd">``SignatureTester`` based on BioQC.</span>
+
+<span class="sd">.. _BioQC:</span>
+<span class="sd">    https://accio.github.io/BioQC</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<span class="kn">import</span> <span class="nn">readline</span>  <span class="c1"># not used, but needed as a workaround for an import problem.</span>
 <span class="kn">import</span> <span class="nn">rpy2.robjects</span> <span class="kn">as</span> <span class="nn">ro</span>
 <span class="kn">from</span> <span class="nn">rpy2.robjects.packages</span> <span class="kn">import</span> <span class="n">importr</span>
 <span class="kn">from</span> <span class="nn">rpy2.robjects</span> <span class="kn">import</span> <span class="n">numpy2ri</span>
@@ -148,25 +168,30 @@
 <span class="n">bioqc</span> <span class="o">=</span> <span class="n">importr</span><span class="p">(</span><span class="s2">&quot;BioQC&quot;</span><span class="p">)</span>
 <span class="n">biobase</span> <span class="o">=</span> <span class="n">importr</span><span class="p">(</span><span class="s2">&quot;Biobase&quot;</span><span class="p">)</span>
 
-<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">See R vignette.</span>
-<span class="sd">&quot;&quot;&quot;</span>
+
 <span class="n">wmw_test</span> <span class="o">=</span> <span class="n">bioqc</span><span class="o">.</span><span class="n">wmwTest</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Alias to R function ``BioQC::wmwTest`` using rpy2.</span>
 
+<span class="sd">Check the `BioQC Documentation`_</span>
+<span class="sd">for more details.</span>
+
+<span class="sd">.. _BioQC Documentation:</span>
+<span class="sd">    https://bioconductor.org/packages/release/bioc/manuals/BioQC/man/BioQC.pdf</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">See R vignette.</span>
-<span class="sd">&quot;&quot;&quot;</span>
+
 <span class="n">read_gmt</span> <span class="o">=</span> <span class="n">bioqc</span><span class="o">.</span><span class="n">readGmt</span>
-
-
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Generate an R Expression set with exprs() and fData() annotation.</span>
-<span class="sd">    fData will contain one single column named GeneSymbol.</span>
+<span class="sd">Alias to R function ``BioQC::readGmt`` using rpy2.</span>
 
-<span class="sd">    Args:</span>
-<span class="sd">        exprs: numpy.array m x n expression matrix. np.matrix does NOT work!</span>
-<span class="sd">        gene_symbols: numpy.array m vector containing gene symbols.</span>
+<span class="sd">Check the `BioQC Documentation`_</span>
+<span class="sd">for more details.</span>
+
+<span class="sd">.. _BioQC Documentation:</span>
+<span class="sd">    https://bioconductor.org/packages/release/bioc/manuals/BioQC/man/BioQC.pdf</span>
 <span class="sd">&quot;&quot;&quot;</span>
+
+
 <span class="n">ro</span><span class="o">.</span><span class="n">r</span><span class="p">(</span><span class="s1">&#39;&#39;&#39;</span>
 <span class="s1">    mk_eset = function(exprs, gene_symbols) {</span>
 <span class="s1">        return(new(&quot;ExpressionSet&quot;,</span>
@@ -176,12 +201,43 @@
 <span class="s1">     }</span>
 <span class="s1">     &#39;&#39;&#39;</span><span class="p">)</span>
 <span class="n">mk_eset</span> <span class="o">=</span> <span class="n">ro</span><span class="o">.</span><span class="n">r</span><span class="p">[</span><span class="s1">&#39;mk_eset&#39;</span><span class="p">]</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Generate an R ExpressionSet with ``exprs()`` and ``fData()`` annotation.</span>
+<span class="sd">fData will contain one single column named GeneSymbol.</span>
+
+<span class="sd">Args:</span>
+<span class="sd">    exprs: ``numpy.array`` m x n expression matrix. ``np.matrix`` does NOT work!</span>
+<span class="sd">    gene_symbols: ``numpy.array`` m vector containing gene symbols.</span>
+<span class="sd">&quot;&quot;&quot;</span>
 
 
 <div class="viewcode-block" id="BioQCSignatureTester"><a class="viewcode-back" href="../../apidoc.html#pygenesig.bioqc.BioQCSignatureTester">[docs]</a><span class="k">class</span> <span class="nc">BioQCSignatureTester</span><span class="p">(</span><span class="n">SignatureTester</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Use BioQC to check the validity of gene signatures.</span>
+
+<span class="sd">    We use the WMW-test implemented by BioQC to generate a p-value for</span>
+<span class="sd">    each signature in each sample. If a signature is enriched in a specific sample</span>
+<span class="sd">    the WMW-test will result in a small p-value.</span>
+
+<span class="sd">    We define a sample as `correctly classified` by the signature</span>
+<span class="sd">    if the signature corresponding to the `true tissue of origin`</span>
+<span class="sd">    has the lowest p-value of all tested signatures.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        expr (np.ndarray): m x n matrix with m samples and n genes</span>
+<span class="sd">        target (array-like): m-vector with true tissue for each sample</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="nd">@staticmethod</span>
 <div class="viewcode-block" id="BioQCSignatureTester.signatures2gmt"><a class="viewcode-back" href="../../apidoc.html#pygenesig.bioqc.BioQCSignatureTester.signatures2gmt">[docs]</a>    <span class="k">def</span> <span class="nf">signatures2gmt</span><span class="p">(</span><span class="n">signatures</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;convert signature dictionary into an R GMTList object. &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Convert signature dictionary into an R GMTList object.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            signatures (dict): signature dictionary</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            GMTList: R GMTList object containing the signatures.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">with</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">NamedTemporaryFile</span><span class="p">()</span> <span class="k">as</span> <span class="n">gmt_file</span><span class="p">:</span>
             <span class="n">write_gmt</span><span class="p">(</span><span class="n">signatures</span><span class="p">,</span> <span class="n">gmt_file</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
             <span class="n">gmt</span> <span class="o">=</span> <span class="n">read_gmt</span><span class="p">(</span><span class="n">gmt_file</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
@@ -190,15 +246,15 @@
     <span class="nd">@staticmethod</span>
 <div class="viewcode-block" id="BioQCSignatureTester.run_bioqc"><a class="viewcode-back" href="../../apidoc.html#pygenesig.bioqc.BioQCSignatureTester.run_bioqc">[docs]</a>    <span class="k">def</span> <span class="nf">run_bioqc</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="n">gene_symbols</span><span class="p">,</span> <span class="n">gmt</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Apply BioQC to a gene expression matrix.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            expr: m x n gene expression matrix with m genes and n samples.</span>
 <span class="sd">            gene_symbols: m vector containing gene symbols</span>
-<span class="sd">            gmt: GMTList object containing k signatures. Generate with signatures2gmt().</span>
+<span class="sd">            gmt: GMTList object containing k signatures. Generate with ``signatures2gmt()``.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            np.array: k x n p-value matrix.</span>
-
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># although BioQC does support testing on a matrix and</span>
         <span class="c1"># list of signatures, I decided to go with the</span>
@@ -212,13 +268,6 @@
 <span class="sd">        Test Signatures with BioQC. A sample is considered to be</span>
 <span class="sd">        &#39;true-positive&#39; if the highest scoring signature is the one</span>
 <span class="sd">        generated from the actual tissue.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            expr:</span>
-<span class="sd">            signatures:</span>
-
-<span class="sd">        Returns:</span>
-
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">gene_symbols</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">expr</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])]</span>
         <span class="n">signatures_not_empty</span> <span class="o">=</span> <span class="p">{</span>

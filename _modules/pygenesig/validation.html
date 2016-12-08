@@ -80,12 +80,17 @@
           
             
             
-                <ul>
+                <p class="caption"><span class="caption-text">User&#8217;s Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">Getting started with pygenesig</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../prepare_data.html">Prepare data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../use_pygenesig.html">Creating signatures</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../use_pygenesig.html#testing-signatures">Testing signatures</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../use_pygenesig.html#putting-it-together-crossvalidation">Putting it together: crossvalidation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../use_pygenesig.html#case-studies">Case studies</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Developer&#8217;s Guide</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../../developers_guide.html">Implement own methods</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../apidoc.html">API documentation</a></li>
 </ul>
@@ -154,12 +159,19 @@
 <span class="sd">    Perform a crossvalidation by generating and testing signatures on a given expression matrix.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        expr_file (str): np matrix (binary) file containing expression matrix</span>
-<span class="sd">        target_file (str): file containing target classes, line-by-line</span>
-<span class="sd">        signature_generator (SignatureGenerator): SignatureGenerator used to derive the signatures</span>
-<span class="sd">        signature_tester (SignatureTester): SignatureTester used to check the quality of signatures</span>
-<span class="sd">        splitter (sklearn.model_selection._BaseKFold): crossvalidation method from scikit-learn.</span>
-<span class="sd">            See [here](http://scikit-learn.org/stable/modules/classes.html#module-sklearn.model_selection).</span>
+<span class="sd">        expr_file (str): path to numpy.array (binary) file containing expression matrix saved with ``numpy.save()``</span>
+<span class="sd">        target_file (str): path to plaintext file containing target classes, line-by-line</span>
+<span class="sd">        signature_generator (SignatureGenerator): ``SignatureGenerator`` used to derive the signatures</span>
+<span class="sd">        signature_tester (SignatureTester): ``SignatureTester`` used to check the quality of signatures</span>
+<span class="sd">        splitter (sklearn.model_selection._BaseKFold): crossvalidation method from `scikit-learn`_.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        (list, list): list of signature dictionaries containing the signatures generated</span>
+<span class="sd">        on each fold, list of confusion matrices containing the confusion matrices calculated on each fold.</span>
+
+<span class="sd">    .. _scikit-learn:</span>
+<span class="sd">        http://scikit-learn.org/stable/modules/classes.html#module-sklearn.model_selection</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># we need the number of samples locally for splitting in test and training sets</span>
     <span class="n">target_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="n">target_file</span><span class="p">)</span>
@@ -185,28 +197,26 @@
 
 
 <div class="viewcode-block" id="SignatureGenerator"><a class="viewcode-back" href="../../apidoc.html#pygenesig.validation.SignatureGenerator">[docs]</a><span class="k">class</span> <span class="nc">SignatureGenerator</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">ABCMeta</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Abstract base-class for generating gene signatures.</span>
-<span class="sd">    Child classes build gene signatures for a given gene expression matrix and tissue list. &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Abstract base-class for generating gene signatures.</span>
+<span class="sd">    Child classes build gene signatures from a gene expression matrix and target labels.</span>
+
+<span class="sd">    When initializing ``SignatureGenerator`` the input data is checked for consistency.</span>
+<span class="sd">    You can override the ``__init__`` method in your implementation of ``SignatureGenerator``</span>
+<span class="sd">    to pass additional parameters, however, make always sure to call this method</span>
+<span class="sd">    in your ``__init__`` function to take advantage of the consistency check::</span>
+
+<span class="sd">        def __init__(self, expr, target, your_param):</span>
+<span class="sd">            super(YourSignatureGenerator, self).__init__(expr, target)</span>
+<span class="sd">            # your code goes here</span>
+
+
+<span class="sd">    Args:</span>
+<span class="sd">        expr (np.ndarray): m x n matrix with m samples and n genes</span>
+<span class="sd">        target (array-like): m-vector with true tissue for each sample</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Initialize the SignatureGenerator with a gene expression matrix and the target labels.</span>
-<span class="sd">        Checks the consistency of the input data and saves them as class attributes.</span>
-
-<span class="sd">        You can override this method in your implementation of a SignatureGenerator</span>
-<span class="sd">        to pass additional parameters, however, make always sure to call this method</span>
-<span class="sd">        in your `__init__` function to take advantage of the consistency check:</span>
-
-<span class="sd">        ```</span>
-<span class="sd">        def __init__(self, expr, target, your_param):</span>
-<span class="sd">            super(YourSignatureTester, self).__init__(expr, target)</span>
-<span class="sd">            # your code goes here</span>
-<span class="sd">        ```</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            expr (np.ndarray): m x n matrix with m samples and n genes</span>
-<span class="sd">            target (array-like): m-vector with true tissue for each sample</span>
-<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">expr</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">target</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The length of target must equal the number of samples (columns) in the expr matrix. &quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">issubdtype</span><span class="p">(</span><span class="n">expr</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">issubdtype</span><span class="p">(</span><span class="n">expr</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
@@ -246,7 +256,25 @@
 <span class="sd">                Useful for cross-validation. If omitted, all samples will be used.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            dict: tissue_name -&gt; [list, of, enriched, genes]. The indices correspond to expr.index.</span>
+<span class="sd">            dict: signature dictionary. Maps target labels to a list of row-indices of the gene</span>
+<span class="sd">            expression matrix.</span>
+
+<span class="sd">            Example::</span>
+
+<span class="sd">                signatures = {</span>
+<span class="sd">                    &#39;adipose tissue&#39; : [</span>
+<span class="sd">                        42,</span>
+<span class="sd">                        124,</span>
+<span class="sd">                        256,</span>
+<span class="sd">                        1038,</span>
+<span class="sd">                        ... ],</span>
+<span class="sd">                    &#39;skeletal muscle&#39; : [</span>
+<span class="sd">                        52,</span>
+<span class="sd">                        679,</span>
+<span class="sd">                        ... ],</span>
+<span class="sd">                    ...</span>
+<span class="sd">                }</span>
+
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">subset</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
@@ -256,30 +284,26 @@
 
 
 <div class="viewcode-block" id="SignatureTester"><a class="viewcode-back" href="../../apidoc.html#pygenesig.validation.SignatureTester">[docs]</a><span class="k">class</span> <span class="nc">SignatureTester</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">ABCMeta</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Abstract base-class for testing gene signatures.</span>
-<span class="sd">    Child classes test if a signature is able to identify the respective tissue properly,</span>
-<span class="sd">    given an expression matrix and a list of the actual tissues. &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Abstract base-class for testing gene signatures.</span>
+<span class="sd">    Child classes test if signatures are able to identify their respective samples,</span>
+<span class="sd">    given an expression matrix and a list of the actual tissues.</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Initialize the SignatureTester with a gene expression matrix and the</span>
-<span class="sd">        target labels (=standard of truth).</span>
-<span class="sd">        Checks the consistency of the input data and saves them as class attributes.</span>
+<span class="sd">    When initializing ``SignatureTester`` the input data is checked for consistency.</span>
+<span class="sd">    You can override the ``__init__`` method in your implementation of ``SignatureTester``</span>
+<span class="sd">    to pass additional parameters, however, make always sure to call this method</span>
+<span class="sd">    in your ``__init__`` function to take advantage of the consistency check::</span>
 
-<span class="sd">        You can override this method in your implementation of a SignatureTester</span>
-<span class="sd">        to pass additional parameters, however, make always sure to call this method</span>
-<span class="sd">        in your `__init__` function to take advantage of the consistency check:</span>
-
-<span class="sd">        ```</span>
 <span class="sd">        def __init__(self, expr, target, your_param):</span>
 <span class="sd">            super(YourSignatureTester, self).__init__(expr, target)</span>
 <span class="sd">            # your code goes here</span>
-<span class="sd">        ```</span>
 
-<span class="sd">        Args:</span>
-<span class="sd">            expr (np.ndarray): m x n matrix with m samples and n genes</span>
-<span class="sd">            target (array-like): m-vector with true tissue for each sample</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">    Args:</span>
+<span class="sd">        expr (np.ndarray): m x n gene expression matrix with m samples and n genes</span>
+<span class="sd">        target (array-like): m-vector with true tissue for each sample (`ground truth`)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">expr</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">target</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The length of target must equal the number of samples (columns) in the expr matrix. &quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">issubdtype</span><span class="p">(</span><span class="n">expr</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">issubdtype</span><span class="p">(</span><span class="n">expr</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
@@ -291,17 +315,24 @@
 <div class="viewcode-block" id="SignatureTester.sort_signatures"><a class="viewcode-back" href="../../apidoc.html#pygenesig.validation.SignatureTester.sort_signatures">[docs]</a>    <span class="k">def</span> <span class="nf">sort_signatures</span><span class="p">(</span><span class="n">signatures</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Retrieve the signatures in a consistent order.</span>
-<span class="sd">        The rows/columns in the confusion matrix generated with `confusion_matrix` will</span>
-<span class="sd">        be in this order.</span>
+
+<span class="sd">        The signature dictionary is a python default dict, which is unordered.</span>
+<span class="sd">        However, when displaying results, it is desirable to display the</span>
+<span class="sd">        signatures in a consistent order.</span>
+
+<span class="sd">        You can use this method to iterate over the signature dictionary::</span>
+
+<span class="sd">            for tissue in sort_signatures(signatures):</span>
+<span class="sd">                print(tissue, signatures[tissue])</span>
+
+<span class="sd">        Confusion matrices generated with ``SignatureTester.confusion_matrix`` are</span>
+<span class="sd">        also sorted with ``sort_signatures``.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            signatures: signature dictionary.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            list: sorted keys of the signature dictionary.</span>
-
-<span class="sd">        Note: use this method when implementing test_signatures to make sure that</span>
-<span class="sd">            the confusion matrix is sorted according to this order.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">signatures</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span></div>
@@ -320,7 +351,7 @@
 <span class="sd">                Dictionary: tissue_name -&gt; [list, of, enriched, genes].</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            list: list of names of highest scoring signature (=predicted class) for each column in expr.</span>
+<span class="sd">            list: list of names (dict keys) of highest scoring signature (=predicted class) for each column in expr.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span>
@@ -330,8 +361,7 @@
 <span class="sd">        Test signatures based on the expression matrix.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            signatures (dict[str, list]): Signatures dictionary returned by SignatureGenerator.mk_signature.</span>
-<span class="sd">                Dictionary: tissue_name -&gt; [list, of, enriched, genes].</span>
+<span class="sd">            signatures (dict[str, list]): Signatures dictionary returned by ``SignatureGenerator.mk_signature``.</span>
 <span class="sd">            subset: sample indices (columns of expression matrix) to use for testing. Useful for crossvalidation.</span>
 
 <span class="sd">        Returns:</span>
@@ -354,8 +384,12 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Make a confusion matrix.</span>
 
-<span class="sd">        This is a wrapper for the sklearn.metrics.confusion matrix. Makes the matrix contain all</span>
+<span class="sd">        This is a wrapper for the ``sklearn.metrics.confusion_matrix``. Makes the matrix contain all</span>
 <span class="sd">        labels available in the signature.</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            The rows and columns are sorted with ``SignatureTester.sort_signatures``.</span>
+<span class="sd">            You can therefore use ``sort_signatures`` to label you confusion matrix.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            signatures: dict of signatures that was used to predict the labels</span>
@@ -363,7 +397,7 @@
 <span class="sd">            predicted: list of predicted labels</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            np.matrix: confusion matrix</span>
+<span class="sd">            numpy.matrix: confusion matrix</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">sklearn</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">confusion_matrix</span><span class="p">(</span><span class="n">actual</span><span class="p">,</span> <span class="n">predicted</span><span class="p">,</span>

@@ -81,12 +81,17 @@
           
             
             
-                <ul class="current">
+                <p class="caption"><span class="caption-text">User&#8217;s Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="index.html">Getting started with pygenesig</a></li>
 <li class="toctree-l1"><a class="reference internal" href="prepare_data.html">Prepare data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="use_pygenesig.html">Creating signatures</a></li>
 <li class="toctree-l1"><a class="reference internal" href="use_pygenesig.html#testing-signatures">Testing signatures</a></li>
 <li class="toctree-l1"><a class="reference internal" href="use_pygenesig.html#putting-it-together-crossvalidation">Putting it together: crossvalidation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="use_pygenesig.html#case-studies">Case studies</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Developer&#8217;s Guide</span></p>
+<ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Implement own methods</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#implement-a-signaturegenerator">Implement a SignatureGenerator</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#example-ginisignaturegenerator">Example: GiniSignatureGenerator</a></li>
@@ -147,7 +152,7 @@
 <p>To standardize the API for creating and testing signatures, pygenesig provides two abstract classes, <code class="docutils literal"><span class="pre">SignatureGenerator</span></code> and <code class="docutils literal"><span class="pre">SignatureTester</span></code> which serve as template for the different methods.</p>
 <div class="section" id="implement-a-signaturegenerator">
 <span id="implement-a-signaturegenerator"></span><h2>Implement a SignatureGenerator<a class="headerlink" href="#implement-a-signaturegenerator" title="Permalink to this headline">¶</a></h2>
-<p>To get started, read the <a class="reference external" href="apidoc.html">apidoc</a> of SignatureGenerator. Essentially, all you have to do is creating a child class of <code class="docutils literal"><span class="pre">SignatureGenerator</span></code> and implement the method <code class="docutils literal"><span class="pre">_mk_signatures(expr,</span> <span class="pre">target)</span></code>.
+<p>To get started, read the <a class="reference external" href="apidoc.html#pygenesig.validation.SignatureGenerator">apidoc</a> of <code class="docutils literal"><span class="pre">SignatureGenerator</span></code>. Essentially, all you have to do is creating a child class of <code class="docutils literal"><span class="pre">SignatureGenerator</span></code> and implement the method <code class="docutils literal"><span class="pre">_mk_signatures(expr,</span> <span class="pre">target)</span></code>.
 The method needs to return a signature dictionary as described in the <a class="reference external" href="prepare_data.html">data preparation tutorial</a>.</p>
 <p>For example:</p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">MySignatureGenerator</span><span class="p">(</span><span class="n">SignatureGenerator</span><span class="p">):</span> 
@@ -164,7 +169,7 @@ Make always sure to call the parent constructor, though, as it performs some con
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">MySignatureGenerator</span><span class="p">(</span><span class="n">SignatureGenerator</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">param1</span><span class="o">=</span><span class="mi">42</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">MySignatureGenerator</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">param1</span> <span class="o">=</span> <span class="mi">42</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">param1</span> <span class="o">=</span> <span class="n">param1</span> 
 
     <span class="k">def</span> <span class="nf">_mk_signatures</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
         <span class="c1"># ...</span>
@@ -190,7 +195,7 @@ Make always sure to call the parent constructor, though, as it performs some con
 </div>
 <div class="section" id="implement-a-signaturetester">
 <span id="implement-a-signaturetester"></span><h2>Implement a SignatureTester<a class="headerlink" href="#implement-a-signaturetester" title="Permalink to this headline">¶</a></h2>
-<p>To get started, read the <a class="reference external" href="apidoc.html">apidoc</a> of SignatureTester. Essentially, all you have to do is creating a child class of <code class="docutils literal"><span class="pre">SignatureTester</span></code> and implement the method <code class="docutils literal"><span class="pre">_predict(expr,</span> <span class="pre">signatures)</span></code>.
+<p>To get started, read the <a class="reference external" href="apidoc.html#pygenesig.validation.SignatureTester">apidoc</a> of <code class="docutils literal"><span class="pre">SignatureTester</span></code>. Essentially, all you have to do is creating a child class of <code class="docutils literal"><span class="pre">SignatureTester</span></code> and implement the method <code class="docutils literal"><span class="pre">_predict(expr,</span> <span class="pre">signatures)</span></code>.
 The method returns a list of the predicted labels for each samples.</p>
 <p>For example, a random predictor, being agnostic of the signatures could look like:</p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">random</span> 

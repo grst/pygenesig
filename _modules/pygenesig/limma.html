@@ -80,12 +80,17 @@
           
             
             
-                <ul>
+                <p class="caption"><span class="caption-text">User&#8217;s Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">Getting started with pygenesig</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../prepare_data.html">Prepare data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../use_pygenesig.html">Creating signatures</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../use_pygenesig.html#testing-signatures">Testing signatures</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../use_pygenesig.html#putting-it-together-crossvalidation">Putting it together: crossvalidation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../use_pygenesig.html#case-studies">Case studies</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Developer&#8217;s Guide</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../../developers_guide.html">Implement own methods</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../apidoc.html">API documentation</a></li>
 </ul>
@@ -133,7 +138,23 @@
            <div itemprop="articleBody">
             
   <h1>Source code for pygenesig.limma</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">readline</span>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">With Differential Expression (DE)-Analysis one can find genes that</span>
+<span class="sd">are significantly differentially expressed between different conditions.</span>
+
+<span class="sd">This module provides a python bridge to the R packages `limma`_ and `edgeR`_</span>
+<span class="sd">using ``rpy2`` and implements a ``SignatureGenerator`` based on DE.</span>
+
+<span class="sd">.. _limma:</span>
+<span class="sd">    https://bioconductor.org/packages/release/bioc/html/limma.html</span>
+
+<span class="sd">.. _edgeR:</span>
+<span class="sd">    https://www.bioconductor.org/packages/release/bioc/html/edgeR.html</span>
+
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">readline</span>
 <span class="kn">import</span> <span class="nn">rpy2.robjects</span> <span class="kn">as</span> <span class="nn">ro</span>
 <span class="kn">from</span> <span class="nn">rpy2.robjects.packages</span> <span class="kn">import</span> <span class="n">importr</span>
 <span class="kn">from</span> <span class="nn">rpy2.robjects</span> <span class="kn">import</span> <span class="n">numpy2ri</span><span class="p">,</span> <span class="n">pandas2ri</span><span class="p">,</span> <span class="n">Formula</span>
@@ -154,17 +175,25 @@
 
 
 <div class="viewcode-block" id="LimmaSignatureGenerator"><a class="viewcode-back" href="../../apidoc.html#pygenesig.limma.LimmaSignatureGenerator">[docs]</a><span class="k">class</span> <span class="nc">LimmaSignatureGenerator</span><span class="p">(</span><span class="n">SignatureGenerator</span><span class="p">):</span>
-    <span class="n">TARGET_COL</span> <span class="o">=</span> <span class="s2">&quot;target&quot;</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Use Differntial Expression (DE) Analysis to generate signatures.</span>
+
+<span class="sd">    The LimmaSignatureGenerator uses `Limma` and `voom` to find significantly differentially</span>
+<span class="sd">    expressed genes. Genes, which are specific for a tissue have a high fold-change and a low</span>
+<span class="sd">    p-value, whereas genes equally present in all tissues will not be significant.</span>
+
+<span class="sd">    The idea is, that genes which are significantly different between different tissues</span>
+<span class="sd">    will reliably identify their tissue of origin.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        expr (np.ndarray): m x n matrix with m samples and n genes</span>
+<span class="sd">        target (array-like): m-vector with true tissue for each sample</span>
+<span class="sd">        fold_change (int): minimal fold change for a gene to be considered as `differentially expressed`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">_TARGET_COL</span> <span class="o">=</span> <span class="s2">&quot;target&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">covariates</span><span class="p">,</span> <span class="n">fold_change</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            expr:</span>
-<span class="sd">            target:</span>
-<span class="sd">            covariates (pd.DataFrame):</span>
-<span class="sd">            fold_change:</span>
-<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">LimmaSignatureGenerator</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
         <span class="k">assert</span> <span class="n">covariates</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">expr</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;nrow(covariates) must equal ncol(expr)&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fold_change</span> <span class="o">=</span> <span class="n">fold_change</span>
@@ -175,11 +204,11 @@
         <span class="n">genes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">expr</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])])</span>
         <span class="n">dg_list</span> <span class="o">=</span> <span class="n">edge_r</span><span class="o">.</span><span class="n">DGEList</span><span class="p">(</span><span class="n">counts</span><span class="o">=</span><span class="n">expr</span><span class="p">,</span> <span class="n">genes</span><span class="o">=</span><span class="n">genes</span><span class="p">)</span>
 
-        <span class="k">assert</span> <span class="nb">all</span><span class="p">([</span><span class="bp">True</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">col</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">TARGET_COL</span><span class="p">)</span> <span class="k">else</span> <span class="bp">False</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">covariates</span><span class="o">.</span><span class="n">columns</span><span class="p">]),</span> \
+        <span class="k">assert</span> <span class="nb">all</span><span class="p">([</span><span class="bp">True</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">col</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_TARGET_COL</span><span class="p">)</span> <span class="k">else</span> <span class="bp">False</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">covariates</span><span class="o">.</span><span class="n">columns</span><span class="p">]),</span> \
             <span class="s2">&quot;covariates must not contain a column named target. &quot;</span>
         <span class="n">fmla</span> <span class="o">=</span> <span class="n">Formula</span><span class="p">(</span><span class="s2">&quot;~ target + &quot;</span> <span class="o">+</span> <span class="s2">&quot; + &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">covariates</span><span class="o">.</span><span class="n">columns</span><span class="p">))</span>
         <span class="n">env</span> <span class="o">=</span> <span class="n">fmla</span><span class="o">.</span><span class="n">environment</span>
-        <span class="n">env</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">TARGET_COL</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">target</span>
+        <span class="n">env</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_TARGET_COL</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">target</span>
         <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">covariates</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
             <span class="n">env</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">covariates</span><span class="p">[</span><span class="n">col</span><span class="p">]</span>
         <span class="n">design_mat</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">model_matrix</span><span class="p">(</span><span class="n">fmla</span><span class="p">)</span>
@@ -211,7 +240,7 @@
         <span class="n">np_rslt</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">rslt</span><span class="p">)</span>
         <span class="n">tissue_cols</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="bp">True</span> <span class="k">if</span> <span class="n">col</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;target&#39;</span><span class="p">)</span> <span class="k">else</span> <span class="bp">False</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">colnames</span><span class="p">])</span>
         <span class="n">np_rslt</span> <span class="o">=</span> <span class="n">np_rslt</span><span class="p">[:,</span> <span class="n">tissue_cols</span><span class="p">]</span>
-        <span class="n">tissues</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">col</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">TARGET_COL</span><span class="p">):]</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">colnames</span><span class="p">[</span><span class="n">tissue_cols</span><span class="p">]])</span>
+        <span class="n">tissues</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">col</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_TARGET_COL</span><span class="p">):]</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">colnames</span><span class="p">[</span><span class="n">tissue_cols</span><span class="p">]])</span>
         <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">tissues</span><span class="p">)</span> <span class="o">==</span> <span class="n">np_rslt</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
         <span class="n">row_inds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">cpm_inds</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">signatures</span> <span class="o">=</span> <span class="p">{}</span>
