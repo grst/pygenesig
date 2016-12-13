@@ -1,0 +1,393 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pygenesig.mcp_counter &mdash; pygenesig 0.1.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="pygenesig 0.1.0 documentation" href="../../index.html"/>
+        <link rel="up" title="Module code" href="../index.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> pygenesig
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">User&#8217;s Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">Getting started with pygenesig</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../prepare_data.html">Prepare data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../use_pygenesig.html">Creating signatures</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../use_pygenesig.html#testing-signatures">Testing signatures</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../use_pygenesig.html#putting-it-together-crossvalidation">Putting it together: crossvalidation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../use_pygenesig.html#case-studies">Case studies</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Developer&#8217;s Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../developers_guide.html">Implement own methods</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../apidoc.html">API documentation</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../index.html">pygenesig</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+      
+    <li>pygenesig.mcp_counter</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for pygenesig.mcp_counter</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">`MCPCounter`_ is a method described by Becht et al., Genome Biology (2015)</span>
+<span class="sd">for deconvolution of tissue-infiltrating immune and stromal cell populations.</span>
+
+<span class="sd">Besides presenting a method for gene-expression based deconvolution they put a</span>
+<span class="sd">lot of effort into curating signatures.</span>
+
+<span class="sd">This module</span>
+
+<span class="sd">* re-implements MCP counter in python as SignatureTester</span>
+<span class="sd">* implements a SignatureGenerator based on the MCP method for curating signatures.</span>
+
+<span class="sd">.. _MCPCounter:</span>
+<span class="sd">    http://dx.doi.org/10.1186/s13059-016-1070-5</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<span class="kn">from</span> <span class="nn">pygenesig.validation</span> <span class="kn">import</span> <span class="n">SignatureGenerator</span><span class="p">,</span> <span class="n">SignatureTester</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">roc_auc_score</span>
+
+
+<div class="viewcode-block" id="fold_change"><a class="viewcode-back" href="../../apidoc.html#pygenesig.mcp_counter.fold_change">[docs]</a><span class="k">def</span> <span class="nf">fold_change</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="n">positive_mask</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute the fold change between the</span>
+<span class="sd">    positive and negative samples for a single gene `G`.</span>
+
+<span class="sd">    According to `Becht et al.`_ the fold change is defined as</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        FC = X - \overline{X}</span>
+
+<span class="sd">    where :math:`X` is the mean of positive and :math:`\overline{X}` is the mean of the negative samples.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        expr (np.ndarray): expression of `G` for each sample.</span>
+<span class="sd">        positive_mask (np.ndarray, dtype=np.bool): boolean mask for `expr` indicating which samples belong to</span>
+<span class="sd">            the positive class.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        float: fold change</span>
+
+<span class="sd">    &gt;&gt;&gt; expr = np.array([2, 3, 5, 4, 9, 15])</span>
+<span class="sd">    &gt;&gt;&gt; target = np.array([&quot;A&quot;, &quot;B&quot;, &quot;C&quot;, &quot;A&quot;, &quot;B&quot;, &quot;C&quot;])</span>
+<span class="sd">    &gt;&gt;&gt; fold_change(expr, target == &quot;A&quot;)</span>
+<span class="sd">    -5.0</span>
+
+<span class="sd">    .. _Becht et al.:</span>
+<span class="sd">        http://dx.doi.org/10.1186/s13059-016-1070-5</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">subtract</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">expr</span><span class="p">[</span><span class="n">positive_mask</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">expr</span><span class="p">[</span><span class="o">~</span><span class="n">positive_mask</span><span class="p">]))</span></div>
+
+
+<div class="viewcode-block" id="specific_fold_change"><a class="viewcode-back" href="../../apidoc.html#pygenesig.mcp_counter.specific_fold_change">[docs]</a><span class="k">def</span> <span class="nf">specific_fold_change</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="n">positive_mask</span><span class="p">,</span> <span class="n">negative_masks</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute the specific fold change of the positive class with respect to all other classes</span>
+<span class="sd">    for a single gene `G`.</span>
+
+<span class="sd">    According to `Becht et al.`_ the specific fold change is defined as</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        sFC = (X - \overline{X}_{min})/(\overline{X}_{max} - \overline{X}_{min})</span>
+
+<span class="sd">    where :math:`X` is the mean of positive and :math:`\overline{X}_{max}` is the maximum mean over</span>
+<span class="sd">    all negative classes and :math:`\overline{X}_{min}` is the minimal mean over all negative classes.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        expr (np.ndarray): expression of `G` for each sample.</span>
+<span class="sd">        positive_mask (np.ndarray): boolean mask for `expr` indicating which samples belong to</span>
+<span class="sd">            the positive class.</span>
+<span class="sd">        negative_masks (list of np.ndarray): list of boolean masks for `expr` indicating which samples belong</span>
+<span class="sd">            to the different negative classes.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        float: specific fold change</span>
+
+<span class="sd">    &gt;&gt;&gt; expr = np.array([2, 3, 5, 4, 9, 15])</span>
+<span class="sd">    &gt;&gt;&gt; target = np.array([&quot;A&quot;, &quot;B&quot;, &quot;C&quot;, &quot;A&quot;, &quot;B&quot;, &quot;C&quot;])</span>
+<span class="sd">    &gt;&gt;&gt; specific_fold_change(expr, target == &#39;A&#39;, [target == &quot;B&quot;, target == &quot;C&quot;])</span>
+<span class="sd">    -0.75</span>
+
+<span class="sd">    .. _Becht et al.:</span>
+<span class="sd">        http://dx.doi.org/10.1186/s13059-016-1070-5</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">mean_per_class</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">expr</span><span class="p">[</span><span class="n">class_inds</span><span class="p">])</span> <span class="k">for</span> <span class="n">class_inds</span> <span class="ow">in</span> <span class="n">negative_masks</span><span class="p">]</span>
+    <span class="n">x_min</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">mean_per_class</span><span class="p">)</span>
+    <span class="n">x_max</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">mean_per_class</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">divide</span><span class="p">(</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">subtract</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">expr</span><span class="p">[</span><span class="n">positive_mask</span><span class="p">]),</span> <span class="n">x_min</span><span class="p">),</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">subtract</span><span class="p">(</span><span class="n">x_max</span><span class="p">,</span> <span class="n">x_min</span><span class="p">)</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="roc_auc"><a class="viewcode-back" href="../../apidoc.html#pygenesig.mcp_counter.roc_auc">[docs]</a><span class="k">def</span> <span class="nf">roc_auc</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="n">positive_mask</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute the Receiver Operator Characteristics Area under the Curve (ROC AUC) for a single gene `G`.</span>
+<span class="sd">    This tells how well the gene discriminates between the two classes.</span>
+
+<span class="sd">    This is a wrapper for the scikit-learn `roc_auc_score`_ function.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">       expr (np.ndarray): expression of `G` for each sample.</span>
+<span class="sd">       positive_mask (np.ndarray, dtype=np.bool): boolean mask for `expr` indicating which samples belong to</span>
+<span class="sd">            the positive class.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        float: roc auc score</span>
+
+<span class="sd">    .. _roc_auc_score:</span>
+<span class="sd">        http://scikit-learn.org/stable/modules/generated/sklearn.metrics.roc_auc_score.html#sklearn.metrics.roc_auc_score</span>
+
+<span class="sd">    &gt;&gt;&gt; expr = np.array([2, 3, 5, 4, 9, 15])</span>
+<span class="sd">    &gt;&gt;&gt; target = np.array([&quot;A&quot;, &quot;B&quot;, &quot;C&quot;, &quot;A&quot;, &quot;B&quot;, &quot;C&quot;])</span>
+<span class="sd">    &gt;&gt;&gt; roc_auc(expr, target == &quot;A&quot;)</span>
+<span class="sd">    0.125</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">roc_auc_score</span><span class="p">(</span><span class="n">positive_mask</span><span class="p">,</span> <span class="n">expr</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MCPSignatureGenerator"><a class="viewcode-back" href="../../apidoc.html#pygenesig.mcp_counter.MCPSignatureGenerator">[docs]</a><span class="k">class</span> <span class="nc">MCPSignatureGenerator</span><span class="p">(</span><span class="n">SignatureGenerator</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Implements the procedure described by `Becht et al.`_ for curating signatures.</span>
+<span class="sd">    A gene is considered a valid `Transcription Marker` (TM) if it meets the following criteria</span>
+
+<span class="sd">    * fold change &gt;= ``min_fc`` (default=2)</span>
+<span class="sd">    * specific fold change &gt;= ``min_sfc`` (default=1.5)</span>
+<span class="sd">    * AUC ROC &gt;= ``min_auc`` (default=0.97)</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        expr: m x n gene expression matrix with m genes and n samples.</span>
+<span class="sd">        target: m-vector with true tissue for each sample</span>
+<span class="sd">        min_fc: minimal fold change for a gene to be considered as valid TM</span>
+<span class="sd">        min_sfc: minimal specific fold change for a gene to be considered as valid TM</span>
+<span class="sd">        min_auc: minimal ROC AUC for a gene to be considered as valid TM</span>
+
+<span class="sd">    .. _Becht et al.:</span>
+<span class="sd">        http://dx.doi.org/10.1186/s13059-016-1070-5</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">min_fc</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">min_sfc</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">min_auc</span><span class="o">=.</span><span class="mi">97</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">MCPSignatureGenerator</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">min_fc</span> <span class="o">=</span> <span class="n">min_fc</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">min_sfc</span> <span class="o">=</span> <span class="n">min_sfc</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">min_auc</span> <span class="o">=</span> <span class="n">min_auc</span>
+
+    <span class="k">def</span> <span class="nf">_mk_signatures</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
+        <span class="n">classes</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">target</span><span class="p">))</span>
+        <span class="n">masks</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">cls</span><span class="p">:</span> <span class="n">target</span> <span class="o">==</span> <span class="n">cls</span> <span class="k">for</span> <span class="n">cls</span> <span class="ow">in</span> <span class="n">classes</span>
+        <span class="p">}</span>
+        <span class="n">signatures</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">cls</span><span class="p">:</span> <span class="p">[]</span> <span class="k">for</span> <span class="n">cls</span> <span class="ow">in</span> <span class="n">classes</span>
+        <span class="p">}</span>
+        <span class="c1"># TODO: this could be sped up significantly by precomputing the means for each class.</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">expr</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+            <span class="k">for</span> <span class="n">cls</span> <span class="ow">in</span> <span class="n">classes</span><span class="p">:</span>
+                <span class="n">fc</span> <span class="o">=</span> <span class="n">fold_change</span><span class="p">(</span><span class="n">expr</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:],</span> <span class="n">masks</span><span class="p">[</span><span class="n">cls</span><span class="p">])</span>
+                <span class="n">sfc</span> <span class="o">=</span> <span class="n">specific_fold_change</span><span class="p">(</span><span class="n">expr</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:],</span> <span class="n">masks</span><span class="p">[</span><span class="n">cls</span><span class="p">],</span> <span class="p">[</span><span class="n">mask</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">mask</span> <span class="ow">in</span> <span class="n">masks</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="o">!=</span> <span class="n">cls</span><span class="p">])</span>
+                <span class="n">auc</span> <span class="o">=</span> <span class="n">roc_auc</span><span class="p">(</span><span class="n">expr</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:],</span> <span class="n">masks</span><span class="p">[</span><span class="n">cls</span><span class="p">])</span>
+                <span class="k">if</span> <span class="n">fc</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_fc</span> <span class="ow">and</span> <span class="n">sfc</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_sfc</span> <span class="ow">and</span> <span class="n">auc</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_auc</span><span class="p">:</span>
+                    <span class="n">signatures</span><span class="p">[</span><span class="n">cls</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">signatures</span></div>
+
+
+<div class="viewcode-block" id="MCPSignatureTester"><a class="viewcode-back" href="../../apidoc.html#pygenesig.mcp_counter.MCPSignatureTester">[docs]</a><span class="k">class</span> <span class="nc">MCPSignatureTester</span><span class="p">(</span><span class="n">SignatureTester</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Implements the `MCPCounter`_ described by Becht et al. in python.</span>
+
+<span class="sd">    The principle is super-simple: take the mean of all marker genes as indicator.</span>
+<span class="sd">    Also see their `R script`_.</span>
+
+<span class="sd">    .. _R script:</span>
+<span class="sd">        https://github.com/ebecht/MCPcounter/blob/a79614eee002c88c64725d69140c7653e7c379b4/Source/R/MCPcounter.R</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">_predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="n">signatures</span><span class="p">):</span>
+        <span class="n">predicted</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">classes</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">signatures</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">expr</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
+            <span class="n">sample_means</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">cls</span> <span class="ow">in</span> <span class="n">classes</span><span class="p">:</span>
+                <span class="n">inds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">signatures</span><span class="p">[</span><span class="n">cls</span><span class="p">])</span>
+                <span class="n">cls_mean</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">expr</span><span class="p">[</span><span class="n">inds</span><span class="p">,</span> <span class="n">j</span><span class="p">])</span>
+                <span class="n">sample_means</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cls_mean</span><span class="p">)</span>
+            <span class="n">predicted</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">classes</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">sample_means</span><span class="p">)])</span>
+        <span class="k">return</span> <span class="n">predicted</span></div>
+
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Gregor Sturm.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'0.1.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

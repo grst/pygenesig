@@ -97,13 +97,11 @@
 <li class="toctree-l3"><a class="reference internal" href="#module-pygenesig.validation">Abstract classes and cross validation (<code class="docutils literal"><span class="pre">pygenesig.validation</span></code>)</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#signature-generators">Signature Generators</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#methods">Methods</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#module-pygenesig.gini">Gini Index</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-pygenesig.limma">Differential Expression (Limma)</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="#signature-testers">Signature Testers</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#module-pygenesig.bioqc">BioQC</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-pygenesig.mcp_counter">MCPCounter</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#tools">Tools</a><ul>
@@ -380,8 +378,8 @@ on each fold, list of confusion matrices containing the confusion matrices calcu
 
 </div>
 </div>
-<div class="section" id="signature-generators">
-<span id="signature-generators"></span><h2>Signature Generators<a class="headerlink" href="#signature-generators" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="methods">
+<span id="methods"></span><h2>Methods<a class="headerlink" href="#methods" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="module-pygenesig.gini">
 <span id="gini-index"></span><span id="gini-index"></span><h3>Gini Index<a class="headerlink" href="#module-pygenesig.gini" title="Permalink to this headline">¶</a></h3>
 <p>The Gini-coefficient (gini index) measures the inequality among values of
@@ -539,9 +537,6 @@ will reliably identify their tissue of origin.</p>
 </dd></dl>
 
 </div>
-</div>
-<div class="section" id="signature-testers">
-<span id="signature-testers"></span><h2>Signature Testers<a class="headerlink" href="#signature-testers" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="module-pygenesig.bioqc">
 <span id="bioqc"></span><span id="bioqc"></span><h3>BioQC<a class="headerlink" href="#module-pygenesig.bioqc" title="Permalink to this headline">¶</a></h3>
 <p><a class="reference external" href="https://accio.github.io/BioQC">BioQC</a> is a R/Bioconductor package to detect tissue heterogeneity in gene expression data. It ships with a set
@@ -620,7 +615,7 @@ has the lowest p-value of all tested signatures.</p>
 
 <dl class="data">
 <dt id="pygenesig.bioqc.mk_eset">
-<code class="descclassname">pygenesig.bioqc.</code><code class="descname">mk_eset</code><em class="property"> = R object with classes: ('function',) mapped to: &lt;SignatureTranslatedFunction - Python:0x2aab70d56648 / R:0x86637c0&gt;</em><a class="headerlink" href="#pygenesig.bioqc.mk_eset" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">pygenesig.bioqc.</code><code class="descname">mk_eset</code><em class="property"> = R object with classes: ('function',) mapped to: &lt;SignatureTranslatedFunction - Python:0x2aaba3429e48 / R:0x865b690&gt;</em><a class="headerlink" href="#pygenesig.bioqc.mk_eset" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generate an R ExpressionSet with <code class="docutils literal"><span class="pre">exprs()</span></code> and <code class="docutils literal"><span class="pre">fData()</span></code> annotation.
 fData will contain one single column named GeneSymbol.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -639,7 +634,7 @@ fData will contain one single column named GeneSymbol.</p>
 
 <dl class="data">
 <dt id="pygenesig.bioqc.read_gmt">
-<code class="descclassname">pygenesig.bioqc.</code><code class="descname">read_gmt</code><em class="property"> = R object with classes: ('function',) mapped to: &lt;DocumentedSTFunction - Python:0x2aaba3471b08 / R:0x8459cb8&gt;</em><a class="headerlink" href="#pygenesig.bioqc.read_gmt" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">pygenesig.bioqc.</code><code class="descname">read_gmt</code><em class="property"> = R object with classes: ('function',) mapped to: &lt;DocumentedSTFunction - Python:0x2aaba34a2e08 / R:0x8430550&gt;</em><a class="headerlink" href="#pygenesig.bioqc.read_gmt" title="Permalink to this definition">¶</a></dt>
 <dd><p>Alias to R function <code class="docutils literal"><span class="pre">BioQC::readGmt</span></code> using rpy2.</p>
 <p>Check the <a class="reference external" href="https://bioconductor.org/packages/release/bioc/manuals/BioQC/man/BioQC.pdf">BioQC Documentation</a>
 for more details.</p>
@@ -647,10 +642,167 @@ for more details.</p>
 
 <dl class="data">
 <dt id="pygenesig.bioqc.wmw_test">
-<code class="descclassname">pygenesig.bioqc.</code><code class="descname">wmw_test</code><em class="property"> = R object with classes: ('standardGeneric',) mapped to: &lt;DocumentedSTFunction - Python:0x2aaaff9af548 / R:0x7278970&gt;</em><a class="headerlink" href="#pygenesig.bioqc.wmw_test" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">pygenesig.bioqc.</code><code class="descname">wmw_test</code><em class="property"> = R object with classes: ('standardGeneric',) mapped to: &lt;DocumentedSTFunction - Python:0x2aaba3485108 / R:0x726f8f0&gt;</em><a class="headerlink" href="#pygenesig.bioqc.wmw_test" title="Permalink to this definition">¶</a></dt>
 <dd><p>Alias to R function <code class="docutils literal"><span class="pre">BioQC::wmwTest</span></code> using rpy2.</p>
 <p>Check the <a class="reference external" href="https://bioconductor.org/packages/release/bioc/manuals/BioQC/man/BioQC.pdf">BioQC Documentation</a>
 for more details.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-pygenesig.mcp_counter">
+<span id="mcpcounter"></span><span id="mcpcounter"></span><h3>MCPCounter<a class="headerlink" href="#module-pygenesig.mcp_counter" title="Permalink to this headline">¶</a></h3>
+<p><a class="reference external" href="http://dx.doi.org/10.1186/s13059-016-1070-5">MCPCounter</a> is a method described by Becht et al., Genome Biology (2015)
+for deconvolution of tissue-infiltrating immune and stromal cell populations.</p>
+<p>Besides presenting a method for gene-expression based deconvolution they put a
+lot of effort into curating signatures.</p>
+<p>This module</p>
+<ul class="simple">
+<li>re-implements MCP counter in python as SignatureTester</li>
+<li>implements a SignatureGenerator based on the MCP method for curating signatures.</li>
+</ul>
+<dl class="class">
+<dt id="pygenesig.mcp_counter.MCPSignatureGenerator">
+<em class="property">class </em><code class="descclassname">pygenesig.mcp_counter.</code><code class="descname">MCPSignatureGenerator</code><span class="sig-paren">(</span><em>expr</em>, <em>target</em>, <em>min_fc=2</em>, <em>min_sfc=1.5</em>, <em>min_auc=0.97</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pygenesig/mcp_counter.html#MCPSignatureGenerator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pygenesig.mcp_counter.MCPSignatureGenerator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pygenesig.validation.SignatureGenerator" title="pygenesig.validation.SignatureGenerator"><code class="xref py py-class docutils literal"><span class="pre">pygenesig.validation.SignatureGenerator</span></code></a></p>
+<p>Implements the procedure described by <a class="reference external" href="http://dx.doi.org/10.1186/s13059-016-1070-5">Becht et al.</a> for curating signatures.
+A gene is considered a valid <cite>Transcription Marker</cite> (TM) if it meets the following criteria</p>
+<ul class="simple">
+<li>fold change &gt;= <code class="docutils literal"><span class="pre">min_fc</span></code> (default=2)</li>
+<li>specific fold change &gt;= <code class="docutils literal"><span class="pre">min_sfc</span></code> (default=1.5)</li>
+<li>AUC ROC &gt;= <code class="docutils literal"><span class="pre">min_auc</span></code> (default=0.97)</li>
+</ul>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>expr</strong> &#8211; m x n gene expression matrix with m genes and n samples.</li>
+<li><strong>target</strong> &#8211; m-vector with true tissue for each sample</li>
+<li><strong>min_fc</strong> &#8211; minimal fold change for a gene to be considered as valid TM</li>
+<li><strong>min_sfc</strong> &#8211; minimal specific fold change for a gene to be considered as valid TM</li>
+<li><strong>min_auc</strong> &#8211; minimal ROC AUC for a gene to be considered as valid TM</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="class">
+<dt id="pygenesig.mcp_counter.MCPSignatureTester">
+<em class="property">class </em><code class="descclassname">pygenesig.mcp_counter.</code><code class="descname">MCPSignatureTester</code><span class="sig-paren">(</span><em>expr</em>, <em>target</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pygenesig/mcp_counter.html#MCPSignatureTester"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pygenesig.mcp_counter.MCPSignatureTester" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pygenesig.validation.SignatureTester" title="pygenesig.validation.SignatureTester"><code class="xref py py-class docutils literal"><span class="pre">pygenesig.validation.SignatureTester</span></code></a></p>
+<p>Implements the <a class="reference external" href="http://dx.doi.org/10.1186/s13059-016-1070-5">MCPCounter</a> described by Becht et al. in python.</p>
+<p>The principle is super-simple: take the mean of all marker genes as indicator.
+Also see their <a class="reference external" href="https://github.com/ebecht/MCPcounter/blob/a79614eee002c88c64725d69140c7653e7c379b4/Source/R/MCPcounter.R">R script</a>.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pygenesig.mcp_counter.fold_change">
+<code class="descclassname">pygenesig.mcp_counter.</code><code class="descname">fold_change</code><span class="sig-paren">(</span><em>expr</em>, <em>positive_mask</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pygenesig/mcp_counter.html#fold_change"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pygenesig.mcp_counter.fold_change" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the fold change between the
+positive and negative samples for a single gene <cite>G</cite>.</p>
+<p>According to <a class="reference external" href="http://dx.doi.org/10.1186/s13059-016-1070-5">Becht et al.</a> the fold change is defined as</p>
+<div class="math">
+\[FC = X - \overline{X}\]</div>
+<p>where <span class="math">\(X\)</span> is the mean of positive and <span class="math">\(\overline{X}\)</span> is the mean of the negative samples.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>expr</strong> (<em>np.ndarray</em>) &#8211; expression of <cite>G</cite> for each sample.</li>
+<li><strong>positive_mask</strong> (<em>np.ndarray, dtype=np.bool</em>) &#8211; boolean mask for <cite>expr</cite> indicating which samples belong to
+the positive class.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">fold change</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">float</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">expr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">15</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">target</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;B&quot;</span><span class="p">,</span> <span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;B&quot;</span><span class="p">,</span> <span class="s2">&quot;C&quot;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fold_change</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="n">target</span> <span class="o">==</span> <span class="s2">&quot;A&quot;</span><span class="p">)</span>
+<span class="go">-5.0</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="pygenesig.mcp_counter.roc_auc">
+<code class="descclassname">pygenesig.mcp_counter.</code><code class="descname">roc_auc</code><span class="sig-paren">(</span><em>expr</em>, <em>positive_mask</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pygenesig/mcp_counter.html#roc_auc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pygenesig.mcp_counter.roc_auc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the Receiver Operator Characteristics Area under the Curve (ROC AUC) for a single gene <cite>G</cite>.
+This tells how well the gene discriminates between the two classes.</p>
+<p>This is a wrapper for the scikit-learn <a class="reference external" href="http://scikit-learn.org/stable/modules/generated/sklearn.metrics.roc_auc_score.html#sklearn.metrics.roc_auc_score">roc_auc_score</a> function.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>expr</strong> (<em>np.ndarray</em>) &#8211; expression of <cite>G</cite> for each sample.</li>
+<li><strong>positive_mask</strong> (<em>np.ndarray, dtype=np.bool</em>) &#8211; boolean mask for <cite>expr</cite> indicating which samples belong to
+the positive class.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">roc auc score</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">float</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">expr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">15</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">target</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;B&quot;</span><span class="p">,</span> <span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;B&quot;</span><span class="p">,</span> <span class="s2">&quot;C&quot;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">roc_auc</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="n">target</span> <span class="o">==</span> <span class="s2">&quot;A&quot;</span><span class="p">)</span>
+<span class="go">0.125</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="pygenesig.mcp_counter.specific_fold_change">
+<code class="descclassname">pygenesig.mcp_counter.</code><code class="descname">specific_fold_change</code><span class="sig-paren">(</span><em>expr</em>, <em>positive_mask</em>, <em>negative_masks</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pygenesig/mcp_counter.html#specific_fold_change"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pygenesig.mcp_counter.specific_fold_change" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the specific fold change of the positive class with respect to all other classes
+for a single gene <cite>G</cite>.</p>
+<p>According to <a class="reference external" href="http://dx.doi.org/10.1186/s13059-016-1070-5">Becht et al.</a> the specific fold change is defined as</p>
+<div class="math">
+\[sFC = (X - \overline{X}_{min})/(\overline{X}_{max} - \overline{X}_{min})\]</div>
+<p>where <span class="math">\(X\)</span> is the mean of positive and <span class="math">\(\overline{X}_{max}\)</span> is the maximum mean over
+all negative classes and <span class="math">\(\overline{X}_{min}\)</span> is the minimal mean over all negative classes.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>expr</strong> (<em>np.ndarray</em>) &#8211; expression of <cite>G</cite> for each sample.</li>
+<li><strong>positive_mask</strong> (<em>np.ndarray</em>) &#8211; boolean mask for <cite>expr</cite> indicating which samples belong to
+the positive class.</li>
+<li><strong>negative_masks</strong> (<em>list of np.ndarray</em>) &#8211; list of boolean masks for <cite>expr</cite> indicating which samples belong
+to the different negative classes.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">specific fold change</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">float</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">expr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">15</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">target</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;B&quot;</span><span class="p">,</span> <span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;B&quot;</span><span class="p">,</span> <span class="s2">&quot;C&quot;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">specific_fold_change</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="n">target</span> <span class="o">==</span> <span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="p">[</span><span class="n">target</span> <span class="o">==</span> <span class="s2">&quot;B&quot;</span><span class="p">,</span> <span class="n">target</span> <span class="o">==</span> <span class="s2">&quot;C&quot;</span><span class="p">])</span>
+<span class="go">-0.75</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </div>
@@ -679,6 +831,32 @@ for more details.</p>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">float</p>
 </td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pygenesig.tools.load_gmt">
+<code class="descclassname">pygenesig.tools.</code><code class="descname">load_gmt</code><span class="sig-paren">(</span><em>file</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pygenesig/tools.html#load_gmt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pygenesig.tools.load_gmt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read a <a class="reference external" href="http://software.broadinstitute.org/cancer/software/gsea/wiki/index.php/Data_formats#GMT:_Gene_Matrix_Transposed_file_format_.28.2A.gmt.29">GMT file</a> into a signature dictionary.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>file</strong> &#8211; path to GMT file</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">signature dictionary<p>Example:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;tissue1&quot;</span> <span class="p">:</span> <span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="n">of</span><span class="p">,</span> <span class="n">gene</span><span class="p">,</span> <span class="n">ids</span><span class="p">],</span>
+    <span class="s2">&quot;tissue2&quot;</span> <span class="p">:</span> <span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="n">of</span><span class="p">,</span> <span class="n">other</span><span class="p">,</span> <span class="n">genes</span><span class="p">],</span>
+    <span class="o">...</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">dict of list</td>
 </tr>
 </tbody>
 </table>

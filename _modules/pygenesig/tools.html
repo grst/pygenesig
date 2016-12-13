@@ -161,6 +161,39 @@
             <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">itertools</span><span class="o">.</span><span class="n">chain</span><span class="p">([</span><span class="n">sig</span><span class="p">,</span> <span class="n">description</span><span class="p">],</span> <span class="n">genes</span><span class="p">))</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span></div>
 
 
+<div class="viewcode-block" id="load_gmt"><a class="viewcode-back" href="../../apidoc.html#pygenesig.tools.load_gmt">[docs]</a><span class="k">def</span> <span class="nf">load_gmt</span><span class="p">(</span><span class="nb">file</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Read a `GMT file`_ into a signature dictionary.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        file: path to GMT file</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        dict of list: signature dictionary</span>
+
+<span class="sd">        Example::</span>
+
+<span class="sd">            {</span>
+<span class="sd">                &quot;tissue1&quot; : [list, of, gene, ids],</span>
+<span class="sd">                &quot;tissue2&quot; : [list, of, other, genes],</span>
+<span class="sd">                ...</span>
+<span class="sd">            }</span>
+
+<span class="sd">    .. _GMT file:</span>
+<span class="sd">        http://software.broadinstitute.org/cancer/software/gsea/wiki/index.php/Data_formats#GMT:_Gene_Matrix_Transposed_file_format_.28.2A.gmt.29</span>
+
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">signatures</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="nb">file</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="o">.</span><span class="n">readlines</span><span class="p">():</span>
+            <span class="n">cols</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="n">cols</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">genes</span> <span class="o">=</span> <span class="n">cols</span><span class="p">[</span><span class="mi">2</span><span class="p">:]</span>
+            <span class="n">signatures</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">genes</span>
+    <span class="k">return</span> <span class="n">signatures</span></div>
+
+
 <div class="viewcode-block" id="jaccard_ind"><a class="viewcode-back" href="../../apidoc.html#pygenesig.tools.jaccard_ind">[docs]</a><span class="k">def</span> <span class="nf">jaccard_ind</span><span class="p">(</span><span class="n">set1</span><span class="p">,</span> <span class="n">set2</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Computes the Jaccard-Index of two or more sets.</span>
