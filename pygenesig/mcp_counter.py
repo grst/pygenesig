@@ -176,7 +176,7 @@ class MCPSignatureTester(SignatureTester):
     .. _R script:
         https://github.com/ebecht/MCPcounter/blob/a79614eee002c88c64725d69140c7653e7c379b4/Source/R/MCPcounter.R
     """
-    def _predict(self, expr, signatures):
+    def _score_signatures(self, expr, signatures):
         predicted = []
         classes = list(iter(signatures.keys()))
         for j in range(expr.shape[1]):

@@ -20,8 +20,10 @@ class TestValidation(unittest.TestCase):
             return self.DUMMY_SIGS
 
     class DummySignatureTester(SignatureTester):
-        def _predict(self, expr, signatures):
-            return ["A"] * expr.shape[1]
+        def _score_signatures(self, expr, signatures):
+            scores = np.zeros((len(signatures), expr.shape[1]))
+            scores[0, :] = 1.
+            return scores
 
     def setUp(self):
         expr = np.random.random_sample((200, 200))

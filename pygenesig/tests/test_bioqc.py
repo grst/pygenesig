@@ -1,9 +1,11 @@
 import unittest
 from pygenesig.bioqc import *
 from pygenesig.validation import *
+from pygenesig.tools import load_gmt
 from rpy2.robjects.packages import importr
 import logging
 import pickle
+import random
 
 base = importr("base")
 
@@ -16,15 +18,15 @@ class TestBioQC(unittest.TestCase):
                                        "3. 2. 2. 2.;"
                                        "0. 0. 0. 1."))
         self.target = ["A", "A", "B", "B"]
-
-    def test_signatures2gmt(self):
-        signatures = {
+        self.signatures = {  # signatures used in csv and gmt test files.
             "sig_a": [1, 2, 3, 4],
             "sig_b": [5, 6, 7, 8],
-            "sic_c": [9, 10, 11, 12]
+            "sig_c": [9, 10, 11, 12]
         }
-        gmt = BioQCSignatureTester.signatures2gmt(signatures)
-        self.assertCountEqual(signatures.keys(), list(base.names(gmt)))
+
+    def test_signatures2gmt(self):
+        gmt = BioQCSignatureTester.signatures2gmt(self.signatures)
+        self.assertCountEqual(self.signatures.keys(), list(base.names(gmt)))
 
     def test_log_pvalue(self):
         """check if log pvalues are identical with running BioQC in R.
@@ -36,6 +38,13 @@ class TestBioQC(unittest.TestCase):
         p_actual = BioQCSignatureTester.run_bioqc(self.expr, gene_symbols, gmt)
         log_p_actual = -np.log10(p_actual)
         np.testing.assert_array_almost_equal(log_p_expected, log_p_actual)
+
+    def test_score_signatures(self):
+        log_p_expected = np.loadtxt("./bioqc/test_bioqc_log_pvalue.csv", delimiter=',', skiprows=1, usecols=range(1, 5))
+        st = BioQCSignatureTester(self.expr, self.target)
+        log_p = st.score_signatures(self.signatures)
+        # works, because the GMT is properly sorted.
+        np.testing.assert_array_almost_equal(log_p_expected, log_p)
 
     def test_test_with_good_signatures(self):
         signatures_good = {
@@ -140,3 +149,16 @@ class TestBioQC(unittest.TestCase):
         target = np.array(["A", "B"])
         with self.assertRaises(TypeError):
             st = BioQCSignatureTester(expr, target)
+
+    def test_reorder(self):
+        template = ["A", "B", "C", "D"]
+        target = ["D", "B", "C", "A"]
+        np.testing.assert_array_equal([3, 1, 2, 0], BioQCSignatureTester._reorder(template, target))
+
+    def test_reorder_with_random_data(self):
+        template = np.array(list(range(1000)))
+        target = list(range(1000))
+        random.shuffle(target)
+        target = np.array(target)
+        reorder = BioQCSignatureTester._reorder(template, target)
+        np.testing.assert_array_equal(template, target[reorder])

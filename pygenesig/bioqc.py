@@ -87,6 +87,26 @@ class BioQCSignatureTester(SignatureTester):
         expr (np.ndarray): m x n matrix with m samples and n genes
         target (array-like): m-vector with true tissue for each sample
     """
+
+    @staticmethod
+    def _reorder(template, target):
+        """
+        Reorder an array according to a template-array.
+
+        Args:
+            template: List of names how the order should be
+            target: List of names how the order is
+
+        Returns:
+            np.ndarray: Ordered indices to bring target in the order or template.
+
+        .. Note::
+            ``template == target[_reorder(template, target)]`` is always ``True``.
+
+        """
+        target_array = np.array(target)
+        return np.array([np.where(target_array == name)[0][0] for name in template])
+
     @staticmethod
     def signatures2gmt(signatures):
         """
@@ -123,25 +143,28 @@ class BioQCSignatureTester(SignatureTester):
         bioqc_res = wmw_test(eset, gmt, valType="p.greater")
         return np.array(bioqc_res)
 
-    def _predict(self, expr, signatures):
-        """
-        Test Signatures with BioQC. A sample is considered to be
-        'true-positive' if the highest scoring signature is the one
-        generated from the actual tissue.
-        """
+    def _score_signatures(self, expr, signatures):
         gene_symbols = [str(x) for x in range(expr.shape[0])]
         signatures_not_empty = {
             name: genes for name, genes in signatures.items() if len(genes) > 0
         }
-        if len(signatures_not_empty) > 1:
-            gmt = BioQCSignatureTester.signatures2gmt(signatures_not_empty)
-            bioqc_res = self.run_bioqc(expr, gene_symbols, gmt)
-            bioqc_res_log = -np.log10(bioqc_res)
-            gmt_signature_names = list(base.names(gmt))
-            return [gmt_signature_names[i] for i in np.argmax(bioqc_res_log, axis=0)]
-        else:
-            # all samples are predicted as the single existing signature.
-            return [next(iter(signatures_not_empty.keys())) for _ in range(expr.shape[1])]
+        gmt = BioQCSignatureTester.signatures2gmt(signatures_not_empty)
+        bioqc_res = self.run_bioqc(expr, gene_symbols, gmt)
+        if len(signatures_not_empty) == 1:
+            # bug in R which returns a list instead of a matrix for one signature only.
+            # make it a matrix again.
+            bioqc_res = np.array([bioqc_res])
+        bioqc_res_log = -np.log10(bioqc_res)
+
+        reorder = self._reorder(list(base.names(gmt)), self.sort_signatures(signatures))
+        # init empty result matrix
+        result = np.empty((len(signatures), expr.shape[1]))
+        result[:] = np.NAN
+        # reassign row by row to result matrix to include empty signatures.
+        for i_bioqc, i_result in enumerate(reorder):
+            result[i_result, :] = bioqc_res_log[i_bioqc, :]
+
+        return result
 
 
 

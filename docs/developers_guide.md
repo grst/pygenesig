@@ -52,7 +52,7 @@ class GiniSignatureGenerator(SignatureGenerator):
 ```
 
 ## Implement a SignatureTester
-To get started, read the [apidoc](apidoc.html#pygenesig.validation.SignatureTester) of `SignatureTester`. Essentially, all you have to do is creating a child class of `SignatureTester` and implement the method `_predict(expr, signatures)`. 
+To get started, read the [apidoc](apidoc.html#pygenesig.validation.SignatureTester) of `SignatureTester`. Essentially, all you have to do is creating a child class of `SignatureTester` and implement the method `_score_signatures(expr, signatures)`.
 The method returns a list of the predicted labels for each samples. 
 
 For example, a random predictor, being agnostic of the signatures could look like:
@@ -60,7 +60,7 @@ For example, a random predictor, being agnostic of the signatures could look lik
 import random 
 
 class MySignatureTester(SignatureTester):
-    def _predict(self, expr, signatures): 
+    def _score_signatures(self, expr, signatures):
         tissues = list(signatures.keys())
         return [
             random.choice(tissues) for _ in range(expr.shape[1])
