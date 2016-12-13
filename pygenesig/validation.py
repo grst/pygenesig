@@ -249,7 +249,9 @@ class SignatureTester(metaclass=ABCMeta):
 
     def test_signatures(self, signatures, subset=None):
         """
-        Test signatures based on the expression matrix. A signature is considered
+        Test signatures based on the expression matrix. Predicts the class labels
+        using the signatures. A sample is predicted as the label associated with
+        the highest scoring signature.
 
         Args:
             signatures (dict[str, list]): Signatures dictionary returned by ``SignatureGenerator.mk_signature``.

@@ -14,7 +14,6 @@ This module
     http://dx.doi.org/10.1186/s13059-016-1070-5
 """
 
-
 from pygenesig.validation import SignatureGenerator, SignatureTester
 import numpy as np
 from sklearn.metrics import roc_auc_score
@@ -140,6 +139,7 @@ class MCPSignatureGenerator(SignatureGenerator):
         http://dx.doi.org/10.1186/s13059-016-1070-5
 
     """
+
     def __init__(self, expr, target, min_fc=2, min_sfc=1.5, min_auc=.97):
         super(MCPSignatureGenerator, self).__init__(expr, target)
         self.min_fc = min_fc
@@ -150,10 +150,10 @@ class MCPSignatureGenerator(SignatureGenerator):
         classes = list(set(target))
         masks = {
             cls: target == cls for cls in classes
-        }
+            }
         signatures = {
             cls: [] for cls in classes
-        }
+            }
         # TODO: this could be sped up significantly by precomputing the means for each class.
         for i in range(expr.shape[0]):
             for cls in classes:
@@ -176,16 +176,12 @@ class MCPSignatureTester(SignatureTester):
     .. _R script:
         https://github.com/ebecht/MCPcounter/blob/a79614eee002c88c64725d69140c7653e7c379b4/Source/R/MCPcounter.R
     """
+
     def _score_signatures(self, expr, signatures):
-        predicted = []
-        classes = list(iter(signatures.keys()))
-        for j in range(expr.shape[1]):
-            sample_means = []
-            for cls in classes:
-                inds = np.array(signatures[cls])
-                cls_mean = np.mean(expr[inds, j])
-                sample_means.append(cls_mean)
-            predicted.append(classes[np.argmax(sample_means)])
-        return predicted
-
-
+        result = np.empty((len(signatures), expr.shape[1]))
+        classes = self.sort_signatures(signatures)
+        for i, cls in enumerate(classes):
+            inds = np.array(signatures[cls])
+            for j in range(expr.shape[1]):
+                result[i, j] = np.mean(expr[inds, j]) if len(inds) > 0 else np.NAN
+        return result
