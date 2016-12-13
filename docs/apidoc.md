@@ -9,7 +9,7 @@
     :show-inheritance:
 ```
 
-## Signature Generators 
+## Methods 
 ### Gini Index
 
 ```eval_rst
@@ -28,12 +28,19 @@
     :show-inheritance:
 ```
 
-## Signature Testers
-
 ### BioQC
 
 ```eval_rst
 .. automodule:: pygenesig.bioqc
+    :members:
+    :undoc-members:
+    :show-inheritance:
+```
+
+### MCPCounter
+
+```eval_rst
+.. automodule:: pygenesig.mcp_counter
     :members:
     :undoc-members:
     :show-inheritance:

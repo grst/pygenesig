@@ -40,6 +40,11 @@ def fold_change(expr, positive_mask):
     Returns:
         float: fold change
 
+    >>> expr = np.array([2, 3, 5, 4, 9, 15])
+    >>> target = np.array(["A", "B", "C", "A", "B", "C"])
+    >>> fold_change(expr, target == "A")
+    -5.0
+
     .. _Becht et al.:
         http://dx.doi.org/10.1186/s13059-016-1070-5
 
@@ -49,22 +54,31 @@ def fold_change(expr, positive_mask):
 
 def specific_fold_change(expr, positive_mask, negative_masks):
     """
-    Compute the specific fold change of the positive class with respect to all other classes.
+    Compute the specific fold change of the positive class with respect to all other classes
+    for a single gene `G`.
 
     According to `Becht et al.`_ the specific fold change is defined as
 
     .. math::
-        sFC = X - \overline{X}
+        sFC = (X - \overline{X}_{min})/(\overline{X}_{max} - \overline{X}_{min})
 
-    where :math:`X` is the mean of positive and :math:`\overline{X}` is the mean of the negative samples.
+    where :math:`X` is the mean of positive and :math:`\overline{X}_{max}` is the maximum mean over
+    all negative classes and :math:`\overline{X}_{min}` is the minimal mean over all negative classes.
 
     Args:
-        expr (np.ndarray):
-        positive_mask (np.ndarray):
-        negative_masks (list of np.ndarray):
+        expr (np.ndarray): expression of `G` for each sample.
+        positive_mask (np.ndarray): boolean mask for `expr` indicating which samples belong to
+            the positive class.
+        negative_masks (list of np.ndarray): list of boolean masks for `expr` indicating which samples belong
+            to the different negative classes.
 
     Returns:
         float: specific fold change
+
+    >>> expr = np.array([2, 3, 5, 4, 9, 15])
+    >>> target = np.array(["A", "B", "C", "A", "B", "C"])
+    >>> specific_fold_change(expr, target == 'A', [target == "B", target == "C"])
+    -0.75
 
     .. _Becht et al.:
         http://dx.doi.org/10.1186/s13059-016-1070-5
@@ -81,18 +95,51 @@ def specific_fold_change(expr, positive_mask, negative_masks):
 
 def roc_auc(expr, positive_mask):
     """
+    Compute the Receiver Operator Characteristics Area under the Curve (ROC AUC) for a single gene `G`.
+    This tells how well the gene discriminates between the two classes.
+
+    This is a wrapper for the scikit-learn `roc_auc_score`_ function.
 
     Args:
-       expr (np.ndarray):
-       positive_mask (np.ndarray, dtype=np.bool):
+       expr (np.ndarray): expression of `G` for each sample.
+       positive_mask (np.ndarray, dtype=np.bool): boolean mask for `expr` indicating which samples belong to
+            the positive class.
 
     Returns:
+        float: roc auc score
+
+    .. _roc_auc_score:
+        http://scikit-learn.org/stable/modules/generated/sklearn.metrics.roc_auc_score.html#sklearn.metrics.roc_auc_score
+
+    >>> expr = np.array([2, 3, 5, 4, 9, 15])
+    >>> target = np.array(["A", "B", "C", "A", "B", "C"])
+    >>> roc_auc(expr, target == "A")
+    0.125
 
     """
-    return roc_auc_score(positive_mask, normalize(expr))
+    return roc_auc_score(positive_mask, expr)
 
 
 class MCPSignatureGenerator(SignatureGenerator):
+    """
+    Implements the procedure described by `Becht et al.`_ for curating signatures.
+    A gene is considered a valid `Transcription Marker` (TM) if it meets the following criteria
+
+    * fold change >= ``min_fc`` (default=2)
+    * specific fold change >= ``min_sfc`` (default=1.5)
+    * AUC ROC >= ``min_auc`` (default=0.97)
+
+    Args:
+        expr: m x n gene expression matrix with m genes and n samples.
+        target: m-vector with true tissue for each sample
+        min_fc: minimal fold change for a gene to be considered as valid TM
+        min_sfc: minimal specific fold change for a gene to be considered as valid TM
+        min_auc: minimal ROC AUC for a gene to be considered as valid TM
+
+    .. _Becht et al.:
+        http://dx.doi.org/10.1186/s13059-016-1070-5
+
+    """
     def __init__(self, expr, target, min_fc=2, min_sfc=1.5, min_auc=.97):
         super(MCPSignatureGenerator, self).__init__(expr, target)
         self.min_fc = min_fc
@@ -107,6 +154,7 @@ class MCPSignatureGenerator(SignatureGenerator):
         signatures = {
             cls: [] for cls in classes
         }
+        # TODO: this could be sped up significantly by precomputing the means for each class.
         for i in range(expr.shape[0]):
             for cls in classes:
                 fc = fold_change(expr[i, :], masks[cls])
@@ -119,6 +167,15 @@ class MCPSignatureGenerator(SignatureGenerator):
 
 
 class MCPSignatureTester(SignatureTester):
+    """
+    Implements the `MCPCounter`_ described by Becht et al. in python.
+
+    The principle is super-simple: take the mean of all marker genes as indicator.
+    Also see their `R script`_.
+
+    .. _R script:
+        https://github.com/ebecht/MCPcounter/blob/a79614eee002c88c64725d69140c7653e7c379b4/Source/R/MCPcounter.R
+    """
     def _predict(self, expr, signatures):
         predicted = []
         classes = list(iter(signatures.keys()))
