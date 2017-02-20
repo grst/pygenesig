@@ -115,13 +115,15 @@ class GiniSignatureGenerator(SignatureGenerator):
         min_gini (float): gini cutoff, genes need to have a gini index larger than this value.
         max_rk (int): rank cutoff, include genes if they rank ``<= max_rank`` among all tissues.
         min_expr (float): genes need to have at least an expression ``>= min_expr`` to be included.
+        aggregate_fun (function): function used to aggregate samples of the same tissue.
     """
-    def __init__(self, expr, target, min_gini=.7, max_rk=3, min_expr=1):
+    def __init__(self, expr, target, min_gini=.7, max_rk=3, min_expr=1, aggregate_fun=np.median):
         super(GiniSignatureGenerator, self).__init__(expr, target)
         self.min_gini = min_gini
         self.max_rk = max_rk
         self.min_expr = min_expr
+        self.aggregate_fun = aggregate_fun
 
     def _mk_signatures(self, expr, target):
-        df_aggr = aggregate_expression(expr, target)
+        df_aggr = aggregate_expression(expr, target, aggregate_fun=self.aggregate_fun)
         return get_gini_signatures(df_aggr, min_gini=self.min_gini, max_rk=self.max_rk, min_expr=self.min_expr)
