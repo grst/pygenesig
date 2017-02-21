@@ -65,6 +65,74 @@ def aggregate_expression(expr, target, aggregate_fun=np.median):
     return df_aggr
 
 
+def _apply_gini_to_expression(df_aggr, min_gini, min_expr):
+    """
+    Helper function to filter dataframe by gini index and expression.
+
+    Args:
+        df_aggr (pd.DataFrame): m x n pandas dataframe with m Genes and n tissues
+        min_gini: gini cutoff
+        min_expr: expression cutoff
+
+    Returns:
+        df_aggr: input dataframe filtered by gini and expression
+        df_aggr_rank: dataframe of the same shape as df_aggr, containing the ranks of the
+            tissues for each gene
+        expr_gini: m-series containing the gini-index for each gene
+
+    """
+    df_aggr = df_aggr[df_aggr.apply(np.max, axis=1) >= min_expr]
+    expr_gini = df_aggr.apply(gini, axis=1)
+    df_aggr = df_aggr[expr_gini >= min_gini]
+    df_aggr_rank = df_aggr.rank(axis=1, ascending=False)
+    expr_gini = expr_gini[df_aggr.index]
+    return df_aggr, df_aggr_rank, expr_gini
+
+
+def get_rogini_format(df_aggr, min_gini=.7, max_rk=3, min_expr=1):
+    """
+    Imitate the *rogini* output format.
+
+    Args:
+        df_aggr (pd.DataFrame): m x n pandas DataFrame with m Genes and n tissues
+        min_gini (float): gini cutoff, genes need to have a gini index larger than this value.
+        max_rk (int): rank cutoff, include genes if they rank <= max_rank among all tissues.
+        min_expr (float): minimal expression
+
+    Returns:
+        pd.DataFrame: equal to *rogini* output.
+
+        Example::
+
+            GENEID  CATEGORY        VALUE   RANKING GINI_IDX
+            54165   Whole blood (ribopure)  491.359000      1       0.441296
+            54165   CD34 cells differentiated to erythrocyte lineage        148.124000      2       0.441296
+            54165   Mast cell - stimulated  68.973000       3       0.441296
+            101927596       CD4+CD25-CD45RA+ naive conventional T cells     15.505000       1       0.948804
+            101927596       CD8+ T Cells (pluriselect)      15.376000       2       0.948804
+            101927596       CD4+CD25-CD45RA- memory conventional T cells    10.769000       3       0.948804
+
+    """
+    df_aggr, df_aggr_rank, expr_gini = _apply_gini_to_expression(df_aggr, min_gini, min_expr)
+    gini_rows = []
+    for i in range(df_aggr.shape[0]):
+        geneid = df_aggr.index[i]
+        row = df_aggr.iloc[i]
+        rank_row = df_aggr_rank.iloc[i]
+        for rk in range(1, max_rk+1):
+            gini_rows.append([
+                geneid,
+                df_aggr.columns[rank_row == rk][0],
+                row[rank_row == rk][0],
+                rk,
+                expr_gini[i]
+            ])
+    columns = ["GENEID", "CATEGORY", "VALUE", "RANKING", "GINI_IDX"]
+    df = pd.DataFrame(gini_rows)
+    df.columns = columns
+    return df
+
+
 def get_gini_signatures(df_aggr, min_gini=.7, max_rk=3, min_expr=1):
     """
     Generate gene signatures using gini index.
@@ -89,10 +157,7 @@ def get_gini_signatures(df_aggr, min_gini=.7, max_rk=3, min_expr=1):
             }
 
     """
-    df_aggr = df_aggr[df_aggr.apply(np.max, axis=1) >= min_expr]
-    expr_gini = df_aggr.apply(gini, axis=1)
-    df_aggr = df_aggr[expr_gini >= min_gini]
-    df_aggr_rank = df_aggr.rank(axis=1, ascending=False)
+    df_aggr, df_aggr_rank, expr_gini = _apply_gini_to_expression(df_aggr, min_gini, min_expr)
     signatures = {}
     for tissue in df_aggr:
         signatures[tissue] = set(df_aggr.loc[df_aggr_rank[tissue] <= max_rk].index)
