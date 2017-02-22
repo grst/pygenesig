@@ -54,6 +54,27 @@ def load_gmt(file):
     return signatures
 
 
+def translate_signatures(signatures, rosetta):
+    """
+    Translate gene identifiers in a signature dictionary.
+
+    Args:
+        signatures (dict of list): signature dictionary
+        rosetta (dict): translation table mapping one gene identifier to another
+
+    Returns:
+        dict of list: translated signature dictionary
+
+    Raises:
+        KeyError: if a gene is not in the rosetta dictionary
+    """
+    return {
+        tissue: [
+            rosetta[gene] for gene in genes
+        ] for tissue, genes in signatures.items()
+    }
+
+
 def jaccard_ind(set1, set2, *args):
     """
     Computes the Jaccard-Index of two or more sets.
