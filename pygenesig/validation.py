@@ -224,7 +224,7 @@ class SignatureTester(metaclass=ABCMeta):
 
     def score_signatures(self, signatures, subset=None):
         """
-        Generates a score for each sample and signature. The high score represents
+        Generates a score for each sample and signature. A high score represents
         a high representation of the signature in the sample.
 
         Args:
