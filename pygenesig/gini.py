@@ -77,14 +77,16 @@ def _apply_gini_to_expression(df_aggr, min_gini, min_expr):
     Returns:
         df_aggr: input dataframe filtered by gini and expression
         df_aggr_rank: dataframe of the same shape as df_aggr, containing the ranks of the
-            tissues for each gene
+            tissues for each gene. Ranks are computed using the 'first' method to obtain
+            consecutive ranks for the 'gini-format'
         expr_gini: m-series containing the gini-index for each gene
 
     """
     df_aggr = df_aggr[df_aggr.apply(np.max, axis=1) >= min_expr]
     expr_gini = df_aggr.apply(gini, axis=1)
     df_aggr = df_aggr[expr_gini >= min_gini]
-    df_aggr_rank = df_aggr.rank(axis=1, ascending=False)
+    # min, because consecutive rank needed for gini method.
+    df_aggr_rank = df_aggr.rank(axis=1, ascending=False, method='first')
     expr_gini = expr_gini[df_aggr.index]
     return df_aggr, df_aggr_rank, expr_gini
 
@@ -125,7 +127,7 @@ def get_rogini_format(df_aggr, min_gini=.7, max_rk=3, min_expr=1):
                 df_aggr.columns[rank_row == rk][0],
                 row[rank_row == rk][0],
                 rk,
-                expr_gini[i]
+                expr_gini[geneid]
             ])
     columns = ["GENEID", "CATEGORY", "VALUE", "RANKING", "GINI_IDX"]
     df = pd.DataFrame(gini_rows)
@@ -192,3 +194,7 @@ class GiniSignatureGenerator(SignatureGenerator):
     def _mk_signatures(self, expr, target):
         df_aggr = aggregate_expression(expr, target, aggregate_fun=self.aggregate_fun)
         return get_gini_signatures(df_aggr, min_gini=self.min_gini, max_rk=self.max_rk, min_expr=self.min_expr)
+
+    def get_rogini_format(self):
+        df_aggr = aggregate_expression(self.expr, self.target, aggregate_fun=self.aggregate_fun)
+        return get_rogini_format(df_aggr, min_gini=self.min_gini, max_rk=self.max_rk, min_expr=self.min_expr)
