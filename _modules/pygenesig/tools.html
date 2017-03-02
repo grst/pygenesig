@@ -140,6 +140,7 @@
   <h1>Source code for pygenesig.tools</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">itertools</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="kn">as</span> <span class="nn">pd</span>
 
 
 <div class="viewcode-block" id="write_gmt"><a class="viewcode-back" href="../../apidoc.html#pygenesig.tools.write_gmt">[docs]</a><span class="k">def</span> <span class="nf">write_gmt</span><span class="p">(</span><span class="n">signatures</span><span class="p">,</span> <span class="nb">file</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;na&quot;</span><span class="p">):</span>
@@ -192,6 +193,27 @@
             <span class="n">genes</span> <span class="o">=</span> <span class="n">cols</span><span class="p">[</span><span class="mi">2</span><span class="p">:]</span>
             <span class="n">signatures</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">genes</span>
     <span class="k">return</span> <span class="n">signatures</span></div>
+
+
+<div class="viewcode-block" id="translate_signatures"><a class="viewcode-back" href="../../apidoc.html#pygenesig.tools.translate_signatures">[docs]</a><span class="k">def</span> <span class="nf">translate_signatures</span><span class="p">(</span><span class="n">signatures</span><span class="p">,</span> <span class="n">rosetta</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Translate gene identifiers in a signature dictionary.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        signatures (dict of list): signature dictionary</span>
+<span class="sd">        rosetta (dict): translation table mapping one gene identifier to another</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        dict of list: translated signature dictionary</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        KeyError: if a gene is not in the rosetta dictionary</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="n">tissue</span><span class="p">:</span> <span class="p">[</span>
+            <span class="n">rosetta</span><span class="p">[</span><span class="n">gene</span><span class="p">]</span> <span class="k">for</span> <span class="n">gene</span> <span class="ow">in</span> <span class="n">genes</span>
+        <span class="p">]</span> <span class="k">for</span> <span class="n">tissue</span><span class="p">,</span> <span class="n">genes</span> <span class="ow">in</span> <span class="n">signatures</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+    <span class="p">}</span></div>
 
 
 <div class="viewcode-block" id="jaccard_ind"><a class="viewcode-back" href="../../apidoc.html#pygenesig.tools.jaccard_ind">[docs]</a><span class="k">def</span> <span class="nf">jaccard_ind</span><span class="p">(</span><span class="n">set1</span><span class="p">,</span> <span class="n">set2</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
@@ -264,6 +286,56 @@
     <span class="k">return</span> <span class="n">res</span></div>
 
 
+<div class="viewcode-block" id="jaccard_mat"><a class="viewcode-back" href="../../apidoc.html#pygenesig.tools.jaccard_mat">[docs]</a><span class="k">def</span> <span class="nf">jaccard_mat</span><span class="p">(</span><span class="n">sigs1</span><span class="p">,</span> <span class="n">sigs2</span><span class="p">,</span> <span class="n">colname1</span><span class="o">=</span><span class="s2">&quot;set 1&quot;</span><span class="p">,</span> <span class="n">colname2</span><span class="o">=</span><span class="s2">&quot;set 2&quot;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute a matrix of jaccard indices to compute the overlap of two signature sets.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        sigs1: signature dictionary</span>
+<span class="sd">        sigs2: signature dictionary</span>
+<span class="sd">        colname1: Name of the column for sigs1 in the dataframe</span>
+<span class="sd">        colname2: Name of the column for sigs2 in the dataframe</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        pd.DataFrame: Matrix of Jaccard indices in long format</span>
+
+<span class="sd">    Plot the overlap of signatures:</span>
+<span class="sd">    &gt;&gt;&gt; import seaborn as sns</span>
+<span class="sd">    &gt;&gt;&gt; signatures = load_gmt(&quot;tests/bioqc/test_bioqc_log_pvalue.gmt&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; df = jaccard_mat(signatures, signatures)</span>
+<span class="sd">    &gt;&gt;&gt; sns.heatmap(df.pivot(*df.columns))</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">jaccard_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">name1</span><span class="p">,</span> <span class="n">genes1</span> <span class="ow">in</span> <span class="n">sigs1</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">name2</span><span class="p">,</span> <span class="n">genes2</span> <span class="ow">in</span> <span class="n">sigs2</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">jaccard_list</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">name1</span><span class="p">,</span> <span class="n">name2</span><span class="p">,</span> <span class="n">jaccard_ind</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">genes1</span><span class="p">),</span> <span class="nb">set</span><span class="p">(</span><span class="n">genes2</span><span class="p">))))</span>
+
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">jaccard_list</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">(</span><span class="n">colname1</span><span class="p">,</span> <span class="n">colname2</span><span class="p">,</span> <span class="s2">&quot;jaccard index&quot;</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">df</span></div>
+
+
+<div class="viewcode-block" id="collapse_matrix"><a class="viewcode-back" href="../../apidoc.html#pygenesig.tools.collapse_matrix">[docs]</a><span class="k">def</span> <span class="nf">collapse_matrix</span><span class="p">(</span><span class="n">mat</span><span class="p">,</span> <span class="n">group_by</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">aggregate_fun</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Aggregate expression by annotation (collapse samples of the same tissue)</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        mat (np.array): m x n gene expression matrix with m genes and n samples.</span>
+<span class="sd">        group_by (list-like): list of length m (if axis=0) or list of length n (if axis=1)</span>
+<span class="sd">        axis (int): 0 for rows, 1 for columns</span>
+<span class="sd">        aggregate_fun (function): aggregate to apply, defaults to ``numpy.median``</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        pd.DataFrame: collapsed matrix with annotation from `group_by`.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">axis</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="n">mat</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">group_by</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">axis</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="n">mat</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">group_by</span><span class="p">)</span>
+
+    <span class="n">mat_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">mat</span><span class="p">)</span>
+    <span class="n">group_by</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">group_by</span><span class="p">)</span>  <span class="c1"># strip index from series</span>
+    <span class="k">return</span> <span class="n">mat_df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">group_by</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">)</span><span class="o">.</span><span class="n">aggregate</span><span class="p">(</span><span class="n">aggregate_fun</span><span class="p">)</span></div>
 
 </pre></div>
 

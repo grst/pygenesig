@@ -148,6 +148,7 @@
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="kn">as</span> <span class="nn">pd</span>
 <span class="kn">from</span> <span class="nn">pygenesig.validation</span> <span class="kn">import</span> <span class="n">SignatureGenerator</span>
+<span class="kn">from</span> <span class="nn">pygenesig.tools</span> <span class="kn">import</span> <span class="n">collapse_matrix</span>
 
 
 <div class="viewcode-block" id="gini"><a class="viewcode-back" href="../../apidoc.html#pygenesig.gini.gini">[docs]</a><span class="k">def</span> <span class="nf">gini</span><span class="p">(</span><span class="n">array</span><span class="p">):</span>
@@ -186,23 +187,81 @@
 
 <div class="viewcode-block" id="aggregate_expression"><a class="viewcode-back" href="../../apidoc.html#pygenesig.gini.aggregate_expression">[docs]</a><span class="k">def</span> <span class="nf">aggregate_expression</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">aggregate_fun</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Aggregate expression by annotation (collapse samples of the same tissue)</span>
+<span class="sd">    DEPRECATED.</span>
+
+<span class="sd">    wrapper for collapse_matrix from tools.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">collapse_matrix</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">aggregate_fun</span><span class="o">=</span><span class="n">aggregate_fun</span><span class="p">)</span></div>
+
+
+<span class="k">def</span> <span class="nf">_apply_gini_to_expression</span><span class="p">(</span><span class="n">df_aggr</span><span class="p">,</span> <span class="n">min_gini</span><span class="p">,</span> <span class="n">min_expr</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Helper function to filter dataframe by gini index and expression.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        expr (np.array): m x n gene expression matrix with m genes and n samples.</span>
-<span class="sd">        target (list-like): list of length n, containing the target annotation for each sample (e.g. tissue)</span>
-<span class="sd">        aggregate_fun (function): aggregate to apply, defaults to ``numpy.median``</span>
+<span class="sd">        df_aggr (pd.DataFrame): m x n pandas dataframe with m Genes and n tissues</span>
+<span class="sd">        min_gini: gini cutoff</span>
+<span class="sd">        min_expr: expression cutoff</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        pd.DataFrame: m x n pandas dataframe with m = #Genes and n = #target labels</span>
+<span class="sd">        df_aggr: input dataframe filtered by gini and expression</span>
+<span class="sd">        df_aggr_rank: dataframe of the same shape as df_aggr, containing the ranks of the</span>
+<span class="sd">            tissues for each gene. Ranks are computed using the &#39;first&#39; method to obtain</span>
+<span class="sd">            consecutive ranks for the &#39;gini-format&#39;</span>
+<span class="sd">        expr_gini: m-series containing the gini-index for each gene</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">group_series</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
-    <span class="n">group</span> <span class="o">=</span> <span class="n">group_series</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">group_series</span><span class="p">)</span>
-    <span class="n">df_aggr</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
-    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">series</span> <span class="ow">in</span> <span class="n">group</span><span class="p">:</span>
-        <span class="n">df_aggr</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">apply_along_axis</span><span class="p">(</span><span class="n">aggregate_fun</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">expr</span><span class="p">[:,</span> <span class="n">series</span><span class="o">.</span><span class="n">index</span><span class="p">])</span>
-    <span class="k">return</span> <span class="n">df_aggr</span></div>
+    <span class="n">df_aggr</span> <span class="o">=</span> <span class="n">df_aggr</span><span class="p">[</span><span class="n">df_aggr</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">min_expr</span><span class="p">]</span>
+    <span class="n">expr_gini</span> <span class="o">=</span> <span class="n">df_aggr</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">gini</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">df_aggr</span> <span class="o">=</span> <span class="n">df_aggr</span><span class="p">[</span><span class="n">expr_gini</span> <span class="o">&gt;=</span> <span class="n">min_gini</span><span class="p">]</span>
+    <span class="c1"># min, because consecutive rank needed for gini method.</span>
+    <span class="n">df_aggr_rank</span> <span class="o">=</span> <span class="n">df_aggr</span><span class="o">.</span><span class="n">rank</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;first&#39;</span><span class="p">)</span>
+    <span class="n">expr_gini</span> <span class="o">=</span> <span class="n">expr_gini</span><span class="p">[</span><span class="n">df_aggr</span><span class="o">.</span><span class="n">index</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">df_aggr</span><span class="p">,</span> <span class="n">df_aggr_rank</span><span class="p">,</span> <span class="n">expr_gini</span>
+
+
+<div class="viewcode-block" id="get_rogini_format"><a class="viewcode-back" href="../../apidoc.html#pygenesig.gini.get_rogini_format">[docs]</a><span class="k">def</span> <span class="nf">get_rogini_format</span><span class="p">(</span><span class="n">df_aggr</span><span class="p">,</span> <span class="n">min_gini</span><span class="o">=.</span><span class="mi">7</span><span class="p">,</span> <span class="n">max_rk</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">min_expr</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Imitate the *rogini* output format.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        df_aggr (pd.DataFrame): m x n pandas DataFrame with m Genes and n tissues</span>
+<span class="sd">        min_gini (float): gini cutoff, genes need to have a gini index larger than this value.</span>
+<span class="sd">        max_rk (int): rank cutoff, include genes if they rank &lt;= max_rank among all tissues.</span>
+<span class="sd">        min_expr (float): minimal expression</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        pd.DataFrame: equal to *rogini* output.</span>
+
+<span class="sd">        Example::</span>
+
+<span class="sd">            GENEID  CATEGORY        VALUE   RANKING GINI_IDX</span>
+<span class="sd">            54165   Whole blood (ribopure)  491.359000      1       0.441296</span>
+<span class="sd">            54165   CD34 cells differentiated to erythrocyte lineage        148.124000      2       0.441296</span>
+<span class="sd">            54165   Mast cell - stimulated  68.973000       3       0.441296</span>
+<span class="sd">            101927596       CD4+CD25-CD45RA+ naive conventional T cells     15.505000       1       0.948804</span>
+<span class="sd">            101927596       CD8+ T Cells (pluriselect)      15.376000       2       0.948804</span>
+<span class="sd">            101927596       CD4+CD25-CD45RA- memory conventional T cells    10.769000       3       0.948804</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">df_aggr</span><span class="p">,</span> <span class="n">df_aggr_rank</span><span class="p">,</span> <span class="n">expr_gini</span> <span class="o">=</span> <span class="n">_apply_gini_to_expression</span><span class="p">(</span><span class="n">df_aggr</span><span class="p">,</span> <span class="n">min_gini</span><span class="p">,</span> <span class="n">min_expr</span><span class="p">)</span>
+    <span class="n">gini_rows</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">df_aggr</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+        <span class="n">geneid</span> <span class="o">=</span> <span class="n">df_aggr</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">row</span> <span class="o">=</span> <span class="n">df_aggr</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">rank_row</span> <span class="o">=</span> <span class="n">df_aggr_rank</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">rk</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">max_rk</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
+            <span class="n">gini_rows</span><span class="o">.</span><span class="n">append</span><span class="p">([</span>
+                <span class="n">geneid</span><span class="p">,</span>
+                <span class="n">df_aggr</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="n">rank_row</span> <span class="o">==</span> <span class="n">rk</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
+                <span class="n">row</span><span class="p">[</span><span class="n">rank_row</span> <span class="o">==</span> <span class="n">rk</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
+                <span class="n">rk</span><span class="p">,</span>
+                <span class="n">expr_gini</span><span class="p">[</span><span class="n">geneid</span><span class="p">]</span>
+            <span class="p">])</span>
+    <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;GENEID&quot;</span><span class="p">,</span> <span class="s2">&quot;CATEGORY&quot;</span><span class="p">,</span> <span class="s2">&quot;VALUE&quot;</span><span class="p">,</span> <span class="s2">&quot;RANKING&quot;</span><span class="p">,</span> <span class="s2">&quot;GINI_IDX&quot;</span><span class="p">]</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">gini_rows</span><span class="p">)</span>
+    <span class="n">df</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="n">columns</span>
+    <span class="k">return</span> <span class="n">df</span></div>
 
 
 <div class="viewcode-block" id="get_gini_signatures"><a class="viewcode-back" href="../../apidoc.html#pygenesig.gini.get_gini_signatures">[docs]</a><span class="k">def</span> <span class="nf">get_gini_signatures</span><span class="p">(</span><span class="n">df_aggr</span><span class="p">,</span> <span class="n">min_gini</span><span class="o">=.</span><span class="mi">7</span><span class="p">,</span> <span class="n">max_rk</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">min_expr</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
@@ -229,10 +288,7 @@
 <span class="sd">            }</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">df_aggr</span> <span class="o">=</span> <span class="n">df_aggr</span><span class="p">[</span><span class="n">df_aggr</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">min_expr</span><span class="p">]</span>
-    <span class="n">expr_gini</span> <span class="o">=</span> <span class="n">df_aggr</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">gini</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-    <span class="n">df_aggr</span> <span class="o">=</span> <span class="n">df_aggr</span><span class="p">[</span><span class="n">expr_gini</span> <span class="o">&gt;=</span> <span class="n">min_gini</span><span class="p">]</span>
-    <span class="n">df_aggr_rank</span> <span class="o">=</span> <span class="n">df_aggr</span><span class="o">.</span><span class="n">rank</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+    <span class="n">df_aggr</span><span class="p">,</span> <span class="n">df_aggr_rank</span><span class="p">,</span> <span class="n">expr_gini</span> <span class="o">=</span> <span class="n">_apply_gini_to_expression</span><span class="p">(</span><span class="n">df_aggr</span><span class="p">,</span> <span class="n">min_gini</span><span class="p">,</span> <span class="n">min_expr</span><span class="p">)</span>
     <span class="n">signatures</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="k">for</span> <span class="n">tissue</span> <span class="ow">in</span> <span class="n">df_aggr</span><span class="p">:</span>
         <span class="n">signatures</span><span class="p">[</span><span class="n">tissue</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">df_aggr</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df_aggr_rank</span><span class="p">[</span><span class="n">tissue</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">max_rk</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
@@ -255,16 +311,22 @@
 <span class="sd">        min_gini (float): gini cutoff, genes need to have a gini index larger than this value.</span>
 <span class="sd">        max_rk (int): rank cutoff, include genes if they rank ``&lt;= max_rank`` among all tissues.</span>
 <span class="sd">        min_expr (float): genes need to have at least an expression ``&gt;= min_expr`` to be included.</span>
+<span class="sd">        aggregate_fun (function): function used to aggregate samples of the same tissue.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">min_gini</span><span class="o">=.</span><span class="mi">7</span><span class="p">,</span> <span class="n">max_rk</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">min_expr</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">min_gini</span><span class="o">=.</span><span class="mi">7</span><span class="p">,</span> <span class="n">max_rk</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">min_expr</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">aggregate_fun</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">GiniSignatureGenerator</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">min_gini</span> <span class="o">=</span> <span class="n">min_gini</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">max_rk</span> <span class="o">=</span> <span class="n">max_rk</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">min_expr</span> <span class="o">=</span> <span class="n">min_expr</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">aggregate_fun</span> <span class="o">=</span> <span class="n">aggregate_fun</span>
 
     <span class="k">def</span> <span class="nf">_mk_signatures</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
-        <span class="n">df_aggr</span> <span class="o">=</span> <span class="n">aggregate_expression</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">get_gini_signatures</span><span class="p">(</span><span class="n">df_aggr</span><span class="p">,</span> <span class="n">min_gini</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">min_gini</span><span class="p">,</span> <span class="n">max_rk</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">max_rk</span><span class="p">,</span> <span class="n">min_expr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">min_expr</span><span class="p">)</span></div>
+        <span class="n">df_aggr</span> <span class="o">=</span> <span class="n">aggregate_expression</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">aggregate_fun</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">aggregate_fun</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">get_gini_signatures</span><span class="p">(</span><span class="n">df_aggr</span><span class="p">,</span> <span class="n">min_gini</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">min_gini</span><span class="p">,</span> <span class="n">max_rk</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">max_rk</span><span class="p">,</span> <span class="n">min_expr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">min_expr</span><span class="p">)</span>
+
+<div class="viewcode-block" id="GiniSignatureGenerator.get_rogini_format"><a class="viewcode-back" href="../../apidoc.html#pygenesig.gini.GiniSignatureGenerator.get_rogini_format">[docs]</a>    <span class="k">def</span> <span class="nf">get_rogini_format</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">df_aggr</span> <span class="o">=</span> <span class="n">aggregate_expression</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">expr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="p">,</span> <span class="n">aggregate_fun</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">aggregate_fun</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">get_rogini_format</span><span class="p">(</span><span class="n">df_aggr</span><span class="p">,</span> <span class="n">min_gini</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">min_gini</span><span class="p">,</span> <span class="n">max_rk</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">max_rk</span><span class="p">,</span> <span class="n">min_expr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">min_expr</span><span class="p">)</span></div></div>
 </pre></div>
 
            </div>

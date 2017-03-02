@@ -227,6 +227,26 @@
 <span class="sd">        expr (np.ndarray): m x n matrix with m samples and n genes</span>
 <span class="sd">        target (array-like): m-vector with true tissue for each sample</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_reorder</span><span class="p">(</span><span class="n">template</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Reorder an array according to a template-array.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            template: List of names how the order should be</span>
+<span class="sd">            target: List of names how the order is</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            np.ndarray: Ordered indices to bring target in the order or template.</span>
+
+<span class="sd">        .. Note::</span>
+<span class="sd">            ``template == target[_reorder(template, target)]`` is always ``True``.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">target_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">target_array</span> <span class="o">==</span> <span class="n">name</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">template</span><span class="p">])</span>
+
     <span class="nd">@staticmethod</span>
 <div class="viewcode-block" id="BioQCSignatureTester.signatures2gmt"><a class="viewcode-back" href="../../apidoc.html#pygenesig.bioqc.BioQCSignatureTester.signatures2gmt">[docs]</a>    <span class="k">def</span> <span class="nf">signatures2gmt</span><span class="p">(</span><span class="n">signatures</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -263,25 +283,28 @@
         <span class="n">bioqc_res</span> <span class="o">=</span> <span class="n">wmw_test</span><span class="p">(</span><span class="n">eset</span><span class="p">,</span> <span class="n">gmt</span><span class="p">,</span> <span class="n">valType</span><span class="o">=</span><span class="s2">&quot;p.greater&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">bioqc_res</span><span class="p">)</span></div>
 
-    <span class="k">def</span> <span class="nf">_predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="n">signatures</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Test Signatures with BioQC. A sample is considered to be</span>
-<span class="sd">        &#39;true-positive&#39; if the highest scoring signature is the one</span>
-<span class="sd">        generated from the actual tissue.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">_score_signatures</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="n">signatures</span><span class="p">):</span>
         <span class="n">gene_symbols</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">expr</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])]</span>
         <span class="n">signatures_not_empty</span> <span class="o">=</span> <span class="p">{</span>
             <span class="n">name</span><span class="p">:</span> <span class="n">genes</span> <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">genes</span> <span class="ow">in</span> <span class="n">signatures</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">genes</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
         <span class="p">}</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">signatures_not_empty</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="n">gmt</span> <span class="o">=</span> <span class="n">BioQCSignatureTester</span><span class="o">.</span><span class="n">signatures2gmt</span><span class="p">(</span><span class="n">signatures_not_empty</span><span class="p">)</span>
-            <span class="n">bioqc_res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_bioqc</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="n">gene_symbols</span><span class="p">,</span> <span class="n">gmt</span><span class="p">)</span>
-            <span class="n">bioqc_res_log</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">bioqc_res</span><span class="p">)</span>
-            <span class="n">gmt_signature_names</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">base</span><span class="o">.</span><span class="n">names</span><span class="p">(</span><span class="n">gmt</span><span class="p">))</span>
-            <span class="k">return</span> <span class="p">[</span><span class="n">gmt_signature_names</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">bioqc_res_log</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)]</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="c1"># all samples are predicted as the single existing signature.</span>
-            <span class="k">return</span> <span class="p">[</span><span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">signatures_not_empty</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">expr</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])]</span></div>
+        <span class="n">gmt</span> <span class="o">=</span> <span class="n">BioQCSignatureTester</span><span class="o">.</span><span class="n">signatures2gmt</span><span class="p">(</span><span class="n">signatures_not_empty</span><span class="p">)</span>
+        <span class="n">bioqc_res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_bioqc</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="n">gene_symbols</span><span class="p">,</span> <span class="n">gmt</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">signatures_not_empty</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="c1"># bug in R which returns a list instead of a matrix for one signature only.</span>
+            <span class="c1"># make it a matrix again.</span>
+            <span class="n">bioqc_res</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">bioqc_res</span><span class="p">])</span>
+        <span class="n">bioqc_res_log</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">bioqc_res</span><span class="p">)</span>
+
+        <span class="n">reorder</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reorder</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">base</span><span class="o">.</span><span class="n">names</span><span class="p">(</span><span class="n">gmt</span><span class="p">)),</span> <span class="bp">self</span><span class="o">.</span><span class="n">sort_signatures</span><span class="p">(</span><span class="n">signatures</span><span class="p">))</span>
+        <span class="c1"># init empty result matrix</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">signatures</span><span class="p">),</span> <span class="n">expr</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+        <span class="n">result</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">NAN</span>
+        <span class="c1"># reassign row by row to result matrix to include empty signatures.</span>
+        <span class="k">for</span> <span class="n">i_bioqc</span><span class="p">,</span> <span class="n">i_result</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">reorder</span><span class="p">):</span>
+            <span class="n">result</span><span class="p">[</span><span class="n">i_result</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">bioqc_res_log</span><span class="p">[</span><span class="n">i_bioqc</span><span class="p">,</span> <span class="p">:]</span>
+
+        <span class="k">return</span> <span class="n">result</span></div>
 
 
 

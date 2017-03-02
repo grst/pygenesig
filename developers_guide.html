@@ -195,13 +195,13 @@ Make always sure to call the parent constructor, though, as it performs some con
 </div>
 <div class="section" id="implement-a-signaturetester">
 <span id="implement-a-signaturetester"></span><h2>Implement a SignatureTester<a class="headerlink" href="#implement-a-signaturetester" title="Permalink to this headline">¶</a></h2>
-<p>To get started, read the <a class="reference external" href="apidoc.html#pygenesig.validation.SignatureTester">apidoc</a> of <code class="docutils literal"><span class="pre">SignatureTester</span></code>. Essentially, all you have to do is creating a child class of <code class="docutils literal"><span class="pre">SignatureTester</span></code> and implement the method <code class="docutils literal"><span class="pre">_predict(expr,</span> <span class="pre">signatures)</span></code>.
+<p>To get started, read the <a class="reference external" href="apidoc.html#pygenesig.validation.SignatureTester">apidoc</a> of <code class="docutils literal"><span class="pre">SignatureTester</span></code>. Essentially, all you have to do is creating a child class of <code class="docutils literal"><span class="pre">SignatureTester</span></code> and implement the method <code class="docutils literal"><span class="pre">_score_signatures(expr,</span> <span class="pre">signatures)</span></code>.
 The method returns a list of the predicted labels for each samples.</p>
 <p>For example, a random predictor, being agnostic of the signatures could look like:</p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">random</span> 
 
 <span class="k">class</span> <span class="nc">MySignatureTester</span><span class="p">(</span><span class="n">SignatureTester</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">_predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="n">signatures</span><span class="p">):</span> 
+    <span class="k">def</span> <span class="nf">_score_signatures</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="n">signatures</span><span class="p">):</span>
         <span class="n">tissues</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">signatures</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
         <span class="k">return</span> <span class="p">[</span>
             <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">tissues</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">expr</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
