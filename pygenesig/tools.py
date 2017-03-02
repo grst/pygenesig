@@ -1,5 +1,6 @@
 import numpy as np
 import itertools
+import pandas as pd
 
 
 def write_gmt(signatures, file, description="na"):
@@ -145,4 +146,54 @@ def performance_per_tissue(list_of_confusion_matrices, sig_labels, perf_fun):
     return res
 
 
+def jaccard_mat(sigs1, sigs2, colname1="set 1", colname2="set 2"):
+    """
+    Compute a matrix of jaccard indices to compute the overlap of two signature sets.
+
+    Args:
+        sigs1: signature dictionary
+        sigs2: signature dictionary
+        colname1: Name of the column for sigs1 in the dataframe
+        colname2: Name of the column for sigs2 in the dataframe
+
+    Returns:
+        pd.DataFrame: Matrix of Jaccard indices in long format
+
+    Plot the overlap of signatures:
+    >>> import seaborn as sns
+    >>> signatures = load_gmt("tests/bioqc/test_bioqc_log_pvalue.gmt")
+    >>> df = jaccard_mat(signatures, signatures)
+    >>> sns.heatmap(df.pivot(*df.columns))
+    """
+    jaccard_list = []
+    for name1, genes1 in sigs1.items():
+        for name2, genes2 in sigs2.items():
+            jaccard_list.append((name1, name2, jaccard_ind(set(genes1), set(genes2))))
+
+    df = pd.DataFrame(jaccard_list, columns=(colname1, colname2, "jaccard index"))
+    return df
+
+
+def collapse_matrix(mat, group_by, axis=0, aggregate_fun=np.median):
+    """
+    Aggregate expression by annotation (collapse samples of the same tissue)
+
+    Args:
+        mat (np.array): m x n gene expression matrix with m genes and n samples.
+        group_by (list-like): list of length m (if axis=0) or list of length n (if axis=1)
+        axis (int): 0 for rows, 1 for columns
+        aggregate_fun (function): aggregate to apply, defaults to ``numpy.median``
+
+    Returns:
+        pd.DataFrame: collapsed matrix with annotation from `group_by`.
+
+    """
+    if axis == 0:
+        assert mat.shape[0] == len(group_by)
+    elif axis == 1:
+        assert mat.shape[1] == len(group_by)
+
+    mat_df = pd.DataFrame(mat)
+    group_by = list(group_by)  # strip index from series
+    return mat_df.groupby(group_by, axis=axis).aggregate(aggregate_fun)
 

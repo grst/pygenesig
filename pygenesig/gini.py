@@ -8,6 +8,7 @@ over-represented in certain samples.
 import numpy as np
 import pandas as pd
 from pygenesig.validation import SignatureGenerator
+from pygenesig.tools import collapse_matrix
 
 
 def gini(array):
@@ -46,23 +47,11 @@ def gini(array):
 
 def aggregate_expression(expr, target, aggregate_fun=np.median):
     """
-    Aggregate expression by annotation (collapse samples of the same tissue)
+    DEPRECATED.
 
-    Args:
-        expr (np.array): m x n gene expression matrix with m genes and n samples.
-        target (list-like): list of length n, containing the target annotation for each sample (e.g. tissue)
-        aggregate_fun (function): aggregate to apply, defaults to ``numpy.median``
-
-    Returns:
-        pd.DataFrame: m x n pandas dataframe with m = #Genes and n = #target labels
-
+    wrapper for collapse_matrix from tools.
     """
-    group_series = pd.Series(target)
-    group = group_series.groupby(group_series)
-    df_aggr = pd.DataFrame()
-    for name, series in group:
-        df_aggr[name] = np.apply_along_axis(aggregate_fun, 1, expr[:, series.index])
-    return df_aggr
+    return collapse_matrix(expr, target, axis=1, aggregate_fun=aggregate_fun)
 
 
 def _apply_gini_to_expression(df_aggr, min_gini, min_expr):
