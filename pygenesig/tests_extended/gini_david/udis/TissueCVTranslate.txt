@@ -1,0 +1,45 @@
+Adipose Tissue	Adipose - Subcutaneous	Adipose - Subcutaneous
+Adipose Tissue	Adipose - Visceral (Omentum)	Adipose - Visceral (Omentum)
+Adrenal Gland	Adrenal Gland	Adrenal Gland
+Blood	Cells - EBV-transformed lymphocytes	Lymphocytes
+Blood	Whole Blood	Whole Blood
+Blood Vessel	Artery - Aorta	Artery - Aorta
+Blood Vessel	Artery - Coronary	Artery - Coronary
+Blood Vessel	Artery - Tibial	Artery - Tibial
+Brain	Brain - Amygdala	Brain - Amygdala
+Brain	Brain - Anterior cingulate cortex (BA24)	Brain - Anterior cingulate cortex
+Brain	Brain - Caudate (basal ganglia)	Brain - basal ganglia
+Brain	Brain - Cerebellar Hemisphere	Brain - Cerebellar Hemisphere
+Brain	Brain - Cerebellum	Brain - Cerebellum
+Brain	Brain - Cortex	Brain - Cortex
+Brain	Brain - Frontal Cortex (BA9)	Brain - Frontal Cortex
+Brain	Brain - Hippocampus	Brain - Hippocampus
+Brain	Brain - Hypothalamus	Brain - Hypothalamus
+Brain	Brain - Nucleus accumbens (basal ganglia)	Brain - Nucleus accumbens
+Brain	Brain - Putamen (basal ganglia)	Brain - Putamen
+Brain	Brain - Spinal cord (cervical c-1)	Brain - Spinal cord
+Brain	Brain - Substantia nigra	Brain - Substantia nigra
+Breast	Breast - Mammary Tissue	Breast - Mammary Tissue
+Colon	Colon - Transverse	Colon - Transverse
+Esophagus	Esophagus - Mucosa	Esophagus - Mucosa
+Esophagus	Esophagus - Muscularis	Esophagus - Muscularis
+Fallopian Tube	Fallopian Tube	Fallopian Tube
+Heart	Heart - Atrial Appendage	Heart - Atrial Appendage
+Heart	Heart - Left Ventricle	Heart - Left Ventricle
+Kidney	Kidney - Cortex	Kidney - Cortex
+Liver	Liver	Liver
+Lung	Lung	Lung
+Muscle	Muscle - Skeletal	Muscle - Skeletal
+Nerve	Nerve - Tibial	Nerve - Tibial
+Ovary	Ovary	Ovary
+Pancreas	Pancreas	Pancreas
+Pituitary	Pituitary	Pituitary
+Prostate	Prostate	Prostate
+Skin	Cells - Transformed fibroblasts	Fibroblast
+Skin	Skin - Not Sun Exposed (Suprapubic)	Skin
+Skin	Skin - Sun Exposed (Lower leg)	Skin
+Stomach	Stomach	Stomach
+Testis	Testis	Testis
+Thyroid	Thyroid	Thyroid
+Uterus	Uterus	Uterus
+Vagina	Vagina	Vagina
