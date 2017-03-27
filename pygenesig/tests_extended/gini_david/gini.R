@@ -12,6 +12,13 @@ source("funcs.R")
 
 genesetFile <- "data/RocheAnnotated_GTEx_Analysis_RNA-seq_RNA-SeQCv1.1.8_gene_reads__Pilot_2013_01_31.RData"
 
+transformCnames <- function(x) {
+  x <- gsub(" - ", " ", x)
+  x <- gsub("\\(|\\)", "", x)
+  x <- gsub(" ", "_", x)
+  paste(x, "_NGS_GTEx_0.8_3",sep="")
+}
+
 if(!loadFile(genesetFile)) {
   graw <- read_gct_matrix("data/GTEx_Analysis_RNA-seq_RNA-SeQCv1.1.8_gene_reads__Pilot_V3_patch1.gct")
   ## convert count
@@ -56,7 +63,8 @@ if(!loadFile(genesetFile)) {
   save(geneset, file=genesetFile)
   write_gct(exprs(geneset), file="data/roche_annotated_read_counts.gct")
   write_tsv(fData(geneset), "data/roche_annotated_fdata.tsv")
-  write_tsv(pData(geneset), "data/roche_annotated_pdata.tsv")
+  pdata_tab = cbind(pData(geneset), data.frame(SIG_NAME=sapply(pData(geneset)$UDISCV, transformCnames)))
+  write_tsv(pdata_tab, "data/roche_annotated_pdata.tsv")
 }
 
 
@@ -175,12 +183,7 @@ list2gmt <- function(list, description="") {
   return(res)
 }
 cnames <- names(cpmSigGeneSymbol)
-transformCnames <- function(x) {
-  x <- gsub(" - ", " ", x)
-  x <- gsub("\\(|\\)", "", x)
-  x <- gsub(" ", "_", x)
-  paste(x, "_NGS_GTEx_0.8_3",sep="")
-}
+
 ncnames <- transformCnames(cnames)
 names(cpmSigGeneSymbol) <- names(cpmSigGeneID) <- ncnames
 cpmGmt <- list2gmt(cpmSigGeneSymbol, description="Roche")
