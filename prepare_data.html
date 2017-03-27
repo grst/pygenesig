@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Prepare data &mdash; pygenesig 0.1.0 documentation</title>
+  <title>Prepare data &mdash; pygenesig 0.2.0 documentation</title>
   
 
   
@@ -30,7 +30,7 @@
   
 
   
-    <link rel="top" title="pygenesig 0.1.0 documentation" href="index.html"/>
+    <link rel="top" title="pygenesig 0.2.0 documentation" href="index.html"/>
         <link rel="next" title="Creating signatures" href="use_pygenesig.html"/>
         <link rel="prev" title="Getting started with pygenesig" href="index.html"/> 
 
@@ -60,7 +60,7 @@
             
             
               <div class="version">
-                0.1
+                0.2
               </div>
             
           
@@ -221,6 +221,13 @@ The annotation needs to be in the same order as the columns in the matrix.</p>
 </pre></div>
 </div>
 <p>If you use <em>pygenesig</em> for generating the signatures, you will get such a dictionary by default.</p>
+<p>If you provide a <em>translation dictionary</em>, you can use the <a class="reference external" href="apidoc.html#pygenesig.tools.translate_signatures">translate_signatures</a> function
+to change the indices to something meaningful, e.g. gene symbols:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">gene_symbols</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;ADH1&#39;</span><span class="p">,</span> <span class="s1">&#39;p53&#39;</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>     <span class="c1"># list of gene symbols, same order as genes in the expression matrix</span>
+<span class="n">rosetta</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">enumerate</span><span class="p">(</span><span class="n">gene_symbols</span><span class="p">))</span>
+<span class="n">signatures_gene_symbols</span> <span class="o">=</span> <span class="n">translate_signatures</span><span class="p">(</span><span class="n">signatures</span><span class="p">,</span> <span class="n">rosetta</span><span class="p">)</span>
+</pre></div>
+</div>
 </div>
 </div>
 </div>
@@ -266,7 +273,7 @@ The annotation needs to be in the same order as the columns in the matrix.</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.1.0',
+            VERSION:'0.2.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

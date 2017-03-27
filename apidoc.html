@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>API documentation &mdash; pygenesig 0.1.0 documentation</title>
+  <title>API documentation &mdash; pygenesig 0.2.0 documentation</title>
   
 
   
@@ -30,7 +30,7 @@
   
 
   
-    <link rel="top" title="pygenesig 0.1.0 documentation" href="index.html"/>
+    <link rel="top" title="pygenesig 0.2.0 documentation" href="index.html"/>
         <link rel="prev" title="Implement own methods" href="developers_guide.html"/> 
 
   
@@ -59,7 +59,7 @@
             
             
               <div class="version">
-                0.1
+                0.2
               </div>
             
           
@@ -385,6 +385,37 @@ the highest scoring signature.</p>
 <dl class="function">
 <dt id="pygenesig.validation.cross_validate_signatures">
 <code class="descclassname">pygenesig.validation.</code><code class="descname">cross_validate_signatures</code><span class="sig-paren">(</span><em>expr_file</em>, <em>target_file</em>, <em>signature_generator</em>, <em>signature_tester</em>, <em>splitter=StratifiedKFold(n_splits=10</em>, <em>random_state=None</em>, <em>shuffle=False)</em>, <em>sg_kwargs={}</em>, <em>st_kwargs={}</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pygenesig/validation.html#cross_validate_signatures"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pygenesig.validation.cross_validate_signatures" title="Permalink to this definition">¶</a></dt>
+<dd><div class="deprecated">
+<p><span class="versionmodified">Deprecated since version 0.2: </span>Just kept for existing jupyter notebooks. Use cv_score instead, as it is more flexible.</p>
+</div>
+<p>Perform a crossvalidation by generating and testing signatures on a given expression matrix.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>expr_file</strong> (<em>str</em>) &#8211; path to numpy.array (binary) file containing expression matrix saved with <code class="docutils literal"><span class="pre">numpy.save()</span></code></li>
+<li><strong>target_file</strong> (<em>str</em>) &#8211; path to plaintext file containing target classes, line-by-line</li>
+<li><strong>signature_generator</strong> (<a class="reference internal" href="#pygenesig.validation.SignatureGenerator" title="pygenesig.validation.SignatureGenerator"><em>SignatureGenerator</em></a>) &#8211; <code class="docutils literal"><span class="pre">SignatureGenerator</span></code> used to derive the signatures</li>
+<li><strong>signature_tester</strong> (<a class="reference internal" href="#pygenesig.validation.SignatureTester" title="pygenesig.validation.SignatureTester"><em>SignatureTester</em></a>) &#8211; <code class="docutils literal"><span class="pre">SignatureTester</span></code> used to check the quality of signatures</li>
+<li><strong>splitter</strong> (<em>sklearn.model_selection._BaseKFold</em>) &#8211; crossvalidation method from <a class="reference external" href="http://scikit-learn.org/stable/modules/classes.html#module-sklearn.model_selection">scikit-learn</a>.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">list of signature dictionaries containing the signatures generated
+on each fold, list of confusion matrices containing the confusion matrices calculated on each fold.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">(list, list)</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pygenesig.validation.cv_score">
+<code class="descclassname">pygenesig.validation.</code><code class="descname">cv_score</code><span class="sig-paren">(</span><em>expr_file</em>, <em>target_file</em>, <em>signature_generator</em>, <em>signature_tester</em>, <em>splitter=StratifiedKFold(n_splits=10</em>, <em>random_state=None</em>, <em>shuffle=False)</em>, <em>sg_kwargs={}</em>, <em>st_kwargs={}</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pygenesig/validation.html#cv_score"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pygenesig.validation.cv_score" title="Permalink to this definition">¶</a></dt>
 <dd><p>Perform a crossvalidation by generating and testing signatures on a given expression matrix.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -453,13 +484,6 @@ their tissue of origin.</p>
 </dd></dl>
 
 <dl class="function">
-<dt id="pygenesig.gini.aggregate_expression">
-<code class="descclassname">pygenesig.gini.</code><code class="descname">aggregate_expression</code><span class="sig-paren">(</span><em>expr</em>, <em>target</em>, <em>aggregate_fun=&lt;function median&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pygenesig/gini.html#aggregate_expression"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pygenesig.gini.aggregate_expression" title="Permalink to this definition">¶</a></dt>
-<dd><p>DEPRECATED.</p>
-<p>wrapper for collapse_matrix from tools.</p>
-</dd></dl>
-
-<dl class="function">
 <dt id="pygenesig.gini.get_gini_signatures">
 <code class="descclassname">pygenesig.gini.</code><code class="descname">get_gini_signatures</code><span class="sig-paren">(</span><em>df_aggr</em>, <em>min_gini=0.7</em>, <em>max_rk=3</em>, <em>min_expr=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pygenesig/gini.html#get_gini_signatures"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pygenesig.gini.get_gini_signatures" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generate gene signatures using gini index.</p>
@@ -497,7 +521,7 @@ their tissue of origin.</p>
 
 <dl class="function">
 <dt id="pygenesig.gini.get_rogini_format">
-<code class="descclassname">pygenesig.gini.</code><code class="descname">get_rogini_format</code><span class="sig-paren">(</span><em>df_aggr</em>, <em>min_gini=0.7</em>, <em>max_rk=3</em>, <em>min_expr=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pygenesig/gini.html#get_rogini_format"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pygenesig.gini.get_rogini_format" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">pygenesig.gini.</code><code class="descname">get_rogini_format</code><span class="sig-paren">(</span><em>df_aggr</em>, <em>min_gini=0.7</em>, <em>max_rk=None</em>, <em>min_expr=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pygenesig/gini.html#get_rogini_format"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pygenesig.gini.get_rogini_format" title="Permalink to this definition">¶</a></dt>
 <dd><p>Imitate the <em>rogini</em> output format.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -674,7 +698,7 @@ has the lowest p-value of all tested signatures.</p>
 
 <dl class="data">
 <dt id="pygenesig.bioqc.mk_eset">
-<code class="descclassname">pygenesig.bioqc.</code><code class="descname">mk_eset</code><em class="property"> = R object with classes: ('function',) mapped to: &lt;SignatureTranslatedFunction - Python:0x2aaba2e53508 / R:0x8017608&gt;</em><a class="headerlink" href="#pygenesig.bioqc.mk_eset" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">pygenesig.bioqc.</code><code class="descname">mk_eset</code><em class="property"> = R object with classes: ('function',) mapped to: &lt;SignatureTranslatedFunction - Python:0x2aaad2f2e108 / R:0x8033018&gt;</em><a class="headerlink" href="#pygenesig.bioqc.mk_eset" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generate an R ExpressionSet with <code class="docutils literal"><span class="pre">exprs()</span></code> and <code class="docutils literal"><span class="pre">fData()</span></code> annotation.
 fData will contain one single column named GeneSymbol.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -693,7 +717,7 @@ fData will contain one single column named GeneSymbol.</p>
 
 <dl class="data">
 <dt id="pygenesig.bioqc.read_gmt">
-<code class="descclassname">pygenesig.bioqc.</code><code class="descname">read_gmt</code><em class="property"> = R object with classes: ('function',) mapped to: &lt;DocumentedSTFunction - Python:0x2aaba2ec4b48 / R:0x7c399a0&gt;</em><a class="headerlink" href="#pygenesig.bioqc.read_gmt" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">pygenesig.bioqc.</code><code class="descname">read_gmt</code><em class="property"> = R object with classes: ('function',) mapped to: &lt;DocumentedSTFunction - Python:0x2aaad2f77388 / R:0x7ca1c68&gt;</em><a class="headerlink" href="#pygenesig.bioqc.read_gmt" title="Permalink to this definition">¶</a></dt>
 <dd><p>Alias to R function <code class="docutils literal"><span class="pre">BioQC::readGmt</span></code> using rpy2.</p>
 <p>Check the <a class="reference external" href="https://bioconductor.org/packages/release/bioc/manuals/BioQC/man/BioQC.pdf">BioQC Documentation</a>
 for more details.</p>
@@ -701,7 +725,7 @@ for more details.</p>
 
 <dl class="data">
 <dt id="pygenesig.bioqc.wmw_test">
-<code class="descclassname">pygenesig.bioqc.</code><code class="descname">wmw_test</code><em class="property"> = R object with classes: ('standardGeneric',) mapped to: &lt;DocumentedSTFunction - Python:0x2aaba2e61c08 / R:0x847acc8&gt;</em><a class="headerlink" href="#pygenesig.bioqc.wmw_test" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">pygenesig.bioqc.</code><code class="descname">wmw_test</code><em class="property"> = R object with classes: ('standardGeneric',) mapped to: &lt;DocumentedSTFunction - Python:0x2aaad2f57a48 / R:0x8493148&gt;</em><a class="headerlink" href="#pygenesig.bioqc.wmw_test" title="Permalink to this definition">¶</a></dt>
 <dd><p>Alias to R function <code class="docutils literal"><span class="pre">BioQC::wmwTest</span></code> using rpy2.</p>
 <p>Check the <a class="reference external" href="https://bioconductor.org/packages/release/bioc/manuals/BioQC/man/BioQC.pdf">BioQC Documentation</a>
 for more details.</p>
@@ -905,8 +929,8 @@ to the different negative classes.</li>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>set1</strong> (<em>set</em>) &#8211; </li>
-<li><strong>set2</strong> (<em>set</em>) &#8211; </li>
+<li><strong>set1</strong> (<em>list-like</em>) &#8211; </li>
+<li><strong>set2</strong> (<em>list-like</em>) &#8211; </li>
 <li><strong>*args</strong> &#8211; arbitrary number of more sets.</li>
 </ul>
 </td>
@@ -923,7 +947,7 @@ to the different negative classes.</li>
 
 <dl class="function">
 <dt id="pygenesig.tools.jaccard_mat">
-<code class="descclassname">pygenesig.tools.</code><code class="descname">jaccard_mat</code><span class="sig-paren">(</span><em>sigs1</em>, <em>sigs2</em>, <em>colname1='set 1'</em>, <em>colname2='set 2'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pygenesig/tools.html#jaccard_mat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pygenesig.tools.jaccard_mat" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">pygenesig.tools.</code><code class="descname">jaccard_mat</code><span class="sig-paren">(</span><em>sigs1</em>, <em>sigs2</em>, <em>colname1='set_1'</em>, <em>colname2='set_2'</em>, <em>as_matrix=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pygenesig/tools.html#jaccard_mat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pygenesig.tools.jaccard_mat" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute a matrix of jaccard indices to compute the overlap of two signature sets.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -934,6 +958,7 @@ to the different negative classes.</li>
 <li><strong>sigs2</strong> &#8211; signature dictionary</li>
 <li><strong>colname1</strong> &#8211; Name of the column for sigs1 in the dataframe</li>
 <li><strong>colname2</strong> &#8211; Name of the column for sigs2 in the dataframe</li>
+<li><strong>as_matrix</strong> &#8211; if False, a long-form dataframe will be returned, if True, a 2d matrix will be returned instead.</li>
 </ul>
 </td>
 </tr>
@@ -949,7 +974,8 @@ to the different negative classes.</li>
 &gt;&gt;&gt; import seaborn as sns
 &gt;&gt;&gt; signatures = load_gmt(&#8220;tests/bioqc/test_bioqc_log_pvalue.gmt&#8221;)
 &gt;&gt;&gt; df = jaccard_mat(signatures, signatures)
-&gt;&gt;&gt; sns.heatmap(df.pivot(<a href="#id6"><span class="problematic" id="id7">*</span></a>df.columns))</p>
+&gt;&gt;&gt; sns.heatmap(df.pivot(<a href="#id7"><span class="problematic" id="id8">*</span></a>df.columns))  # doctest: +ELLIPSIS
+&lt;matplotlib.axes._subplots.AxesSubplot object at ...&gt;</p>
 </dd></dl>
 
 <dl class="function">
@@ -976,6 +1002,12 @@ to the different negative classes.</li>
 </tr>
 </tbody>
 </table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pygenesig.tools.normalize">
+<code class="descclassname">pygenesig.tools.</code><code class="descname">normalize</code><span class="sig-paren">(</span><em>array</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pygenesig/tools.html#normalize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pygenesig.tools.normalize" title="Permalink to this definition">¶</a></dt>
+<dd><p>normalize a vector to values between 0 and 1</p>
 </dd></dl>
 
 <dl class="function">
@@ -1012,7 +1044,7 @@ to build the output dictionary.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>list_of_confusion_matrices</strong> (<em>list of np.array</em>) &#8211; list of</li>
+<li><strong>list_of_confusion_matrices</strong> (<em>list of np.array</em>) &#8211; list of confusion matrices</li>
 <li><strong>sig_labels</strong> (<em>array-like</em>) &#8211; list of signatures in the same order as in the confusion matrices.</li>
 <li><strong>perf_fun</strong> (<em>function</em>) &#8211; <code class="docutils literal"><span class="pre">(TP,</span> <span class="pre">FN,</span> <span class="pre">TP,</span> <span class="pre">TN)</span></code> computing a performance measure from the binary confusion matrix.
 See <code class="docutils literal"><span class="pre">perfmeasures</span></code> module.</li>
@@ -1030,8 +1062,26 @@ See <code class="docutils literal"><span class="pre">perfmeasures</span></code> 
 </dd></dl>
 
 <dl class="function">
+<dt id="pygenesig.tools.read_gct">
+<code class="descclassname">pygenesig.tools.</code><code class="descname">read_gct</code><span class="sig-paren">(</span><em>file</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pygenesig/tools.html#read_gct"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pygenesig.tools.read_gct" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read a <a class="reference external" href="http://software.broadinstitute.org/cancer/software/genepattern/file-formats-guide#gct">GCT file</a> to a gene expression matrix.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>file</strong> &#8211; path to GCT file</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">gene expression matrix as 2d numpy array. (rows = genes, cols = samples)</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">np.array</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
 <dt id="pygenesig.tools.translate_signatures">
-<code class="descclassname">pygenesig.tools.</code><code class="descname">translate_signatures</code><span class="sig-paren">(</span><em>signatures</em>, <em>rosetta</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pygenesig/tools.html#translate_signatures"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pygenesig.tools.translate_signatures" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">pygenesig.tools.</code><code class="descname">translate_signatures</code><span class="sig-paren">(</span><em>signatures</em>, <em>rosetta</em>, <em>ignore_missing=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pygenesig/tools.html#translate_signatures"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pygenesig.tools.translate_signatures" title="Permalink to this definition">¶</a></dt>
 <dd><p>Translate gene identifiers in a signature dictionary.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1040,6 +1090,8 @@ See <code class="docutils literal"><span class="pre">perfmeasures</span></code> 
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>signatures</strong> (<em>dict of list</em>) &#8211; signature dictionary</li>
 <li><strong>rosetta</strong> (<em>dict</em>) &#8211; translation table mapping one gene identifier to another</li>
+<li><strong>ignore_missing</strong> (<em>boolean</em>) &#8211; If true, no error will be raised if an identifier is not in
+the translation dictionary. Respective entries will be skipped.</li>
 </ul>
 </td>
 </tr>
@@ -1049,7 +1101,7 @@ See <code class="docutils literal"><span class="pre">perfmeasures</span></code> 
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first">dict of list</p>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><code class="xref py py-exc docutils literal"><span class="pre">KeyError</span></code> &#8211; if a gene is not in the rosetta dictionary</p>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><code class="xref py py-exc docutils literal"><span class="pre">KeyError</span></code> &#8211; if a gene is not in the rosetta dictionary unless ignore_missing is specified</p>
 </td>
 </tr>
 </tbody>
@@ -1181,7 +1233,7 @@ As an introduction to evaluating classificators, we recommend reading this <a cl
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.1.0',
+            VERSION:'0.2.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Creating signatures &mdash; pygenesig 0.1.0 documentation</title>
+  <title>Creating signatures &mdash; pygenesig 0.2.0 documentation</title>
   
 
   
@@ -30,7 +30,7 @@
   
 
   
-    <link rel="top" title="pygenesig 0.1.0 documentation" href="index.html"/>
+    <link rel="top" title="pygenesig 0.2.0 documentation" href="index.html"/>
         <link rel="next" title="Implement own methods" href="developers_guide.html"/>
         <link rel="prev" title="Prepare data" href="prepare_data.html"/> 
 
@@ -60,7 +60,7 @@
             
             
               <div class="version">
-                0.1
+                0.2
               </div>
             
           
@@ -140,7 +140,9 @@
             
   <div class="section" id="creating-signatures">
 <span id="creating-signatures"></span><h1>Creating signatures<a class="headerlink" href="#creating-signatures" title="Permalink to this headline">¶</a></h1>
-<p><em>pygenesig</em> shippes with two classes for signature generation. The <a class="reference external" href="apidoc.html#module-pygenesig.gini">GiniSignatureGenerator</a> and the <a class="reference external" href="apidoc.html#module-pygenesig.limma">LimmaSignatureGenerator</a>. The two methods are described in the <a class="reference external" href="apidoc.html">API documentation</a>.</p>
+<p><em>pygenesig</em> shippes with multiple classes for signature generation. Here, we use the
+<a class="reference external" href="apidoc.html#module-pygenesig.gini">GiniSignatureGenerator</a>.
+All methods are described in the <a class="reference external" href="apidoc.html">API documentation</a>.</p>
 <p>First, we load the expression data and target annotation we <a class="reference external" href="prepare_data.html">prepared earlier</a>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
 <span class="n">expr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;expression_matrix.npy&quot;</span><span class="p">)</span>
@@ -165,14 +167,17 @@
 </div>
 <div class="section" id="testing-signatures">
 <span id="testing-signatures"></span><h1>Testing signatures<a class="headerlink" href="#testing-signatures" title="Permalink to this headline">¶</a></h1>
-<p><em>pygenesig</em> shippes with the <code class="docutils literal"><span class="pre">BioQCSignatureTester</span></code>. The method is described in more detail <a class="reference external" href="apidoc.html#module-pygenesig.bioqc">here</a>.</p>
-<p>To test signatures, we initalize the tester with the gene expression data and the target labels. Then, we can test different signature sets on the data:</p>
+<p><em>pygenesig</em> shippes with the <code class="docutils literal"><span class="pre">BioQCSignatureTester</span></code>. The method is described in more
+detail <a class="reference external" href="apidoc.html#module-pygenesig.bioqc">here</a>.</p>
+<p>To test signatures, we initalize the tester with the gene expression data and the target labels.
+Then, we can test different signature sets on the data:</p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pygenesig.bioqc</span> <span class="kn">import</span> <span class="n">BioQCSignatureTester</span>
 <span class="n">st</span> <span class="o">=</span> <span class="n">BioQCSignatureTester</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
 <span class="n">actual</span><span class="p">,</span> <span class="n">predicted</span> <span class="o">=</span> <span class="n">st</span><span class="o">.</span><span class="n">test_signatures</span><span class="p">(</span><span class="n">signatures</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>From the list of actual and predicted labels, we can for example create a confusion matrix. <em>Pygenesig</em> provides a convenient wrapper method to create the confusion matrix, but essentially you can use whatever performance measure from <a class="reference external" href="http://scikit-learn.org/stable/modules/classes.html#sklearn-metrics-metrics">scikit-learn</a>.</p>
+<p>From the list of actual and predicted labels, we can for example create a confusion matrix. <em>Pygenesig</em> provides
+a convenient wrapper method to create the confusion matrix, but essentially you can use whatever performance measure from <a class="reference external" href="http://scikit-learn.org/stable/modules/classes.html#sklearn-metrics-metrics">scikit-learn</a>.</p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">seaborn</span> <span class="kn">as</span> <span class="nn">sns</span>
 <span class="n">confmat</span> <span class="o">=</span> <span class="n">st</span><span class="o">.</span><span class="n">confusion_matrix</span><span class="p">(</span><span class="n">signatures</span><span class="p">,</span> <span class="n">actual</span><span class="p">,</span> <span class="n">predicted</span><span class="p">)</span>
 <span class="n">sig_labels</span> <span class="o">=</span> <span class="n">st</span><span class="o">.</span><span class="n">sort_signatures</span><span class="p">(</span><span class="n">signatures</span><span class="p">)</span>
@@ -187,7 +192,11 @@
 </div>
 <div class="section" id="putting-it-together-crossvalidation">
 <span id="putting-it-together-crossvalidation"></span><h1>Putting it together: crossvalidation<a class="headerlink" href="#putting-it-together-crossvalidation" title="Permalink to this headline">¶</a></h1>
-<p>To avoid overfitting sample-specific noise, we can use <em>crossvalidation</em> to create and test signatures. To this end, we divide our data into 10 independent, <em>stratified</em> folds (<em>i.e.</em> every fold contains about the same amount of items from every class). We always use 9 of the 10 folds for generating the signatures and apply them to the remaining fold for testing. This procedure is illustrated in the following flowchart:</p>
+<p>To avoid overfitting sample-specific noise, we can use <em>crossvalidation</em> to create and test signatures.
+To this end, we divide our data into 10 independent, <em>stratified</em> folds
+(<em>i.e.</em> every fold contains about the same amount of items from every class).
+We always use 9 of the 10 folds for generating the signatures and apply them to
+the remaining fold for testing. This procedure is illustrated in the following flowchart:</p>
 <!-- edit flowchart on https://www.draw.io/?chrome=0&lightbox=1&edit=https%3A%2F%2Fwww.draw.io%2F%23G0BxECzhdeMGwJQXB5ZjNHckRWRzQ&nav=1#G0BxECzhdeMGwJQXB5ZjNHckRWRzQ --> <p><img alt="flowchart" src="_images/pygenesig_xval.svg" /></p>
 <p>You can use using scikit-learn <a class="reference external" href="http://scikit-learn.org/stable/modules/generated/sklearn.model_selection.StratifiedKFold.html#sklearn.model_selection.StratifiedKFold">StratifiedKFold</a> to split your data into folds and then apply a <code class="docutils literal"><span class="pre">SignatureGenerator</span></code> and a <code class="docutils literal"><span class="pre">SignatureTester</span></code> on the resulting testing and training sets.</p>
 <p>In <em>pygenesig</em> this is already implemented in <code class="docutils literal"><span class="pre">cross_validate_signatures</span></code> (<a class="reference external" href="apidoc.html#pygenesig.validation.cross_validate_signatures">documentation</a>). The method automatically performs the cross validation, given a gene expression matrix and target annotation:</p>
@@ -204,7 +213,9 @@
                                                         <span class="n">BioQCSignatureTester</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>The cross-validation function uses <a class="reference external" href="http://dask.pydata.org">dask</a> for multiprocessing. It returns a list of <a class="reference external" href="http://dask.pydata.org/en/latest/custom-graphs.html">dask graphs</a> to compute the signatures and confusion matrices.</p>
+<p>The cross-validation function uses <a class="reference external" href="http://dask.pydata.org">dask</a> for multiprocessing. It returns
+a list of <a class="reference external" href="http://dask.pydata.org/en/latest/custom-graphs.html">dask graphs</a> to compute the signatures and
+confusion matrices.</p>
 <p>Dask supports a <a class="reference external" href="http://dask.pydata.org/en/latest/scheduler-overview.html">bunch of schedulers</a>. The <a class="reference external" href="https://distributed.readthedocs.io/en/latest/quickstart.html">distributed</a> scheduler, for instance, allows you to run the cross-validation on a high performance cluster. To keep it simple, we use the <code class="docutils literal"><span class="pre">multiprocessing</span></code> scheduler here to compute the dask-graphs. Note, that for large gene expression matrices, this can be memory-intensive!</p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">dask.multiprocessing</span>
 <span class="kn">from</span> <span class="nn">dask.base</span> <span class="kn">import</span> <span class="n">compute</span>
@@ -230,7 +241,9 @@
 </div>
 <div class="section" id="case-studies">
 <span id="case-studies"></span><h1>Case studies<a class="headerlink" href="#case-studies" title="Permalink to this headline">¶</a></h1>
-<p>We have performed several case studies using <em>pygenesig</em> on the <a class="reference external" href="http://www.gtexportal.org/home/">GTEx</a> dataset. These studies can be understood as &#8216;extended examples&#8217; of how to use <em>pygenesig</em> and are available on <a class="reference external" href="https://github.com/grst/gene-set-study/tree/master/notebooks">github</a>.</p>
+<p>We have performed several case studies using <em>pygenesig</em> on the <a class="reference external" href="http://www.gtexportal.org/home/">GTEx</a> dataset.
+These studies can be understood as &#8216;extended examples&#8217; of how to use <em>pygenesig</em> and are available
+on <a class="reference external" href="https://github.com/grst/gene-set-study/tree/master/notebooks">github</a>.</p>
 <ul class="simple">
 <li><a class="reference external" href="https://github.com/grst/gene-set-study/blob/master/notebooks/validate_gini.ipynb">Cross validation</a>: Full working example of cross-validation on GTEx data.</li>
 <li><a class="reference external" href="https://github.com/grst/gene-set-study/blob/master/notebooks/gini-gridsearch.ipynb">Grid search for parameter optimization</a>: Systematic test of different parameters for the <a class="reference external" href="apidoc.html#module-pygenesig.gini">GiniSignatureGenerator</a>. We found, that gini-index is a robust method for signature generation over a wide range of parameters.</li>
@@ -279,7 +292,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.1.0',
+            VERSION:'0.2.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

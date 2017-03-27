@@ -1,5 +1,7 @@
 # Creating signatures
-*pygenesig* shippes with two classes for signature generation. The [GiniSignatureGenerator](apidoc.html#module-pygenesig.gini) and the [LimmaSignatureGenerator](apidoc.html#module-pygenesig.limma). The two methods are described in the [API documentation](apidoc.html). 
+*pygenesig* shippes with multiple classes for signature generation. Here, we use the 
+[GiniSignatureGenerator](apidoc.html#module-pygenesig.gini).
+All methods are described in the [API documentation](apidoc.html). 
 
 First, we load the expression data and target annotation we [prepared earlier](prepare_data.html):
 ```python
@@ -26,9 +28,11 @@ Which will result in something like
 ```
 
 # Testing signatures
-*pygenesig* shippes with the `BioQCSignatureTester`. The method is described in more detail [here](apidoc.html#module-pygenesig.bioqc).
+*pygenesig* shippes with the `BioQCSignatureTester`. The method is described in more 
+detail [here](apidoc.html#module-pygenesig.bioqc).
 
-To test signatures, we initalize the tester with the gene expression data and the target labels. Then, we can test different signature sets on the data:
+To test signatures, we initalize the tester with the gene expression data and the target labels. 
+Then, we can test different signature sets on the data:
 
 ```python
 from pygenesig.bioqc import BioQCSignatureTester
@@ -36,7 +40,8 @@ st = BioQCSignatureTester(expr, target)
 actual, predicted = st.test_signatures(signatures)
 ```
 
-From the list of actual and predicted labels, we can for example create a confusion matrix. *Pygenesig* provides a convenient wrapper method to create the confusion matrix, but essentially you can use whatever performance measure from [scikit-learn](http://scikit-learn.org/stable/modules/classes.html#sklearn-metrics-metrics). 
+From the list of actual and predicted labels, we can for example create a confusion matrix. *Pygenesig* provides
+a convenient wrapper method to create the confusion matrix, but essentially you can use whatever performance measure from [scikit-learn](http://scikit-learn.org/stable/modules/classes.html#sklearn-metrics-metrics). 
 
 
 ```python
@@ -54,7 +59,11 @@ sns.heatmap(confmat, xticklabels=sig_labels, yticklabels=sig_labels
 ```
 
 # Putting it together: crossvalidation 
-To avoid overfitting sample-specific noise, we can use *crossvalidation* to create and test signatures. To this end, we divide our data into 10 independent, *stratified* folds (*i.e.* every fold contains about the same amount of items from every class). We always use 9 of the 10 folds for generating the signatures and apply them to the remaining fold for testing. This procedure is illustrated in the following flowchart:
+To avoid overfitting sample-specific noise, we can use *crossvalidation* to create and test signatures.
+To this end, we divide our data into 10 independent, *stratified* folds 
+(*i.e.* every fold contains about the same amount of items from every class). 
+We always use 9 of the 10 folds for generating the signatures and apply them to 
+the remaining fold for testing. This procedure is illustrated in the following flowchart:
 
 <!-- edit flowchart on https://www.draw.io/?chrome=0&lightbox=1&edit=https%3A%2F%2Fwww.draw.io%2F%23G0BxECzhdeMGwJQXB5ZjNHckRWRzQ&nav=1#G0BxECzhdeMGwJQXB5ZjNHckRWRzQ --> 
 
@@ -78,7 +87,9 @@ signature_graphs, result_graphs = cross_validate_signatures(expr_file,
                                                         BioQCSignatureTester)
 ```
 
-The cross-validation function uses [dask](http://dask.pydata.org) for multiprocessing. It returns a list of [dask graphs](http://dask.pydata.org/en/latest/custom-graphs.html) to compute the signatures and confusion matrices.  
+The cross-validation function uses [dask](http://dask.pydata.org) for multiprocessing. It returns 
+a list of [dask graphs](http://dask.pydata.org/en/latest/custom-graphs.html) to compute the signatures and
+confusion matrices.  
 
 Dask supports a [bunch of schedulers](http://dask.pydata.org/en/latest/scheduler-overview.html). The [distributed](https://distributed.readthedocs.io/en/latest/quickstart.html) scheduler, for instance, allows you to run the cross-validation on a high performance cluster. To keep it simple, we use the `multiprocessing` scheduler here to compute the dask-graphs. Note, that for large gene expression matrices, this can be memory-intensive! 
 ```python
@@ -105,7 +116,9 @@ sns.heatmap(conf_mat_mean, ax=ax,
 ![xval heatmap](_static/img/xval_heatmap.png)
 
 # Case studies
-We have performed several case studies using *pygenesig* on the [GTEx](http://www.gtexportal.org/home/) dataset. These studies can be understood as 'extended examples' of how to use *pygenesig* and are available on [github](https://github.com/grst/gene-set-study/tree/master/notebooks). 
+We have performed several case studies using *pygenesig* on the [GTEx](http://www.gtexportal.org/home/) dataset.
+These studies can be understood as 'extended examples' of how to use *pygenesig* and are available
+on [github](https://github.com/grst/gene-set-study/tree/master/notebooks). 
 
 * [Cross validation](https://github.com/grst/gene-set-study/blob/master/notebooks/validate_gini.ipynb): Full working example of cross-validation on GTEx data. 
 * [Grid search for parameter optimization](https://github.com/grst/gene-set-study/blob/master/notebooks/gini-gridsearch.ipynb): Systematic test of different parameters for the [GiniSignatureGenerator](apidoc.html#module-pygenesig.gini). We found, that gini-index is a robust method for signature generation over a wide range of parameters. 

@@ -78,3 +78,10 @@ signatures = {
 
 If you use *pygenesig* for generating the signatures, you will get such a dictionary by default. 
 
+If you provide a *translation dictionary*, you can use the [translate_signatures](apidoc.html#pygenesig.tools.translate_signatures) function
+to change the indices to something meaningful, e.g. gene symbols:
+```python
+gene_symbols = ['ADH1', 'p53', ...]     # list of gene symbols, same order as genes in the expression matrix
+rosetta = dict(enumerate(gene_symbols))
+signatures_gene_symbols = translate_signatures(signatures, rosetta)
+```
