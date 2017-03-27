@@ -18,7 +18,7 @@ def write_gmt(signatures, file, description="na"):
     """
     with open(file, 'w') as f:
         for sig, genes in sorted(signatures.items()):
-            genes = [str(g) for g in signatures[sig]]
+            genes = sorted([str(g) for g in signatures[sig]])
             f.write("\t".join(itertools.chain([sig, description], genes)) + "\n")
 
 
@@ -55,7 +55,7 @@ def load_gmt(file):
     return signatures
 
 
-def translate_signatures(signatures, rosetta):
+def translate_signatures(signatures, rosetta, ignore_missing=False):
     """
     Translate gene identifiers in a signature dictionary.
 
@@ -69,6 +69,13 @@ def translate_signatures(signatures, rosetta):
     Raises:
         KeyError: if a gene is not in the rosetta dictionary
     """
+    if ignore_missing:
+        # remove genes from signature which is not in rosetta.
+        signatures = {
+            tissue: [
+                gene for gene in genes if gene in rosetta
+            ] for tissue, genes in signatures.items()
+        }
     return {
         tissue: [
             rosetta[gene] for gene in genes
@@ -81,14 +88,16 @@ def jaccard_ind(set1, set2, *args):
     Computes the Jaccard-Index of two or more sets.
 
     Args:
-        set1 (set):
-        set2 (set):
+        set1 (list-like):
+        set2 (list-like):
         *args: arbitrary number of more sets.
 
     Returns:
         float: jaccard index of all sets
 
     """
+    set1 = set(set1)
+    set2 = set(set2)
     i = len(set.intersection(set1, set2, *args))
     u = len(set.union(set1, set2, *args))
     return np.divide(i, u)
@@ -146,7 +155,7 @@ def performance_per_tissue(list_of_confusion_matrices, sig_labels, perf_fun):
     return res
 
 
-def jaccard_mat(sigs1, sigs2, colname1="set 1", colname2="set 2"):
+def jaccard_mat(sigs1, sigs2, colname1="set_1", colname2="set_2", as_matrix=False):
     """
     Compute a matrix of jaccard indices to compute the overlap of two signature sets.
 
@@ -171,6 +180,8 @@ def jaccard_mat(sigs1, sigs2, colname1="set 1", colname2="set 2"):
             jaccard_list.append((name1, name2, jaccard_ind(set(genes1), set(genes2))))
 
     df = pd.DataFrame(jaccard_list, columns=(colname1, colname2, "jaccard index"))
+    if as_matrix:
+        return df.pivot(index=colname1, columns=colname2)
     return df
 
 
@@ -197,3 +208,12 @@ def collapse_matrix(mat, group_by, axis=0, aggregate_fun=np.median):
     group_by = list(group_by)  # strip index from series
     return mat_df.groupby(group_by, axis=axis).aggregate(aggregate_fun)
 
+
+def normalize(array):
+    """normalize a vector to values between 0 and 1"""
+    amax = float(np.nanmax(array))
+    amin = float(np.nanmin(array))
+    if amax - amin == 0:
+        return [0] * len(array)
+    array = [(x-amin)/(amax-amin) for x in array]
+    return array
