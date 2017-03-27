@@ -164,6 +164,7 @@ def jaccard_mat(sigs1, sigs2, colname1="set_1", colname2="set_2", as_matrix=Fals
         sigs2: signature dictionary
         colname1: Name of the column for sigs1 in the dataframe
         colname2: Name of the column for sigs2 in the dataframe
+        as_matrix:
 
     Returns:
         pd.DataFrame: Matrix of Jaccard indices in long format
@@ -172,7 +173,8 @@ def jaccard_mat(sigs1, sigs2, colname1="set_1", colname2="set_2", as_matrix=Fals
     >>> import seaborn as sns
     >>> signatures = load_gmt("tests/bioqc/test_bioqc_log_pvalue.gmt")
     >>> df = jaccard_mat(signatures, signatures)
-    >>> sns.heatmap(df.pivot(*df.columns))
+    >>> sns.heatmap(df.pivot(*df.columns))  # doctest: +ELLIPSIS
+    <matplotlib.axes._subplots.AxesSubplot object at ...>
     """
     jaccard_list = []
     for name1, genes1 in sigs1.items():

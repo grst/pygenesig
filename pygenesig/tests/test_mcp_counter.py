@@ -125,13 +125,6 @@ class TestMCPCounter(unittest.TestCase):
             cm = tester.confusion_matrix(signatures_all, actual, predicted)
             np.testing.assert_array_equal(cm_expected, cm)
 
-    # def test_mouse(self):
-    #     expr = pickle.load(open("bioqc/mouse_expr.pickle", 'rb'))
-    #     target = pickle.load(open("bioqc/mouse_target.pickle", 'rb'))
-    #     signatures = pickle.load(open("bioqc/mouse_signatures.pickle", 'rb'))
-    #     st = BioQCSignatureTester(expr, target)
-    #     actual, predicted = st.test_signatures(signatures, return_labels=True)
-
     def test_dtype(self):
         expr = np.array([['1.5', '2.7'], ['2.8', '3.7']])
         target = np.array(["A", "B"])

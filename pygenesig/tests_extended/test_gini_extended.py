@@ -18,11 +18,6 @@ class TestGini(unittest.TestCase):
         self.expr = np.load("./data/gtex_corr_exprs.npy")
         self.target = np.load("./data/target.npy")
 
-    def test_aggratation_chain(self):
-        mat_aggr = collapse_matrix(self.expr, self.target, axis=1)
-        mat_aggr2 = collapse_matrix(mat_aggr.as_matrix(), mat_aggr.columns, axis=1)
-        pdt.assert_frame_equal(mat_aggr, mat_aggr2)
-
     def test_gini_with_aggegation(self):
         mat_aggr = collapse_matrix(self.expr, self.target, axis=1)
         sg1 = GiniSignatureGenerator(self.expr, self.target)
