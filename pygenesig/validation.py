@@ -11,11 +11,63 @@ from dask import delayed
 import os.path
 
 
+def cv_score(expr_file, target_file,
+             signature_generator, signature_tester,
+             splitter=sklearn.model_selection.StratifiedKFold(n_splits=10),
+             sg_kwargs={}, st_kwargs={}):
+    """
+    Perform a crossvalidation by generating and testing signatures on a given expression matrix.
+
+    Args:
+        expr_file (str): path to numpy.array (binary) file containing expression matrix saved with ``numpy.save()``
+        target_file (str): path to plaintext file containing target classes, line-by-line
+        signature_generator (SignatureGenerator): ``SignatureGenerator`` used to derive the signatures
+        signature_tester (SignatureTester): ``SignatureTester`` used to check the quality of signatures
+        splitter (sklearn.model_selection._BaseKFold): crossvalidation method from `scikit-learn`_.
+
+    Returns:
+        (list, list): list of signature dictionaries containing the signatures generated
+        on each fold, list of confusion matrices containing the confusion matrices calculated on each fold.
+
+    .. _scikit-learn:
+        http://scikit-learn.org/stable/modules/classes.html#module-sklearn.model_selection
+
+    """
+    # we need the number of samples locally for splitting in test and training sets
+    target_file = os.path.realpath(target_file)
+    expr_file = os.path.realpath(expr_file)
+    target_local = np.genfromtxt(target_file, dtype=str, delimiter=",")
+
+    # the rest we can run delayed on the dask cluster
+    signatures = []
+    scores = []
+    train_list = []
+    test_list = []
+    for train, test in splitter.split(list(enumerate(target_local)), target_local):
+        # due to some bug in dask, it's faster to load all files on every worker separately.
+        train_list.append(train)
+        test_list.append(test)
+        expr = delayed(np.load)(expr_file)
+        target = delayed(np.genfromtxt)(target_file, dtype=str, delimiter=",")
+        sg = delayed(signature_generator)(expr, target, **sg_kwargs)
+        st = delayed(signature_tester)(expr, target, **st_kwargs)
+        signature = delayed(sg.mk_signatures)(train)
+        signatures.append(signature)
+        score = delayed(st.score_signatures, nout=2)(signature, test)
+        scores.append(score)
+    sig_list = delayed(list)(signatures)
+    res_list = delayed(list)(scores)
+    return sig_list, res_list, train_list, test_list
+
+
 def cross_validate_signatures(expr_file, target_file,
                               signature_generator, signature_tester,
                               splitter=sklearn.model_selection.StratifiedKFold(n_splits=10),
                               sg_kwargs={}, st_kwargs={}):
     """
+    .. deprecated:: 0.2
+        Just kept for existing jupyter notebooks. Use cv_score instead, as it is more flexible.
+
     Perform a crossvalidation by generating and testing signatures on a given expression matrix.
 
     Args:

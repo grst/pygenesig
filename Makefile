@@ -8,4 +8,7 @@ reinstall:
 
 doc:
 	cd docs/ && make html 
+
+upload-doc: doc
 	cd docs/_build/html && git add . && git add -u . && git commit -m "Update documentation. " && git push
+

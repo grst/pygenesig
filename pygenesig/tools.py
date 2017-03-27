@@ -55,6 +55,24 @@ def load_gmt(file):
     return signatures
 
 
+def read_gct(file):
+    """
+    Read a `GCT file`_ to a gene expression matrix.
+
+    Args:
+        file: path to GCT file
+
+    Returns:
+        np.array: gene expression matrix as 2d numpy array. (rows = genes, cols = samples)
+
+    .. _GCT file:
+        http://software.broadinstitute.org/cancer/software/genepattern/file-formats-guide#gct
+
+    """
+    gct = pd.read_csv(file, sep="\t", skiprows=2, index_col=0)
+    return gct.iloc[:, 1:].as_matrix()  # get rid of description column
+
+
 def translate_signatures(signatures, rosetta, ignore_missing=False):
     """
     Translate gene identifiers in a signature dictionary.
@@ -62,12 +80,14 @@ def translate_signatures(signatures, rosetta, ignore_missing=False):
     Args:
         signatures (dict of list): signature dictionary
         rosetta (dict): translation table mapping one gene identifier to another
+        ignore_missing (boolean): If true, no error will be raised if an identifier is not in
+            the translation dictionary. Respective entries will be skipped.
 
     Returns:
         dict of list: translated signature dictionary
 
     Raises:
-        KeyError: if a gene is not in the rosetta dictionary
+        KeyError: if a gene is not in the rosetta dictionary unless ignore_missing is specified
     """
     if ignore_missing:
         # remove genes from signature which is not in rosetta.
@@ -133,7 +153,7 @@ def performance_per_tissue(list_of_confusion_matrices, sig_labels, perf_fun):
     Compute per-tissue performance measures from all-against-all confusion matrices.
 
     Args:
-        list_of_confusion_matrices (list of np.array):  list of
+        list_of_confusion_matrices (list of np.array):  list of confusion matrices
         sig_labels (array-like): list of signatures in the same order as in the confusion matrices.
         perf_fun (function): ``(TP, FN, TP, TN)`` computing a performance measure from the binary confusion matrix.
             See ``perfmeasures`` module.
@@ -164,7 +184,7 @@ def jaccard_mat(sigs1, sigs2, colname1="set_1", colname2="set_2", as_matrix=Fals
         sigs2: signature dictionary
         colname1: Name of the column for sigs1 in the dataframe
         colname2: Name of the column for sigs2 in the dataframe
-        as_matrix:
+        as_matrix: if False, a long-form dataframe will be returned, if True, a 2d matrix will be returned instead.
 
     Returns:
         pd.DataFrame: Matrix of Jaccard indices in long format

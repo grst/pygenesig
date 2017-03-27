@@ -97,6 +97,9 @@ def get_rogini_format(df_aggr, min_gini=.7, max_rk=None, min_expr=1):
     df = pd.DataFrame(rogini_rows)
     df.columns = columns
     df.sort_values(['GENEID', 'RANKING'], inplace=True)
+
+    # the index does not have any meaning, we therefore want a consecutive index in the final data frame
+    df.reset_index(drop=True, inplace=True)
     return df
 
 
