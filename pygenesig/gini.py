@@ -136,7 +136,7 @@ def get_gini_signatures(df_aggr, min_gini=.7, max_rk=3, min_expr=1):
 
     expr_gini = df_aggr.apply(gini, axis=1)
     expr_rank = df_aggr.rank(axis=1, ascending=False)
-    sig_mask = (expr_rank <= max_rk) & (df_aggr > min_expr)
+    sig_mask = (expr_rank <= max_rk) & (df_aggr >= min_expr)
     sig_mask.loc[expr_gini < min_gini, ] = False
 
     signatures = {}
