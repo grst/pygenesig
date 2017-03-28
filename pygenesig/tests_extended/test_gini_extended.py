@@ -13,6 +13,7 @@ def sort_dict_of_lists(the_dict):
         key: sorted(value) for key, value in the_dict.items()
     }
 
+
 class TestGini(unittest.TestCase):
     def setUp(self):
         self.expr = read_gct("./gini_david/data/roche_annotated_cpm.gct")
