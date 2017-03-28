@@ -1,76 +1,8 @@
 import numpy as np
 import itertools
 import pandas as pd
-
-
-def write_gmt(signatures, file, description="na"):
-    """
-    Writes signatures to a `GMT file`_.
-
-    Args:
-        signatures (dict of list): signature dictionary
-        file: path to output file
-        description: text to fill in the gmt description field.
-
-    .. _GMT file:
-        http://software.broadinstitute.org/cancer/software/gsea/wiki/index.php/Data_formats#GMT:_Gene_Matrix_Transposed_file_format_.28.2A.gmt.29
-
-    """
-    with open(file, 'w') as f:
-        for sig, genes in sorted(signatures.items()):
-            genes = sorted([str(g) for g in signatures[sig]])
-            f.write("\t".join(itertools.chain([sig, description], genes)) + "\n")
-
-
-def load_gmt(file):
-    """
-    Read a `GMT file`_ into a signature dictionary.
-
-    Args:
-        file: path to GMT file
-
-    Returns:
-        dict of list: signature dictionary
-
-        Example::
-
-            {
-                "tissue1" : [list, of, gene, ids],
-                "tissue2" : [list, of, other, genes],
-                ...
-            }
-
-    .. _GMT file:
-        http://software.broadinstitute.org/cancer/software/gsea/wiki/index.php/Data_formats#GMT:_Gene_Matrix_Transposed_file_format_.28.2A.gmt.29
-
-
-    """
-    signatures = {}
-    with open(file) as f:
-        for line in f.readlines():
-            cols = line.strip().split("\t")
-            name = cols[0]
-            genes = cols[2:]
-            signatures[name] = genes
-    return signatures
-
-
-def read_gct(file):
-    """
-    Read a `GCT file`_ to a gene expression matrix.
-
-    Args:
-        file: path to GCT file
-
-    Returns:
-        np.array: gene expression matrix as 2d numpy array. (rows = genes, cols = samples)
-
-    .. _GCT file:
-        http://software.broadinstitute.org/cancer/software/genepattern/file-formats-guide#gct
-
-    """
-    gct = pd.read_csv(file, sep="\t", skiprows=2, index_col=0)
-    return gct.iloc[:, 1:].as_matrix()  # get rid of description column
+from pprint import pprint
+from pygenesig.file_formats import load_gmt
 
 
 def translate_signatures(signatures, rosetta, ignore_missing=False):
@@ -101,6 +33,33 @@ def translate_signatures(signatures, rosetta, ignore_missing=False):
             rosetta[gene] for gene in genes
         ] for tissue, genes in signatures.items()
     }
+
+
+def combine_signatures(*args, function=set.intersection):
+    """Combine signatures (e.g. by taking the intersection)
+    Args:
+        *args: list of signature dictonaries
+        function: set operation to combine the signatures
+
+    Returns:
+        dict of set: combined signature dictionary.
+
+    >>> s1 = {"A": {1, 2, 3}, "B": {2, 3, 4}}
+    >>> s2 = {"A": {1, 3, 4, 5}, "B": {42}}
+    >>> pprint(combine_signatures(s1, s2))
+    {'A': {1, 3}, 'B': set()}
+    """
+    assert len(args) > 0, "No signatures provided"
+
+    keys = args[0].keys()
+    for sig in args:
+        assert sig.keys() == keys, "All signature dictonaries must have identical keys."
+
+    return {
+        k: function(*[set(sig[k]) for sig in args])
+            for k in keys
+    }
+
 
 
 def jaccard_ind(set1, set2, *args):
@@ -239,3 +198,9 @@ def normalize(array):
         return [0] * len(array)
     array = [(x-amin)/(amax-amin) for x in array]
     return array
+
+
+def normalize_sum(array):
+    """normalize a vector to sum to 1"""
+    s = sum(array)
+    return [x/s for x in array]

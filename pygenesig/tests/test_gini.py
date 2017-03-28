@@ -75,8 +75,17 @@ class TestGini(unittest.TestCase):
         rogini_sig = {}
         for key, group in grouped:
             rogini_sig[key] = list(group.index)
-        gini_sig = get_gini_signatures(df_aggr, min_gini=.5, max_rk=1, min_expr=0)
+        gini_sig = get_gini_signatures(df_aggr, min_gini=.5, max_sample_rk=1, min_expr=0)
         rosetta = dict(enumerate(df_aggr.index))
         gini_sig = translate_signatures(gini_sig, rosetta)
         self.assertDictEqual(sort_dict_of_lists(rogini_sig), sort_dict_of_lists(gini_sig))
+
+    def test_gini_gene_rank(self):
+        """Check if row rank cutoff works. """
+        df_aggr = pd.read_csv("./gini/input/test_rank.tsv", index_col=0, sep="\t")
+        rogini_res = pd.read_csv("./gini/output/rank_0.5_3.gini", sep="\t")
+
+        signatures = get_gini_signatures(df_aggr, min_gini=.5, max_sample_rk=3, min_expr=0, max_rel_gene_rk=.25)
+        expected = {'S1': set(), 'S5': {3}, 'S2': set(), 'S3': set(), 'S4': {3}}
+        self.assertDictEqual(signatures, expected)
 

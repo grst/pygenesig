@@ -52,7 +52,7 @@ class TestBioQC(unittest.TestCase):
             "B": [1]
         }
         tester = BioQCSignatureTester(self.expr, self.target)
-        actual, predicted = tester.test_signatures(signatures_good, np.array(range(4)))
+        actual, predicted = tester._test_signatures(signatures_good, np.array(range(4)))
         np.testing.assert_array_equal(self.target, predicted)
 
     def test_test_with_bad_signatures_and_subset(self):
@@ -61,7 +61,7 @@ class TestBioQC(unittest.TestCase):
             "B": [2]
         }
         tester = BioQCSignatureTester(self.expr, self.target)
-        actual, predicted = tester.test_signatures(signatures_bad, np.array([0, 1, 3]))
+        actual, predicted = tester._test_signatures(signatures_bad, np.array([0, 1, 3]))
         cm = tester.confusion_matrix(signatures_bad, actual, predicted)
         cm_expected = np.matrix("0 2;"
                                 "0 1")
@@ -86,7 +86,7 @@ class TestBioQC(unittest.TestCase):
         for i in range(10):
             """test in loop to have random permutations of the dictionary. """
             new_dict = {k: v for k, v in signatures_all.items()}
-            actual, predicted = tester.test_signatures(new_dict, np.array(range(4)))
+            actual, predicted = tester._test_signatures(new_dict, np.array(range(4)))
             cm = tester.confusion_matrix(signatures_all, actual, predicted)
             np.testing.assert_array_equal(cm_expected, cm)
 
@@ -98,7 +98,7 @@ class TestBioQC(unittest.TestCase):
         }
         tester = BioQCSignatureTester(self.expr, self.target)
         with self.assertRaises(SignatureTesterException):
-            actual, predicted = tester.test_signatures(signatures_bad, np.array([0, 1, 3]))
+            actual, predicted = tester._test_signatures(signatures_bad, np.array([0, 1, 3]))
 
     def test_empty_signature1(self):
         signatures_bad = {
@@ -107,7 +107,7 @@ class TestBioQC(unittest.TestCase):
             "B": []
         }
         tester = BioQCSignatureTester(self.expr, self.target)
-        actual, predicted = tester.test_signatures(signatures_bad, np.array([0, 1, 3]))
+        actual, predicted = tester._test_signatures(signatures_bad, np.array([0, 1, 3]))
         cm = tester.confusion_matrix(signatures_bad, actual, predicted)
         cm_expected = np.matrix("2 0 0;"
                                 "1 0 0;"
@@ -133,16 +133,9 @@ class TestBioQC(unittest.TestCase):
         for i in range(10):
             """test in loop to have random permutations of the dictionary. """
             new_dict = {k: v for k, v in signatures_all.items()}
-            actual, predicted = tester.test_signatures(new_dict, np.array(range(4)))
+            actual, predicted = tester._test_signatures(new_dict, np.array(range(4)))
             cm = tester.confusion_matrix(signatures_all, actual, predicted)
             np.testing.assert_array_equal(cm_expected, cm)
-
-    # def test_mouse(self):
-    #     expr = pickle.load(open("bioqc/mouse_expr.pickle", 'rb'))
-    #     target = pickle.load(open("bioqc/mouse_target.pickle", 'rb'))
-    #     signatures = pickle.load(open("bioqc/mouse_signatures.pickle", 'rb'))
-    #     st = BioQCSignatureTester(expr, target)
-    #     actual, predicted = st.test_signatures(signatures, return_labels=True)
 
     def test_dtype(self):
         expr = np.array([['1.5', '2.7'], ['2.8', '3.7']])

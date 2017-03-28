@@ -103,7 +103,7 @@ def get_rogini_format(df_aggr, min_gini=.7, max_rk=None, min_expr=1):
     return df
 
 
-def get_gini_signatures(df_aggr, min_gini=.7, max_rk=3, min_expr=1):
+def get_gini_signatures(df_aggr, min_gini=.7, max_sample_rk=3, max_rel_gene_rk=1, min_expr=1):
     """
     Generate gene signatures using gini index.
 
@@ -112,7 +112,8 @@ def get_gini_signatures(df_aggr, min_gini=.7, max_rk=3, min_expr=1):
     Args:
         df_aggr (pd.DataFrame): m x n pandas DataFrame with m Genes and n tissues
         min_gini (float): gini cutoff, genes need to have a gini index larger than this value.
-        max_rk (int): rank cutoff, include genes if they rank <= max_rank among all tissues.
+        max_sample_rk (int): rank cutoff, include genes if they rank <= max_rank among all tissues.
+        max_rel_gene_rk (float):
         min_expr (float): minimal expression
 
     Returns:
@@ -127,16 +128,18 @@ def get_gini_signatures(df_aggr, min_gini=.7, max_rk=3, min_expr=1):
             }
 
     """
-    if max_rk is None:
-        max_rk = float("inf")
+    if max_sample_rk is None:
+        max_sample_rk = float("inf")
     if min_gini is None:
         min_gini = 0
     if min_expr is None:
         min_expr = float("-inf")
+    max_gene_rk = max_rel_gene_rk * df_aggr.shape[0]
 
     expr_gini = df_aggr.apply(gini, axis=1)
-    expr_rank = df_aggr.rank(axis=1, ascending=False)
-    sig_mask = (expr_rank <= max_rk) & (df_aggr >= min_expr)
+    expr_rank_sample = df_aggr.rank(axis=1, ascending=False)    # rank across samples (along row)
+    expr_rank_gene = df_aggr.rank(axis=0, ascending=False)   # rank across genes (along column)
+    sig_mask = (expr_rank_sample <= max_sample_rk) & (df_aggr >= min_expr) & (expr_rank_gene <= max_gene_rk)
     sig_mask.loc[expr_gini < min_gini, ] = False
 
     signatures = {}
@@ -163,19 +166,21 @@ class GiniSignatureGenerator(SignatureGenerator):
         min_expr (float): genes need to have at least an expression ``>= min_expr`` to be included.
         aggregate_fun (function): function used to aggregate samples of the same tissue.
     """
-    def __init__(self, expr, target, min_gini=.7, max_rk=3, min_expr=1, aggregate_fun=np.median):
+    def __init__(self, expr, target, min_gini=.7, max_rk=3, min_expr=1, max_rel_rk=1, aggregate_fun=np.median):
         super(GiniSignatureGenerator, self).__init__(expr, target)
         self.min_gini = min_gini
         self.max_rk = max_rk
         self.min_expr = min_expr
         self.aggregate_fun = aggregate_fun
+        self.min_rel_rk = max_rel_rk
 
     def _mk_signatures(self, expr, target):
         df_aggr = collapse_matrix(expr, target, axis=1, aggregate_fun=self.aggregate_fun)
-        return get_gini_signatures(df_aggr, min_gini=self.min_gini, max_rk=self.max_rk, min_expr=self.min_expr)
+        return get_gini_signatures(df_aggr, min_gini=self.min_gini, max_sample_rk=self.max_rk, min_expr=self.min_expr)
 
     def get_rogini_format(self):
         df_aggr = collapse_matrix(self.expr, self.target, axis=1, aggregate_fun=self.aggregate_fun)
-        return get_rogini_format(df_aggr, min_gini=self.min_gini, max_rk=self.max_rk, min_expr=self.min_expr)
+        return get_rogini_format(df_aggr, min_gini=self.min_gini, max_rk=self.max_rk,
+                                 min_expr=self.min_expr, max_rel_rk=self.mak_rel_rk)
 
 

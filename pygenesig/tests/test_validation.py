@@ -10,6 +10,9 @@ import logging
 
 
 class TestValidation(unittest.TestCase):
+    N_GENES = 1000
+    N_SAMPELS = 200
+
     class DummySignatureGenerator(SignatureGenerator):
         DUMMY_SIGS = {
             "A": ("A", "B", "C"),
@@ -26,8 +29,8 @@ class TestValidation(unittest.TestCase):
             return scores
 
     def setUp(self):
-        expr = np.random.random_sample((200, 200))
-        target = np.array(["A" if x < .3 else "B" for x in np.random.random_sample(200)])
+        expr = np.random.random_sample((self.N_GENES, self.N_SAMPELS))
+        target = np.array(["A" if x < .3 else "B" for x in np.random.random_sample(self.N_SAMPELS)])
         self.expr_file = tempfile.NamedTemporaryFile()
         self.target_file = tempfile.NamedTemporaryFile()
         np.save(self.expr_file, expr)
@@ -40,29 +43,37 @@ class TestValidation(unittest.TestCase):
         self.target_file.close()
 
     def test_cross_validation(self):
-        sig_list, res_list = cross_validate_signatures(self.expr_file.name, self.target_file.name,
+        sig_list, res_list, train_list, test_list = cv_score(self.expr_file.name, self.target_file.name,
                                   self.DummySignatureGenerator, self.DummySignatureTester,
                                   splitter=sklearn.model_selection.StratifiedKFold(n_splits=10))
         # use the non-parallel scheduler for debugging.
-        r_sig, r_res = compute(sig_list, res_list, get=dask.async.get_sync)
+        r_sig, r_res, r_train, r_test = compute(sig_list, res_list, train_list, test_list, get=dask.async.get_sync)
         self.assertEqual(10, len(r_sig))
         self.assertEqual(10, len(r_res))
         for i in range(10):
             self.assertEqual(self.DummySignatureGenerator.DUMMY_SIGS, r_sig[i])
-            cm = r_res[i]
-            self.assertEqual(cm.shape, (2, 2))
-            self.assertGreater(np.sum(cm), 0)
+            sm = r_res[i]
+            self.assertEqual(sm.shape, (len(self.DummySignatureGenerator.DUMMY_SIGS), len(r_test[i])))
+            self.assertGreater(np.sum(sm), 0)
 
     def test_cross_validation_parallel(self):
-        sig_list, res_list = cross_validate_signatures(self.expr_file.name, self.target_file.name,
+        sig_list, res_list, train_list, test_list = cv_score(self.expr_file.name, self.target_file.name,
                                                        self.DummySignatureGenerator, self.DummySignatureTester,
                                                        splitter=sklearn.model_selection.StratifiedKFold(n_splits=10))
         # use the threaded scheduler
-        r_sig, r_res = compute(sig_list, res_list, get=dask.threaded.get)
+        r_sig, r_res, r_train, r_test = compute(sig_list, res_list, train_list, test_list, get=dask.threaded.get)
         self.assertEqual(10, len(r_sig))
         self.assertEqual(10, len(r_res))
         for i in range(10):
             self.assertEqual(self.DummySignatureGenerator.DUMMY_SIGS, r_sig[i])
-            cm = r_res[i]
-            self.assertEqual(cm.shape, (2, 2))
-            self.assertGreater(np.sum(cm), 0)
+            sm = r_res[i]
+            self.assertEqual(sm.shape, (len(self.DummySignatureGenerator.DUMMY_SIGS), len(r_test[i])))
+            self.assertGreater(np.sum(sm), 0)
+
+    def test_filter_samples(self):
+        target = np.array(["A"] * 2 + ["B"] * 10 + ["C"] * 4 + ["D"] * 14)
+        exprs = np.random.rand(1000, 30)
+        exprs2, target2 = filter_samples(exprs, target, n_splits=10)
+        np.testing.assert_array_equal(target2, np.array(["B"] * 10 + ["D"] * 14))
+        mask = np.array(list(range(2, 12)) + list(range(16, 30)))
+        np.testing.assert_array_equal(exprs2, exprs[:, mask])

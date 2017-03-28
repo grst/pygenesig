@@ -18,7 +18,7 @@ import rpy2.robjects as ro
 from rpy2.robjects.packages import importr
 from rpy2.robjects import numpy2ri
 from pygenesig.validation import SignatureTester
-from pygenesig.tools import write_gmt
+from pygenesig.file_formats import write_gmt
 import sklearn.metrics
 import numpy as np
 import tempfile

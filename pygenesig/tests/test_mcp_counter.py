@@ -40,7 +40,7 @@ class TestMCPCounter(unittest.TestCase):
             "B": [1]
         }
         tester = MCPSignatureTester(self.expr, self.target)
-        actual, predicted = tester.test_signatures(signatures_good, np.array(range(4)))
+        actual, predicted = tester._test_signatures(signatures_good, np.array(range(4)))
         np.testing.assert_array_equal(self.target, predicted)
 
     def test_test_with_bad_signatures_and_subset(self):
@@ -49,7 +49,7 @@ class TestMCPCounter(unittest.TestCase):
             "B": [2]
         }
         tester = MCPSignatureTester(self.expr, self.target)
-        actual, predicted = tester.test_signatures(signatures_bad, np.array([0, 1, 3]))
+        actual, predicted = tester._test_signatures(signatures_bad, np.array([0, 1, 3]))
         cm = tester.confusion_matrix(signatures_bad, actual, predicted)
         cm_expected = np.matrix("0 2;"
                                 "0 1")
@@ -74,7 +74,7 @@ class TestMCPCounter(unittest.TestCase):
         for i in range(10):
             """test in loop to have random permutations of the dictionary. """
             new_dict = {k: v for k, v in signatures_all.items()}
-            actual, predicted = tester.test_signatures(new_dict, np.array(range(4)))
+            actual, predicted = tester._test_signatures(new_dict, np.array(range(4)))
             cm = tester.confusion_matrix(signatures_all, actual, predicted)
             np.testing.assert_array_equal(cm_expected, cm)
 
@@ -86,7 +86,7 @@ class TestMCPCounter(unittest.TestCase):
         }
         tester = MCPSignatureTester(self.expr, self.target)
         with self.assertRaises(SignatureTesterException):
-            actual, predicted = tester.test_signatures(signatures_bad, np.array([0, 1, 3]))
+            actual, predicted = tester._test_signatures(signatures_bad, np.array([0, 1, 3]))
 
     def test_empty_signature1(self):
         signatures_bad = {
@@ -95,7 +95,7 @@ class TestMCPCounter(unittest.TestCase):
             "B": []
         }
         tester = MCPSignatureTester(self.expr, self.target)
-        actual, predicted = tester.test_signatures(signatures_bad, np.array([0, 1, 3]))
+        actual, predicted = tester._test_signatures(signatures_bad, np.array([0, 1, 3]))
         cm = tester.confusion_matrix(signatures_bad, actual, predicted)
         cm_expected = np.matrix("2 0 0;"
                                 "1 0 0;"
@@ -121,7 +121,7 @@ class TestMCPCounter(unittest.TestCase):
         for i in range(10):
             """test in loop to have random permutations of the dictionary. """
             new_dict = {k: v for k, v in signatures_all.items()}
-            actual, predicted = tester.test_signatures(new_dict, np.array(range(4)))
+            actual, predicted = tester._test_signatures(new_dict, np.array(range(4)))
             cm = tester.confusion_matrix(signatures_all, actual, predicted)
             np.testing.assert_array_equal(cm_expected, cm)
 
