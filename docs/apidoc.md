@@ -47,6 +47,14 @@
 ```
 
 ## Tools
+### File input output (`pygenesig.file_formats`)
+```eval_rst
+.. automodule:: pygenesig.file_formats
+    :members:
+    :undoc-members:
+    :show-inheritance:
+```
+
 ### Auxilary functions related to gene signatures (`pygenesig.tools`) 
 ```eval_rst
 .. automodule:: pygenesig.tools
