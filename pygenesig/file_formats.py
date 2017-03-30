@@ -4,29 +4,29 @@ import itertools
 
 
 def write_expr(expression_matrix, file):
-    """Store a n x m gene expression matrix as numpy object. """
+    """Store a m x n gene expression matrix as numpy object. """
     np.save(file, expression_matrix)
 
 
 def read_expr(expr_file):
-    """Read a n x m gene expression matrix from a numpy object. """
+    """Read a m x n gene expression matrix from a numpy object. """
     return np.load(expr_file)
 
 
 def write_target(target_array, file):
-    """Given a n x m gene expression matrix with n genes and m samples. Write an m-array with
+    """Given a m x n gene expression matrix with m genes and n samples. Write an n-array with
     one target annotation for each sample. """
     np.savetxt(file, target_array, delimiter=",", fmt="%s")
 
 
 def read_target(target_file):
-    """Given a n x m gene expression matrix with n genes and m samples. Read an m-array with
+    """Given a m x n gene expression matrix with m genes and n samples. Read an n-array with
     one target annotation for each sample. """
     return np.genfromtxt(target_file, dtype=str, delimiter=",")
 
 
 def write_rosetta(rosetta_array, rosetta_file):
-    """Given a n x m gene expression matrix with n genes and m samples. Write a n-array
+    """Given a m x n gene expression matrix with m genes and n samples. Write a m-array
     with one identifier for each gene.
 
     This can be used to map the index-based signature back to gene symbols. """
@@ -34,7 +34,7 @@ def write_rosetta(rosetta_array, rosetta_file):
 
 
 def read_rosetta(rosetta_file):
-    """Given a n x m gene expression matrix with n genes and m samples. Read an n-array
+    """Given a m x n gene expression matrix with m genes and n samples. Read an m-array
     with one identifier for each gene.
 
     This will be converted into a dictionary mapping the gene-index

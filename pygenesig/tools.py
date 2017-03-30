@@ -61,7 +61,6 @@ def combine_signatures(*args, function=set.intersection):
     }
 
 
-
 def jaccard_ind(set1, set2, *args):
     """
     Computes the Jaccard-Index of two or more sets.
