@@ -104,8 +104,8 @@
 <li class="toctree-l3"><a class="reference internal" href="#module-pygenesig.mcp_counter">MCPCounter</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#tools">Tools</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#module-pygenesig.file_formats">File input output (<code class="docutils literal"><span class="pre">pygenesig.file_formats</span></code>)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#tools">Tools</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#module-pygenesig.file_formats">File input output (<code class="docutils literal"><span class="pre">pygenesig.file_formats</span></code>)</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-pygenesig.tools">Auxilary functions related to gene signatures (<code class="docutils literal"><span class="pre">pygenesig.tools</span></code>)</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-pygenesig.perfmeasures">Performance Measures (<code class="docutils literal"><span class="pre">pygenesig.perfmeasures</span></code>)</a></li>
 </ul>
@@ -840,7 +840,7 @@ has the lowest p-value of all tested signatures.</p>
 
 <dl class="data">
 <dt id="pygenesig.bioqc.mk_eset">
-<code class="descclassname">pygenesig.bioqc.</code><code class="descname">mk_eset</code><em class="property"> = R object with classes: ('function',) mapped to: &lt;SignatureTranslatedFunction - Python:0x2aaaceaa27c8 / R:0x4ac86b0&gt;</em><a class="headerlink" href="#pygenesig.bioqc.mk_eset" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">pygenesig.bioqc.</code><code class="descname">mk_eset</code><em class="property"> = R object with classes: ('function',) mapped to: &lt;SignatureTranslatedFunction - Python:0x2aaad09f3248 / R:0x4ad5980&gt;</em><a class="headerlink" href="#pygenesig.bioqc.mk_eset" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generate an R ExpressionSet with <code class="docutils literal"><span class="pre">exprs()</span></code> and <code class="docutils literal"><span class="pre">fData()</span></code> annotation.
 fData will contain one single column named GeneSymbol.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -859,7 +859,7 @@ fData will contain one single column named GeneSymbol.</p>
 
 <dl class="data">
 <dt id="pygenesig.bioqc.read_gmt">
-<code class="descclassname">pygenesig.bioqc.</code><code class="descname">read_gmt</code><em class="property"> = R object with classes: ('function',) mapped to: &lt;DocumentedSTFunction - Python:0x2aaaceadc808 / R:0x554bac8&gt;</em><a class="headerlink" href="#pygenesig.bioqc.read_gmt" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">pygenesig.bioqc.</code><code class="descname">read_gmt</code><em class="property"> = R object with classes: ('function',) mapped to: &lt;DocumentedSTFunction - Python:0x2aaad0ab46c8 / R:0x55598d0&gt;</em><a class="headerlink" href="#pygenesig.bioqc.read_gmt" title="Permalink to this definition">¶</a></dt>
 <dd><p>Alias to R function <code class="docutils literal"><span class="pre">BioQC::readGmt</span></code> using rpy2.</p>
 <p>Check the <a class="reference external" href="https://bioconductor.org/packages/release/bioc/manuals/BioQC/man/BioQC.pdf">BioQC Documentation</a>
 for more details.</p>
@@ -867,7 +867,7 @@ for more details.</p>
 
 <dl class="data">
 <dt id="pygenesig.bioqc.wmw_test">
-<code class="descclassname">pygenesig.bioqc.</code><code class="descname">wmw_test</code><em class="property"> = R object with classes: ('standardGeneric',) mapped to: &lt;DocumentedSTFunction - Python:0x2aaaceb4de88 / R:0x4b55548&gt;</em><a class="headerlink" href="#pygenesig.bioqc.wmw_test" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">pygenesig.bioqc.</code><code class="descname">wmw_test</code><em class="property"> = R object with classes: ('standardGeneric',) mapped to: &lt;DocumentedSTFunction - Python:0x2aaad0a481c8 / R:0x4b631d0&gt;</em><a class="headerlink" href="#pygenesig.bioqc.wmw_test" title="Permalink to this definition">¶</a></dt>
 <dd><p>Alias to R function <code class="docutils literal"><span class="pre">BioQC::wmwTest</span></code> using rpy2.</p>
 <p>Check the <a class="reference external" href="https://bioconductor.org/packages/release/bioc/manuals/BioQC/man/BioQC.pdf">BioQC Documentation</a>
 for more details.</p>
@@ -1034,9 +1034,8 @@ to the different negative classes.</li>
 </div>
 <div class="section" id="tools">
 <span id="tools"></span><h2>Tools<a class="headerlink" href="#tools" title="Permalink to this headline">¶</a></h2>
-</div>
 <div class="section" id="module-pygenesig.file_formats">
-<span id="file-input-output-pygenesig-file-formats"></span><span id="file-input-output-pygenesig-file-formats"></span><h2>File input output (<code class="docutils literal"><span class="pre">pygenesig.file_formats</span></code>)<a class="headerlink" href="#module-pygenesig.file_formats" title="Permalink to this headline">¶</a></h2>
+<span id="file-input-output-pygenesig-file-formats"></span><span id="file-input-output-pygenesig-file-formats"></span><h3>File input output (<code class="docutils literal"><span class="pre">pygenesig.file_formats</span></code>)<a class="headerlink" href="#module-pygenesig.file_formats" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="pygenesig.file_formats.load_gmt">
 <code class="descclassname">pygenesig.file_formats.</code><code class="descname">load_gmt</code><span class="sig-paren">(</span><em>file</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pygenesig/file_formats.html#load_gmt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pygenesig.file_formats.load_gmt" title="Permalink to this definition">¶</a></dt>
@@ -1144,6 +1143,7 @@ with one identifier for each gene.</p>
 one target annotation for each sample.</p>
 </dd></dl>
 
+</div>
 <div class="section" id="module-pygenesig.tools">
 <span id="auxilary-functions-related-to-gene-signatures-pygenesig-tools"></span><span id="auxilary-functions-related-to-gene-signatures-pygenesig-tools"></span><h3>Auxilary functions related to gene signatures (<code class="docutils literal"><span class="pre">pygenesig.tools</span></code>)<a class="headerlink" href="#module-pygenesig.tools" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
