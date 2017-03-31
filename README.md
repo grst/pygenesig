@@ -18,6 +18,10 @@ can be found in [pygenesig-example](https://github.com/grst/pygenesig-example)
 
 
 ## Installation
+`pip` should solve all dependencies automatically. You need python3 to use pygenesig. 
+If you use EasyBuild, run `ml load Anaconda3`. If you need to install python, I reccomend getting [Anaconda Python](https://www.continuum.io/downloads) form Continuum Analytics. 
+
+Install *pygenesig* from github: 
 ```
 git clone git@github.com:grst/pygenesig.git
 cd pygenesig
