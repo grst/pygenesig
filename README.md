@@ -21,5 +21,5 @@ can be found in [pygenesig-example](https://github.com/grst/pygenesig-example)
 ```
 git clone git@github.com:grst/pygenesig.git
 cd pygenesig
-pip install --user -e pygenesig
+pip install --user -e .
 ```
