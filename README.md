@@ -15,3 +15,11 @@ can be found in a [dedicated github repository](https://github.com/grst/pygenesi
 
 ### Case studies
 can be found in [pygenesig-example](https://github.com/grst/pygenesig-example)
+
+
+## Installation
+```
+git clone git@github.com:grst/pygenesig.git
+cd pygenesig
+pip install --user -e pygenesig
+```
