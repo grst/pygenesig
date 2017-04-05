@@ -14,7 +14,13 @@ setup(
     install_requires=[
         'jinja2',
         'pyyaml',
-        'docopt'
+        'docopt',
+        'seaborn',
+        'numpy',
+        'pandas',
+        'rpy2',
+        'scikit-learn',
+        'dask'
     ],
     classifiers=[],
     include_package_data=True

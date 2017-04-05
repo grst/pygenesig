@@ -33,15 +33,32 @@ def write_rosetta(rosetta_array, rosetta_file):
     np.savetxt(rosetta_file, rosetta_array, delimiter=",", fmt="%s")
 
 
-def read_rosetta(rosetta_file):
+def read_rosetta(rosetta_file, inverse=False):
     """Given a m x n gene expression matrix with m genes and n samples. Read an m-array
     with one identifier for each gene.
 
     This will be converted into a dictionary mapping the gene-index
     to the gene identifier. This can be used to map the index-based signatures
-    back to gene symbols. """
+    back to gene symbols.
+
+    Args:
+        rosetta_file (str):
+        inverse (boolean): If true, map gene-symbol to index.
+
+    Important::
+        Be carefule when using `inverse = True` when the list in
+        rosetta_file is not unique. In that case only the last
+        entry makes it into the list!
+
+    """
     fdata = np.genfromtxt(rosetta_file, dtype=str, delimiter=",")
-    return dict(enumerate(fdata))
+    if inverse:
+        return {
+            # '-' is an artifact from ribiosAnnotation
+            gene_symbol: i for i, gene_symbol in enumerate(fdata) if gene_symbol != '-'
+        }
+    else:
+        return dict(enumerate(fdata))
 
 
 def read_gct(file):
