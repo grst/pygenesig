@@ -3,7 +3,8 @@ import pandas as pd
 import pandas.util.testing as pdt
 import numpy as np
 from pygenesig.gini import *
-from pygenesig.tools import load_gmt, translate_signatures, read_gct, jaccard_ind
+from pygenesig.tools import load_gmt, translate_signatures, jaccard_ind
+from pygenesig.file_formats import read_gct
 import os
 
 
