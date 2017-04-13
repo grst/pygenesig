@@ -3,6 +3,23 @@ import numpy as np
 import itertools
 
 
+def _read_flatfile(input_file):
+    """read array from file, one entry per line"""
+    with open(input_file) as f:
+        output_array = np.array(f.read().splitlines())
+    return output_array
+
+
+def _write_flatfile(output_file, input_array):
+    """write array to file, one entry per line"""
+    with open(output_file, 'w') as f:
+        for e in input_array:
+            f.write(e + '\n')
+
+
+#################################################################
+# expression
+#################################################################
 def write_expr(expression_matrix, file):
     """Store a m x n gene expression matrix as numpy object. """
     np.save(file, expression_matrix)
@@ -13,24 +30,85 @@ def read_expr(expr_file):
     return np.load(expr_file)
 
 
+def read_gct(file):
+    """
+    Read a `GCT file`_ to a gene expression matrix.
+
+    Args:
+        file (str): path to GCT file
+
+    Returns:
+        np.array or (np.array, np.array, dict or np.array): gene expression matrix as 2d numpy array. (rows = genes, cols = samples)
+
+    .. _GCT file:
+        http://software.broadinstitute.org/cancer/software/genepattern/file-formats-guide#gct
+
+    """
+    gct = pd.read_csv(file, sep="\t", skiprows=2, index_col=0)
+    exprs = gct.iloc[:, 1:].as_matrix()  # get rid of description column
+    return exprs
+
+
+def write_gct(file, exprs, samples=None, description=None, name=None):
+    """
+    Write a gct file.
+
+    Args:
+        file (str): path to output file
+        exprs (np.array): m x n matrix with m genes and n samples
+        samples: n-array with the labels for the n samples
+        description: m array with a description for each gene (e.g. gene symbol)
+        name: m array with the name for each gene (e.g. gene index)
+
+    """
+    if description is None:
+        description = np.repeat("na", exprs.shape[0])
+    if name is None:
+        name = np.arange(0, exprs.shape[0])
+    if samples is None:
+        samples = np.arange(0, exprs.shape[1])
+    assert exprs.shape[0] == description.size == name.size
+    assert exprs.shape[1] == samples.size
+
+    gct = pd.DataFrame(exprs)
+    gct.columns = samples
+    fdata = pd.DataFrame({'NAME': name, 'Description': description})
+    gct = pd.concat((fdata, gct), axis=1)
+    gct.set_index('NAME', inplace=True)
+
+    with open(file, 'w') as f:
+        f.write("#1.2\n")
+        f.write("{} {}\n".format(*exprs.shape))
+
+    gct.to_csv(file, mode='a', sep="\t")
+
+
+##################################################################
+# target (=tissue annotations)
+##################################################################
 def write_target(target_array, file):
     """Given a m x n gene expression matrix with m genes and n samples. Write an n-array with
     one target annotation for each sample. """
-    np.savetxt(file, target_array, delimiter=",", fmt="%s")
+    _write_flatfile(file, target_array)
 
 
 def read_target(target_file):
     """Given a m x n gene expression matrix with m genes and n samples. Read an n-array with
     one target annotation for each sample. """
-    return np.genfromtxt(target_file, dtype=str, delimiter=",")
+    return _read_flatfile(target_file)
 
 
+##################################################################
+# feature (=gene symbol annotation)
+##################################################################
 def write_rosetta(rosetta_array, rosetta_file):
-    """Given a m x n gene expression matrix with m genes and n samples. Write a m-array
+    """Alias for `write_feature`.
+
+    Given a m x n gene expression matrix with m genes and n samples. Write a m-array
     with one identifier for each gene.
 
     This can be used to map the index-based signature back to gene symbols. """
-    np.savetxt(rosetta_file, rosetta_array, delimiter=",", fmt="%s")
+    _write_flatfile(rosetta_file, rosetta_array)
 
 
 def read_rosetta(rosetta_file, as_dict=True, inverse=False):
@@ -58,14 +136,14 @@ def read_rosetta(rosetta_file, as_dict=True, inverse=False):
         dict or np.array: mapping or numpy array.
 
     """
-    fdata = np.genfromtxt(rosetta_file, dtype=str, delimiter=",")
+    fdata = _read_flatfile(rosetta_file)
     if as_dict:
-        return make_dict(fdata, inverse)
+        return make_rosetta_dict(fdata, inverse)
     else:
         return fdata
 
 
-def make_dict(array, inverse=False):
+def make_rosetta_dict(array, inverse=False):
     """
     convert an array to a dictonary mapping the index to the corresponding array entry.
     Use `inverse` to reverse the mapping, i.e. the array entry to the index.
@@ -82,78 +160,14 @@ def make_dict(array, inverse=False):
         return {
             # '-' is an artifact from ribiosAnnotation
             gene_symbol: i for i, gene_symbol in enumerate(array) if gene_symbol != '-'
-        }
+            }
     else:
         return dict(enumerate(array))
 
 
-def read_gct(file, include_pfdata=False, rosetta_as_dict=True, inverse=False):
-    """
-    Read a `GCT file`_ to a gene expression matrix.
-
-    Args:
-        file (str): path to GCT file
-        include_pfdata (boolean): If true, target will be read from the column names and gene symbols from the description column.
-        rosetta_as_dict (boolean): If True, fdata/rosetta will be a dict, otherwise an np.array.
-            See `pygenesig.file_formats.read_rosetta`.
-        inverse (boolean): reverse the rosetta dict. Not applicable if rosetta_as_dict=False. See
-            `pygenesig.file_formats.read_rosetta`.
-
-    Returns:
-        np.array or (np.array, np.array, dict or np.array): gene expression matrix as 2d numpy array. (rows = genes, cols = samples)
-
-    .. _GCT file:
-        http://software.broadinstitute.org/cancer/software/genepattern/file-formats-guide#gct
-
-    """
-    gct = pd.read_csv(file, sep="\t", skiprows=2, index_col=0)
-    exprs = gct.iloc[:, 1:].as_matrix()  # get rid of description column
-    if include_pfdata:
-        fdata = gct.Description.values
-        # pandas suffixes .NNN to duplicate column names which we will remove here.
-        split_name = np.vectorize(lambda x: ".".join(x.split(".")[:-1]) if "." in x else x)
-        target = split_name(gct.columns[1:].values)
-        if rosetta_as_dict:
-            fdata = make_dict(fdata, inverse=inverse)
-        return exprs, target, fdata
-    else:
-        return exprs
-
-
-def write_gct(file, exprs, target=None, description=None, name=None):
-    """
-    Write a gct file.
-
-    Args:
-        file (str): path to output file
-        exprs (np.array): m x n matrix with m genes and n samples
-        target: n-array with the labels for the n samples
-        description: m array with a description for each gene (e.g. gene symbol)
-        name: m array with the name for each gene (e.g. gene index)
-
-    """
-    if description is None:
-        description = np.repeate("na", exprs.shape[0])
-    if name is None:
-        name = np.arange(0, exprs.shape[0])
-    if target is None:
-        target = np.arange(0, exprs.shape[1])
-    assert exprs.shape[0] == description.size == name.size
-    assert exprs.shape[1] == target.size
-
-    gct = pd.DataFrame(exprs)
-    gct.columns = target
-    fdata = pd.DataFrame({'NAME': name, 'Description': description})
-    gct = pd.concat((fdata, gct), axis=1)
-    gct.set_index('NAME', inplace=True)
-
-    with open(file, 'w') as f:
-        f.write("#1.2\n")
-        f.write("{} {}\n".format(*exprs.shape))
-
-    gct.to_csv(file, mode='a', sep="\t")
-
-
+##################################################################
+# signatures
+##################################################################
 def write_gmt(signatures, file, description="na"):
     """
     Writes signatures to a `GMT file`_.

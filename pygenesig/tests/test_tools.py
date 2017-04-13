@@ -2,7 +2,7 @@ import unittest
 import numpy as np
 import pandas as pd
 import random
-from tools import *
+from pygenesig.tools import *
 import pandas.util.testing as pdt
 
 
