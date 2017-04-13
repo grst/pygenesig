@@ -20,7 +20,8 @@ setup(
         'pandas',
         'rpy2',
         'scikit-learn',
-        'dask'
+        'dask',
+        'distributed'
     ],
     classifiers=[],
     include_package_data=True

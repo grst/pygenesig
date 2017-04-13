@@ -38,7 +38,7 @@ def read_gct(file):
         file (str): path to GCT file
 
     Returns:
-        np.array or (np.array, np.array, dict or np.array): gene expression matrix as 2d numpy array. (rows = genes, cols = samples)
+        np.array: gene expression matrix. 
 
     .. _GCT file:
         http://software.broadinstitute.org/cancer/software/genepattern/file-formats-guide#gct
@@ -127,7 +127,7 @@ def read_rosetta(rosetta_file, as_dict=True, inverse=False):
         as_dict (boolean): If True, a dictionary will be returned. Else it will be a flat numpy.array.
         inverse (boolean): If true, map gene-symbol to index.
 
-    Important::
+    .. Important::
         Be carefule when using `inverse = True` when the list in
         rosetta_file is not unique. In that case only the last
         entry makes it into the list!

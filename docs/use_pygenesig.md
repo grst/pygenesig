@@ -5,9 +5,9 @@ All methods are described in the [API documentation](apidoc.html).
 
 First, we load the expression data and target annotation we [prepared earlier](prepare_data.html):
 ```python
-import numpy as np
-expr = np.load("expression_matrix.npy")
-target = np.genfromtxt("target.csv", delimiter=",", dtype=str)
+from pygenesig.file_formats import read_expr, read_target 
+expr = read_expr("expression_matrix.npy")
+target = read_target("target.txt")
 ```
 
 Now, we can generate signatures with the signature generator of our choice:
@@ -29,7 +29,7 @@ Which will result in something like
 
 # Testing signatures
 *pygenesig* shippes with the `BioQCSignatureTester`. The method is described in more 
-detail [here](apidoc.html#module-pygenesig.bioqc).
+detail [here](apidoc.html#signature-testers).
 
 To test signatures, we initalize the tester with the gene expression data and the target labels. 
 Then, we can test different signature sets on the data:
@@ -37,12 +37,16 @@ Then, we can test different signature sets on the data:
 ```python
 from pygenesig.bioqc import BioQCSignatureTester
 st = BioQCSignatureTester(expr, target)
-actual, predicted = st.test_signatures(signatures)
+score_matrix = st.score_signatures(signatures)
 ```
 
 From the list of actual and predicted labels, we can for example create a confusion matrix. *Pygenesig* provides
 a convenient wrapper method to create the confusion matrix, but essentially you can use whatever performance measure from [scikit-learn](http://scikit-learn.org/stable/modules/classes.html#sklearn-metrics-metrics). 
 
+```python
+actual, predicted = st.classify(signatures, score_matrix)
+confusion_matrix = st.confusion_matrix(signatures, actual, predicted)
+```
 
 ```python
 import seaborn as sns

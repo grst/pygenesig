@@ -1,16 +1,23 @@
-# API documentation
-
-## pygenesig core
-### Abstract classes and cross validation (`pygenesig.validation`)
+# *pygenesig* core
+## Abstract classes and cross validation (`pygenesig.validation`)
 ```eval_rst
 .. automodule:: pygenesig.validation
     :members:
     :undoc-members:
     :show-inheritance:
+    :exclude-members: delayed
 ```
 
-## Methods 
-### Gini Index
+# File input output (`pygenesig.file_formats`)
+```eval_rst
+.. automodule:: pygenesig.file_formats
+    :members:
+    :undoc-members:
+    :show-inheritance:
+```
+
+# Signature Generators
+## Gini Index (`pygenesig.gini`)
 
 ```eval_rst
 .. automodule:: pygenesig.gini
@@ -19,7 +26,7 @@
     :show-inheritance:
 ```
 
-### Differential Expression (Limma)
+## Differential Expression (`pygenesig.limma`)
 
 ```eval_rst
 .. automodule:: pygenesig.limma
@@ -28,7 +35,17 @@
     :show-inheritance:
 ```
 
-### BioQC
+## MCPCounter (`pygenesig.mcp_counter`)
+```eval_rst
+.. automodule:: pygenesig.mcp_counter
+    :members:
+    :undoc-members:
+    :show-inheritance:
+    :exclude-members: MCPSignatureTester
+```
+
+# Signature Testers
+## BioQC (`pygenesig.bioqc`)
 
 ```eval_rst
 .. automodule:: pygenesig.bioqc
@@ -37,25 +54,14 @@
     :show-inheritance:
 ```
 
-### MCPCounter
+## MCPCounter (`pygenesig.mcp_counter`)
 
 ```eval_rst
-.. automodule:: pygenesig.mcp_counter
-    :members:
-    :undoc-members:
-    :show-inheritance:
+.. autoclass:: pygenesig.mcp_counter.MCPSignatureTester
 ```
 
-## Tools
-### File input output (`pygenesig.file_formats`)
-```eval_rst
-.. automodule:: pygenesig.file_formats
-    :members:
-    :undoc-members:
-    :show-inheritance:
-```
 
-### Auxilary functions related to gene signatures (`pygenesig.tools`) 
+# Auxilary functions (`pygenesig.tools`)
 ```eval_rst
 .. automodule:: pygenesig.tools
     :members:
@@ -63,8 +69,8 @@
     :show-inheritance:
 ```
 
-### Performance Measures (`pygenesig.perfmeasures`)
 
+# Performance Measures (`pygenesig.perfmeasures`)
 ```eval_rst
 .. automodule:: pygenesig.perfmeasures
     :members:
