@@ -27,3 +27,5 @@ git clone git@github.com:grst/pygenesig.git
 cd pygenesig
 pip install --user -e .
 ```
+
+Note: docs built with sphinx 1.4.1
