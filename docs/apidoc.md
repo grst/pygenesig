@@ -8,7 +8,7 @@
     :exclude-members: delayed
 ```
 
-# File input output (`pygenesig.file_formats`)
+# File input/output (`pygenesig.file_formats`)
 ```eval_rst
 .. automodule:: pygenesig.file_formats
     :members:
