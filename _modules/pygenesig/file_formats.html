@@ -92,7 +92,15 @@
 <p class="caption"><span class="caption-text">Developer&#8217;s Guide</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../developers_guide.html">Implement own methods</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../apidoc.html">API documentation</a></li>
+</ul>
+<p class="caption"><span class="caption-text">API documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../apidoc.html"><em>pygenesig</em> core</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../apidoc.html#module-pygenesig.file_formats">File input/output (<code class="docutils literal"><span class="pre">pygenesig.file_formats</span></code>)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../apidoc.html#signature-generators">Signature Generators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../apidoc.html#signature-testers">Signature Testers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../apidoc.html#module-pygenesig.tools">Auxilary functions (<code class="docutils literal"><span class="pre">pygenesig.tools</span></code>)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../apidoc.html#module-pygenesig.perfmeasures">Performance Measures (<code class="docutils literal"><span class="pre">pygenesig.perfmeasures</span></code>)</a></li>
 </ul>
 
             
@@ -143,6 +151,23 @@
 <span class="kn">import</span> <span class="nn">itertools</span>
 
 
+<span class="k">def</span> <span class="nf">_read_flatfile</span><span class="p">(</span><span class="n">input_file</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;read array from file, one entry per line&quot;&quot;&quot;</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">input_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">output_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">splitlines</span><span class="p">())</span>
+    <span class="k">return</span> <span class="n">output_array</span>
+
+
+<span class="k">def</span> <span class="nf">_write_flatfile</span><span class="p">(</span><span class="n">output_file</span><span class="p">,</span> <span class="n">input_array</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;write array to file, one entry per line&quot;&quot;&quot;</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output_file</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">input_array</span><span class="p">:</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">e</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+
+
+<span class="c1">#################################################################</span>
+<span class="c1"># expression</span>
+<span class="c1">#################################################################</span>
 <div class="viewcode-block" id="write_expr"><a class="viewcode-back" href="../../apidoc.html#pygenesig.file_formats.write_expr">[docs]</a><span class="k">def</span> <span class="nf">write_expr</span><span class="p">(</span><span class="n">expression_matrix</span><span class="p">,</span> <span class="nb">file</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Store a m x n gene expression matrix as numpy object. &quot;&quot;&quot;</span>
     <span class="n">np</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="nb">file</span><span class="p">,</span> <span class="n">expression_matrix</span><span class="p">)</span></div>
@@ -153,55 +178,144 @@
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">expr_file</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="write_target"><a class="viewcode-back" href="../../apidoc.html#pygenesig.file_formats.write_target">[docs]</a><span class="k">def</span> <span class="nf">write_target</span><span class="p">(</span><span class="n">target_array</span><span class="p">,</span> <span class="nb">file</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Given a m x n gene expression matrix with m genes and n samples. Write an n-array with</span>
-<span class="sd">    one target annotation for each sample. &quot;&quot;&quot;</span>
-    <span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span><span class="nb">file</span><span class="p">,</span> <span class="n">target_array</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="read_target"><a class="viewcode-back" href="../../apidoc.html#pygenesig.file_formats.read_target">[docs]</a><span class="k">def</span> <span class="nf">read_target</span><span class="p">(</span><span class="n">target_file</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Given a m x n gene expression matrix with m genes and n samples. Read an n-array with</span>
-<span class="sd">    one target annotation for each sample. &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">genfromtxt</span><span class="p">(</span><span class="n">target_file</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="write_rosetta"><a class="viewcode-back" href="../../apidoc.html#pygenesig.file_formats.write_rosetta">[docs]</a><span class="k">def</span> <span class="nf">write_rosetta</span><span class="p">(</span><span class="n">rosetta_array</span><span class="p">,</span> <span class="n">rosetta_file</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Given a m x n gene expression matrix with m genes and n samples. Write a m-array</span>
-<span class="sd">    with one identifier for each gene.</span>
-
-<span class="sd">    This can be used to map the index-based signature back to gene symbols. &quot;&quot;&quot;</span>
-    <span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span><span class="n">rosetta_file</span><span class="p">,</span> <span class="n">rosetta_array</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="read_rosetta"><a class="viewcode-back" href="../../apidoc.html#pygenesig.file_formats.read_rosetta">[docs]</a><span class="k">def</span> <span class="nf">read_rosetta</span><span class="p">(</span><span class="n">rosetta_file</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Given a m x n gene expression matrix with m genes and n samples. Read an m-array</span>
-<span class="sd">    with one identifier for each gene.</span>
-
-<span class="sd">    This will be converted into a dictionary mapping the gene-index</span>
-<span class="sd">    to the gene identifier. This can be used to map the index-based signatures</span>
-<span class="sd">    back to gene symbols. &quot;&quot;&quot;</span>
-    <span class="n">fdata</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">genfromtxt</span><span class="p">(</span><span class="n">rosetta_file</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
-    <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">enumerate</span><span class="p">(</span><span class="n">fdata</span><span class="p">))</span></div>
-
-
 <div class="viewcode-block" id="read_gct"><a class="viewcode-back" href="../../apidoc.html#pygenesig.file_formats.read_gct">[docs]</a><span class="k">def</span> <span class="nf">read_gct</span><span class="p">(</span><span class="nb">file</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Read a `GCT file`_ to a gene expression matrix.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        file: path to GCT file</span>
+<span class="sd">        file (str): path to GCT file</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        np.array: gene expression matrix as 2d numpy array. (rows = genes, cols = samples)</span>
+<span class="sd">        np.array: gene expression matrix. </span>
 
 <span class="sd">    .. _GCT file:</span>
 <span class="sd">        http://software.broadinstitute.org/cancer/software/genepattern/file-formats-guide#gct</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">gct</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="nb">file</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">skiprows</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">gct</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">:]</span><span class="o">.</span><span class="n">as_matrix</span><span class="p">()</span>  <span class="c1"># get rid of description column</span></div>
+    <span class="n">exprs</span> <span class="o">=</span> <span class="n">gct</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">:]</span><span class="o">.</span><span class="n">as_matrix</span><span class="p">()</span>  <span class="c1"># get rid of description column</span>
+    <span class="k">return</span> <span class="n">exprs</span></div>
 
 
+<div class="viewcode-block" id="write_gct"><a class="viewcode-back" href="../../apidoc.html#pygenesig.file_formats.write_gct">[docs]</a><span class="k">def</span> <span class="nf">write_gct</span><span class="p">(</span><span class="nb">file</span><span class="p">,</span> <span class="n">exprs</span><span class="p">,</span> <span class="n">samples</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Write a gct file.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        file (str): path to output file</span>
+<span class="sd">        exprs (np.array): m x n matrix with m genes and n samples</span>
+<span class="sd">        samples: n-array with the labels for the n samples</span>
+<span class="sd">        description: m array with a description for each gene (e.g. gene symbol)</span>
+<span class="sd">        name: m array with the name for each gene (e.g. gene index)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">description</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">description</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="s2">&quot;na&quot;</span><span class="p">,</span> <span class="n">exprs</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">name</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">exprs</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">samples</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">samples</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">exprs</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="k">assert</span> <span class="n">exprs</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">description</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="n">name</span><span class="o">.</span><span class="n">size</span>
+    <span class="k">assert</span> <span class="n">exprs</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">samples</span><span class="o">.</span><span class="n">size</span>
+
+    <span class="n">gct</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">exprs</span><span class="p">)</span>
+    <span class="n">gct</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="n">samples</span>
+    <span class="n">fdata</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;NAME&#39;</span><span class="p">:</span> <span class="n">name</span><span class="p">,</span> <span class="s1">&#39;Description&#39;</span><span class="p">:</span> <span class="n">description</span><span class="p">})</span>
+    <span class="n">gct</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">((</span><span class="n">fdata</span><span class="p">,</span> <span class="n">gct</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">gct</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;NAME&#39;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="nb">file</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;#1.2</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;{} {}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">*</span><span class="n">exprs</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
+
+    <span class="n">gct</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="nb">file</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+<span class="c1">##################################################################</span>
+<span class="c1"># target (=tissue annotations)</span>
+<span class="c1">##################################################################</span>
+<div class="viewcode-block" id="write_target"><a class="viewcode-back" href="../../apidoc.html#pygenesig.file_formats.write_target">[docs]</a><span class="k">def</span> <span class="nf">write_target</span><span class="p">(</span><span class="n">target_array</span><span class="p">,</span> <span class="nb">file</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Given a m x n gene expression matrix with m genes and n samples. Write an n-array with</span>
+<span class="sd">    one target annotation for each sample. &quot;&quot;&quot;</span>
+    <span class="n">_write_flatfile</span><span class="p">(</span><span class="nb">file</span><span class="p">,</span> <span class="n">target_array</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="read_target"><a class="viewcode-back" href="../../apidoc.html#pygenesig.file_formats.read_target">[docs]</a><span class="k">def</span> <span class="nf">read_target</span><span class="p">(</span><span class="n">target_file</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Given a m x n gene expression matrix with m genes and n samples. Read an n-array with</span>
+<span class="sd">    one target annotation for each sample. &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">_read_flatfile</span><span class="p">(</span><span class="n">target_file</span><span class="p">)</span></div>
+
+
+<span class="c1">##################################################################</span>
+<span class="c1"># feature (=gene symbol annotation)</span>
+<span class="c1">##################################################################</span>
+<div class="viewcode-block" id="write_rosetta"><a class="viewcode-back" href="../../apidoc.html#pygenesig.file_formats.write_rosetta">[docs]</a><span class="k">def</span> <span class="nf">write_rosetta</span><span class="p">(</span><span class="n">rosetta_array</span><span class="p">,</span> <span class="n">rosetta_file</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Alias for `write_feature`.</span>
+
+<span class="sd">    Given a m x n gene expression matrix with m genes and n samples. Write a m-array</span>
+<span class="sd">    with one identifier for each gene.</span>
+
+<span class="sd">    This can be used to map the index-based signature back to gene symbols. &quot;&quot;&quot;</span>
+    <span class="n">_write_flatfile</span><span class="p">(</span><span class="n">rosetta_file</span><span class="p">,</span> <span class="n">rosetta_array</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="read_rosetta"><a class="viewcode-back" href="../../apidoc.html#pygenesig.file_formats.read_rosetta">[docs]</a><span class="k">def</span> <span class="nf">read_rosetta</span><span class="p">(</span><span class="n">rosetta_file</span><span class="p">,</span> <span class="n">as_dict</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">inverse</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Given a m x n gene expression matrix with m genes and n samples. Read an m-array</span>
+<span class="sd">    with one identifier for each gene.</span>
+
+<span class="sd">    If `as_dict` is True, this will be converted into a dictionary mapping the gene-index</span>
+<span class="sd">    to the gene identifier. This can be used to map the index-based signatures</span>
+<span class="sd">    back to gene symbols.</span>
+
+<span class="sd">    If `inverse` is True, the mapping is inverse, and the gene-symbol will be mapped to the</span>
+<span class="sd">    gene-index.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        rosetta_file (str): path to file</span>
+<span class="sd">        as_dict (boolean): If True, a dictionary will be returned. Else it will be a flat numpy.array.</span>
+<span class="sd">        inverse (boolean): If true, map gene-symbol to index.</span>
+
+<span class="sd">    .. Important::</span>
+<span class="sd">        Be carefule when using `inverse = True` when the list in</span>
+<span class="sd">        rosetta_file is not unique. In that case only the last</span>
+<span class="sd">        entry makes it into the list!</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        dict or np.array: mapping or numpy array.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">fdata</span> <span class="o">=</span> <span class="n">_read_flatfile</span><span class="p">(</span><span class="n">rosetta_file</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">as_dict</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">make_rosetta_dict</span><span class="p">(</span><span class="n">fdata</span><span class="p">,</span> <span class="n">inverse</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">fdata</span></div>
+
+
+<div class="viewcode-block" id="make_rosetta_dict"><a class="viewcode-back" href="../../apidoc.html#pygenesig.file_formats.make_rosetta_dict">[docs]</a><span class="k">def</span> <span class="nf">make_rosetta_dict</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="n">inverse</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    convert an array to a dictonary mapping the index to the corresponding array entry.</span>
+<span class="sd">    Use `inverse` to reverse the mapping, i.e. the array entry to the index.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        array (array-like):</span>
+<span class="sd">        inverse (boolean):</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        dict: the map</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">inverse</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="c1"># &#39;-&#39; is an artifact from ribiosAnnotation</span>
+            <span class="n">gene_symbol</span><span class="p">:</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">gene_symbol</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">array</span><span class="p">)</span> <span class="k">if</span> <span class="n">gene_symbol</span> <span class="o">!=</span> <span class="s1">&#39;-&#39;</span>
+            <span class="p">}</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">enumerate</span><span class="p">(</span><span class="n">array</span><span class="p">))</span></div>
+
+
+<span class="c1">##################################################################</span>
+<span class="c1"># signatures</span>
+<span class="c1">##################################################################</span>
 <div class="viewcode-block" id="write_gmt"><a class="viewcode-back" href="../../apidoc.html#pygenesig.file_formats.write_gmt">[docs]</a><span class="k">def</span> <span class="nf">write_gmt</span><span class="p">(</span><span class="n">signatures</span><span class="p">,</span> <span class="nb">file</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;na&quot;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Writes signatures to a `GMT file`_.</span>
@@ -222,6 +336,14 @@
 
 
 <div class="viewcode-block" id="load_gmt"><a class="viewcode-back" href="../../apidoc.html#pygenesig.file_formats.load_gmt">[docs]</a><span class="k">def</span> <span class="nf">load_gmt</span><span class="p">(</span><span class="nb">file</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Deprecated.</span>
+<span class="sd">    Alias for read_gmt.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">read_gmt</span><span class="p">(</span><span class="nb">file</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="read_gmt"><a class="viewcode-back" href="../../apidoc.html#pygenesig.file_formats.read_gmt">[docs]</a><span class="k">def</span> <span class="nf">read_gmt</span><span class="p">(</span><span class="nb">file</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Read a `GMT file`_ into a signature dictionary.</span>
 

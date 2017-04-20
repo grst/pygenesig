@@ -92,7 +92,15 @@
 <p class="caption"><span class="caption-text">Developer&#8217;s Guide</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../developers_guide.html">Implement own methods</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../apidoc.html">API documentation</a></li>
+</ul>
+<p class="caption"><span class="caption-text">API documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../apidoc.html"><em>pygenesig</em> core</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apidoc.html#module-pygenesig.file_formats">File input/output (<code class="docutils literal"><span class="pre">pygenesig.file_formats</span></code>)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apidoc.html#signature-generators">Signature Generators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apidoc.html#signature-testers">Signature Testers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apidoc.html#module-pygenesig.tools">Auxilary functions (<code class="docutils literal"><span class="pre">pygenesig.tools</span></code>)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apidoc.html#module-pygenesig.perfmeasures">Performance Measures (<code class="docutils literal"><span class="pre">pygenesig.perfmeasures</span></code>)</a></li>
 </ul>
 
             
@@ -175,17 +183,17 @@
     <span class="k">return</span> <span class="n">wrapper</span>
  
 <span class="k">class</span> <span class="nc">DocstringProperty</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">class_doc</span><span class="p">,</span> <span class="n">fget</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">class_doc</span><span class="p">,</span> <span class="n">fget</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fget</span> <span class="o">=</span> <span class="n">fget</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">class_doc</span> <span class="o">=</span> <span class="n">class_doc</span>
-    <span class="k">def</span> <span class="nf">__get__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">objtype</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__get__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">objtype</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">obj</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">class_doc</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fget</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">__set__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__set__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">&quot;Cannot set the attribute&quot;</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">__delete__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__delete__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">&quot;Cannot delete the attribute&quot;</span><span class="p">)</span>
 
 <span class="k">def</span> <span class="nf">_repr_argval</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
@@ -220,11 +228,11 @@
 
     <span class="n">_local_env</span> <span class="o">=</span> <span class="bp">None</span>
         
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">Function</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Function</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_local_env</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__newenv</span><span class="p">(</span><span class="nb">hash</span><span class="o">=</span><span class="n">rinterface</span><span class="o">.</span><span class="n">BoolSexpVector</span><span class="p">((</span><span class="bp">True</span><span class="p">,</span> <span class="p">)))</span>
 
-    <span class="nd">@docstring_property</span><span class="p">(</span><span class="n">__doc__</span><span class="p">)</span>
+    <span class="nd">@docstring_property</span><span class="p">(</span><span class="vm">__doc__</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">__doc__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">fm</span> <span class="o">=</span> <span class="n">_formals_fixed</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="n">doc</span> <span class="o">=</span> <span class="nb">list</span><span class="p">([</span><span class="s1">&#39;Python representation of an R function.&#39;</span><span class="p">,</span>
@@ -238,12 +246,12 @@
         <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">doc</span><span class="p">)</span>
 
 
-    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">new_args</span> <span class="o">=</span> <span class="p">[</span><span class="n">conversion</span><span class="o">.</span><span class="n">py2ri</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">args</span><span class="p">]</span>
         <span class="n">new_kwargs</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="n">new_kwargs</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">conversion</span><span class="o">.</span><span class="n">py2ri</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
-        <span class="n">res</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">Function</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__call__</span><span class="p">(</span><span class="o">*</span><span class="n">new_args</span><span class="p">,</span> <span class="o">**</span><span class="n">new_kwargs</span><span class="p">)</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">Function</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__call__</span><span class="p">(</span><span class="o">*</span><span class="n">new_args</span><span class="p">,</span> <span class="o">**</span><span class="n">new_kwargs</span><span class="p">)</span>
         <span class="n">res</span> <span class="o">=</span> <span class="n">conversion</span><span class="o">.</span><span class="n">ri2ro</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">res</span>
 
@@ -271,12 +279,12 @@
     <span class="n">_prm_translate</span> <span class="o">=</span> <span class="bp">None</span>
 
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sexp</span><span class="p">,</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sexp</span><span class="p">,</span>
                  <span class="n">init_prm_translate</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span>
                  <span class="n">on_conflict</span> <span class="o">=</span> <span class="s1">&#39;warn&#39;</span><span class="p">,</span>
                  <span class="n">symbol_r2python</span> <span class="o">=</span> <span class="n">default_symbol_r2python</span><span class="p">,</span>
                  <span class="n">symbol_check_after</span> <span class="o">=</span> <span class="n">default_symbol_check_after</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">SignatureTranslatedFunction</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">sexp</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">SignatureTranslatedFunction</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">sexp</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">init_prm_translate</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="n">prm_translate</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
@@ -308,28 +316,28 @@
         <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">sexp</span><span class="p">,</span> <span class="s1">&#39;__rname__&#39;</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__rname__</span> <span class="o">=</span> <span class="n">sexp</span><span class="o">.</span><span class="n">__rname__</span>
 
-    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">prm_translate</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prm_translate</span>
         <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
             <span class="n">r_k</span> <span class="o">=</span> <span class="n">prm_translate</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">r_k</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
                 <span class="n">v</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
                 <span class="n">kwargs</span><span class="p">[</span><span class="n">r_k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
-        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">SignatureTranslatedFunction</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__call__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">SignatureTranslatedFunction</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__call__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
-<span class="n">pattern_link</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">r&#39;</span><span class="se">\\</span><span class="s1">link\{(.+?)\}&#39;</span><span class="p">)</span>
-<span class="n">pattern_code</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">r&#39;</span><span class="se">\\</span><span class="s1">code\{(.+?)\}&#39;</span><span class="p">)</span>
-<span class="n">pattern_samp</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">r&#39;</span><span class="se">\\</span><span class="s1">samp\{(.+?)\}&#39;</span><span class="p">)</span>
+<span class="n">pattern_link</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;</span><span class="se">\\</span><span class="s1">link\{(.+?)\}&#39;</span><span class="p">)</span>
+<span class="n">pattern_code</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;</span><span class="se">\\</span><span class="s1">code\{(.+?)\}&#39;</span><span class="p">)</span>
+<span class="n">pattern_samp</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;</span><span class="se">\\</span><span class="s1">samp\{(.+?)\}&#39;</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">DocumentedSTFunction</span><span class="p">(</span><span class="n">SignatureTranslatedFunction</span><span class="p">):</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sexp</span><span class="p">,</span> <span class="n">init_prm_translate</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sexp</span><span class="p">,</span> <span class="n">init_prm_translate</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span>
                  <span class="n">packagename</span> <span class="o">=</span> <span class="bp">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">DocumentedSTFunction</span><span class="p">,</span> 
-              <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">sexp</span><span class="p">,</span> 
+              <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">sexp</span><span class="p">,</span> 
                              <span class="n">init_prm_translate</span> <span class="o">=</span> <span class="n">init_prm_translate</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__rpackagename__</span> <span class="o">=</span> <span class="n">packagename</span>
 
-    <span class="nd">@docstring_property</span><span class="p">(</span><span class="n">__doc__</span><span class="p">)</span>
+    <span class="nd">@docstring_property</span><span class="p">(</span><span class="vm">__doc__</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">__doc__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">doc</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Python representation of an R function.&#39;</span><span class="p">]</span>
         <span class="n">description</span> <span class="o">=</span> <span class="n">help</span><span class="o">.</span><span class="n">docstring</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__rpackagename__</span><span class="p">,</span>
@@ -355,9 +363,9 @@
         <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">page</span><span class="o">.</span><span class="n">arguments</span><span class="p">():</span>
             <span class="n">description</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">value</span>
             <span class="n">description</span> <span class="o">=</span> <span class="n">description</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
-            <span class="n">description</span><span class="p">,</span> <span class="n">count</span> <span class="o">=</span> <span class="n">pattern_link</span><span class="o">.</span><span class="n">subn</span><span class="p">(</span><span class="s1">r&#39;\1&#39;</span><span class="p">,</span> <span class="n">description</span><span class="p">)</span>
-            <span class="n">description</span><span class="p">,</span> <span class="n">count</span> <span class="o">=</span> <span class="n">pattern_code</span><span class="o">.</span><span class="n">subn</span><span class="p">(</span><span class="s1">r&#39;`\1`&#39;</span><span class="p">,</span> <span class="n">description</span><span class="p">)</span>
-            <span class="n">description</span><span class="p">,</span> <span class="n">count</span> <span class="o">=</span> <span class="n">pattern_samp</span><span class="o">.</span><span class="n">subn</span><span class="p">(</span><span class="s1">r&#39;`\1`&#39;</span><span class="p">,</span> <span class="n">description</span><span class="p">)</span>
+            <span class="n">description</span><span class="p">,</span> <span class="n">count</span> <span class="o">=</span> <span class="n">pattern_link</span><span class="o">.</span><span class="n">subn</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;\1&#39;</span><span class="p">,</span> <span class="n">description</span><span class="p">)</span>
+            <span class="n">description</span><span class="p">,</span> <span class="n">count</span> <span class="o">=</span> <span class="n">pattern_code</span><span class="o">.</span><span class="n">subn</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;`\1`&#39;</span><span class="p">,</span> <span class="n">description</span><span class="p">)</span>
+            <span class="n">description</span><span class="p">,</span> <span class="n">count</span> <span class="o">=</span> <span class="n">pattern_samp</span><span class="o">.</span><span class="n">subn</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;`\1`&#39;</span><span class="p">,</span> <span class="n">description</span><span class="p">)</span>
             <span class="n">doc</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">((</span><span class="n">item</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="s1">&#39;: &#39;</span><span class="p">,</span> <span class="n">description</span><span class="p">,</span> <span class="s1">&#39;,&#39;</span><span class="p">)))</span>
             <span class="n">doc</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">doc</span><span class="p">)</span>

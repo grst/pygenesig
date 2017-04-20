@@ -92,7 +92,15 @@
 <p class="caption"><span class="caption-text">Developer&#8217;s Guide</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../developers_guide.html">Implement own methods</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../apidoc.html">API documentation</a></li>
+</ul>
+<p class="caption"><span class="caption-text">API documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../apidoc.html"><em>pygenesig</em> core</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../apidoc.html#module-pygenesig.file_formats">File input/output (<code class="docutils literal"><span class="pre">pygenesig.file_formats</span></code>)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../apidoc.html#signature-generators">Signature Generators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../apidoc.html#signature-testers">Signature Testers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../apidoc.html#module-pygenesig.tools">Auxilary functions (<code class="docutils literal"><span class="pre">pygenesig.tools</span></code>)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../apidoc.html#module-pygenesig.perfmeasures">Performance Measures (<code class="docutils literal"><span class="pre">pygenesig.perfmeasures</span></code>)</a></li>
 </ul>
 
             
@@ -192,8 +200,9 @@
 <span class="sd">        splitter (sklearn.model_selection._BaseKFold): crossvalidation method from `scikit-learn`_.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        (list, list): list of signature dictionaries containing the signatures generated</span>
-<span class="sd">        on each fold, list of confusion matrices containing the confusion matrices calculated on each fold.</span>
+<span class="sd">        (list, list, list, list): list of signature dictionaries containing the signatures generated</span>
+<span class="sd">        on each fold, list of confusion matrices containing the confusion matrices calculated on each fold, </span>
+<span class="sd">        list of indices used for training for each fold, list of indices used for testing for each fold. </span>
 
 <span class="sd">    .. _scikit-learn:</span>
 <span class="sd">        http://scikit-learn.org/stable/modules/classes.html#module-sklearn.model_selection</span>
@@ -244,9 +253,11 @@
 <span class="sd">    Args:</span>
 <span class="sd">        expr (np.ndarray): m x n matrix with m samples and n genes</span>
 <span class="sd">        target (array-like): m-vector with true tissue for each sample</span>
+<span class="sd">        </span>
+<span class="sd">    .. automethod:: _mk_signatures</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">expr</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">target</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The length of target must equal the number of samples (columns) in the expr matrix. &quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">issubdtype</span><span class="p">(</span><span class="n">expr</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">issubdtype</span><span class="p">(</span><span class="n">expr</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
@@ -256,7 +267,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">target</span> <span class="o">=</span> <span class="n">target</span>
 
     <span class="nd">@abstractmethod</span>
-    <span class="k">def</span> <span class="nf">_mk_signatures</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
+<div class="viewcode-block" id="SignatureGenerator._mk_signatures"><a class="viewcode-back" href="../../apidoc.html#pygenesig.validation.SignatureGenerator._mk_signatures">[docs]</a>    <span class="k">def</span> <span class="nf">_mk_signatures</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Implement this method.</span>
 <span class="sd">        Generates signatures for a list of tissues given a gene expression matrix.</span>
@@ -271,11 +282,11 @@
 <span class="sd">            dict: tissue_name -&gt; [list, of, enriched, genes]. The indices correspond to expr.index.</span>
 
 <span class="sd">        Note:</span>
-<span class="sd">            When implementing this method, make sure, that every in this.target has an entry in the</span>
+<span class="sd">            When implementing this method, make sure, that every tissue in `this.target` has an entry in the</span>
 <span class="sd">            dictionary, even when the signature does not contain any genes.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">pass</span>
+        <span class="k">pass</span></div>
 
 <div class="viewcode-block" id="SignatureGenerator.mk_signatures"><a class="viewcode-back" href="../../apidoc.html#pygenesig.validation.SignatureGenerator.mk_signatures">[docs]</a>    <span class="k">def</span> <span class="nf">mk_signatures</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subset</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -331,9 +342,11 @@
 <span class="sd">    Args:</span>
 <span class="sd">        expr (np.ndarray): m x n gene expression matrix with m samples and n genes</span>
 <span class="sd">        target (array-like): m-vector with true tissue for each sample (`ground truth`)</span>
+<span class="sd">        </span>
+<span class="sd">    .. automethod:: _score_signatures</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">expr</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">target</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The length of target must equal the number of samples (columns) in the expr matrix. &quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">issubdtype</span><span class="p">(</span><span class="n">expr</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">issubdtype</span><span class="p">(</span><span class="n">expr</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
@@ -368,7 +381,7 @@
         <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">signatures</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span></div>
 
     <span class="nd">@abstractmethod</span>
-    <span class="k">def</span> <span class="nf">_score_signatures</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="n">signatures</span><span class="p">):</span>
+<div class="viewcode-block" id="SignatureTester._score_signatures"><a class="viewcode-back" href="../../apidoc.html#pygenesig.validation.SignatureTester._score_signatures">[docs]</a>    <span class="k">def</span> <span class="nf">_score_signatures</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="n">signatures</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Implement this method.</span>
 
@@ -381,8 +394,8 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            np.ndarray: j x n score matrix with j signatures and n samples containing the</span>
-<span class="sd">                scores generated by this method for each sample and signature. The rows are sorted by</span>
-<span class="sd">                ``SignatureGenerator.sort_signatures``.</span>
+<span class="sd">            scores generated by this method for each sample and signature. The rows are sorted by</span>
+<span class="sd">            ``SignatureGenerator.sort_signatures``.</span>
 
 <span class="sd">        .. important::</span>
 <span class="sd">            Make sure the rows in the result matrix are sorted by ``SignatureGenerator.sort_signatures``.</span>
@@ -390,7 +403,7 @@
 <span class="sd">            *if the signatures is empty* (number of genes = 0).</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">pass</span>
+        <span class="k">pass</span></div>
 
 <div class="viewcode-block" id="SignatureTester.score_signatures"><a class="viewcode-back" href="../../apidoc.html#pygenesig.validation.SignatureTester.score_signatures">[docs]</a>    <span class="k">def</span> <span class="nf">score_signatures</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">signatures</span><span class="p">,</span> <span class="n">subset</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -404,8 +417,8 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            np.ndarray: j x n score matrix with j signatures and n samples containing the</span>
-<span class="sd">                scores generated by this method for each sample and signature. The rows are sorted by</span>
-<span class="sd">                ``SignatureGenerator.sort_signatures``.</span>
+<span class="sd">            scores generated by this method for each sample and signature. The rows are sorted by</span>
+<span class="sd">            ``SignatureGenerator.sort_signatures``.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">all</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">genes</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">for</span> <span class="n">genes</span> <span class="ow">in</span> <span class="n">signatures</span><span class="o">.</span><span class="n">values</span><span class="p">()]):</span>

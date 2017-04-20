@@ -92,7 +92,15 @@
 <p class="caption"><span class="caption-text">Developer&#8217;s Guide</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../developers_guide.html">Implement own methods</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../apidoc.html">API documentation</a></li>
+</ul>
+<p class="caption"><span class="caption-text">API documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../apidoc.html"><em>pygenesig</em> core</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../apidoc.html#module-pygenesig.file_formats">File input/output (<code class="docutils literal"><span class="pre">pygenesig.file_formats</span></code>)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../apidoc.html#signature-generators">Signature Generators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../apidoc.html#signature-testers">Signature Testers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../apidoc.html#module-pygenesig.tools">Auxilary functions (<code class="docutils literal"><span class="pre">pygenesig.tools</span></code>)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../apidoc.html#module-pygenesig.perfmeasures">Performance Measures (<code class="docutils literal"><span class="pre">pygenesig.perfmeasures</span></code>)</a></li>
 </ul>
 
             
@@ -313,8 +321,8 @@
 <span class="sd">        min_expr (float): genes need to have at least an expression ``&gt;= min_expr`` to be included.</span>
 <span class="sd">        aggregate_fun (function): function used to aggregate samples of the same tissue.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">min_gini</span><span class="o">=.</span><span class="mi">7</span><span class="p">,</span> <span class="n">max_rk</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">min_expr</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">max_rel_rk</span><span class="o">=.</span><span class="mi">33</span><span class="p">,</span> <span class="n">aggregate_fun</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">GiniSignatureGenerator</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">min_gini</span><span class="o">=.</span><span class="mi">7</span><span class="p">,</span> <span class="n">max_rk</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">min_expr</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">max_rel_rk</span><span class="o">=.</span><span class="mi">33</span><span class="p">,</span> <span class="n">aggregate_fun</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">GiniSignatureGenerator</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">min_gini</span> <span class="o">=</span> <span class="n">min_gini</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">max_rk</span> <span class="o">=</span> <span class="n">max_rk</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">min_expr</span> <span class="o">=</span> <span class="n">min_expr</span>

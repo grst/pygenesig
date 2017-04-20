@@ -85,13 +85,14 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="index.html">Getting started with pygenesig</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Prepare data</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#for-creating-signatures">for creating signatures</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#for-creating-signatures">For creating signatures</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#gene-expression-matrix">Gene expression matrix</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#target-annotation">Target annotation</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#for-testing-signatures">for testing signatures</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#for-testing-signatures">For testing signatures</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#signature-dictionary">Signature Dictionary</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#reading-gmt-files">Reading <code class="docutils literal"><span class="pre">.gmt</span></code> files.</a></li>
 </ul>
 </li>
 </ul>
@@ -104,7 +105,15 @@
 <p class="caption"><span class="caption-text">Developer&#8217;s Guide</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="developers_guide.html">Implement own methods</a></li>
-<li class="toctree-l1"><a class="reference internal" href="apidoc.html">API documentation</a></li>
+</ul>
+<p class="caption"><span class="caption-text">API documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="apidoc.html"><em>pygenesig</em> core</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apidoc.html#module-pygenesig.file_formats">File input/output (<code class="docutils literal"><span class="pre">pygenesig.file_formats</span></code>)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apidoc.html#signature-generators">Signature Generators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apidoc.html#signature-testers">Signature Testers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apidoc.html#module-pygenesig.tools">Auxilary functions (<code class="docutils literal"><span class="pre">pygenesig.tools</span></code>)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apidoc.html#module-pygenesig.perfmeasures">Performance Measures (<code class="docutils literal"><span class="pre">pygenesig.perfmeasures</span></code>)</a></li>
 </ul>
 
             
@@ -152,13 +161,26 @@
   <div class="section" id="prepare-data">
 <span id="prepare-data"></span><h1>Prepare data<a class="headerlink" href="#prepare-data" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="for-creating-signatures">
-<span id="for-creating-signatures"></span><h2>for creating signatures<a class="headerlink" href="#for-creating-signatures" title="Permalink to this headline">¶</a></h2>
-<p>For creating signatures, we essentially need two pieces of information: The gene expression data and the target annotation (e.g. tissue). Depending on the method, we may need additional covariates, but let&#8217;s focus on the simple case here:</p>
+<span id="for-creating-signatures"></span><h2>For creating signatures<a class="headerlink" href="#for-creating-signatures" title="Permalink to this headline">¶</a></h2>
+<p>For creating signatures, we essentially need two pieces of information:</p>
+<ul class="simple">
+<li>The <em>gene expression</em> data and</li>
+<li>the target annotation (e.g. tissue).</li>
+</ul>
+<p>Depending on the method, we may need additional covariates, but let&#8217;s focus on the simple case here:</p>
 <div class="section" id="gene-expression-matrix">
 <span id="gene-expression-matrix"></span><h3>Gene expression matrix<a class="headerlink" href="#gene-expression-matrix" title="Permalink to this headline">¶</a></h3>
 <p>A <span class="math">\(m \times n\)</span> gene expression matrix with <span class="math">\(m\)</span> genes and <span class="math">\(n\)</span> samples.
-Depending on the method you may want to use either RPKM or raw counts.</p>
-<p>The object needs to be a 2d <code class="docutils literal"><span class="pre">numpy.array</span></code>. You can easily derive that matrix from a gct file using <code class="docutils literal"><span class="pre">pandas</span></code>.</p>
+Depending on the method you may want to use either RPKM or raw counts. The <code class="docutils literal"><span class="pre">expr</span></code> object
+needs to be a 2d <code class="docutils literal"><span class="pre">numpy.array</span></code>.</p>
+<p><em>pygenesig</em> provides functions to read the standardized <a class="reference external" href="http://software.broadinstitute.org/cancer/software/genepattern/file-formats-guide#_Creating_Input_Files_GCT">gct</a>
+format into a gene expression matrix:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pygenesig.file_formats</span> <span class="kn">import</span> <span class="n">read_gct</span>
+<span class="n">expr</span> <span class="o">=</span> <span class="n">read_gct</span><span class="p">(</span><span class="s1">&#39;expression.gct&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>You can also come up with your own methods for reading the expression data, which can be useful if you use different
+formats. Here, we achive the same using <code class="docutils literal"><span class="pre">pandas</span></code>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="kn">as</span> <span class="nn">pd</span>
 <span class="n">gct</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;expression.gct&quot;</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">skiprows</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 <span class="c1"># the first column contains the description, which we do not want to include in the matrix. </span>
@@ -166,8 +188,11 @@ Depending on the method you may want to use either RPKM or raw counts.</p>
 </pre></div>
 </div>
 <p>You may want to save the matrix for later use:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
-<span class="n">np</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s2">&quot;exprssion_matrix.npy&quot;</span><span class="p">,</span> <span class="n">expr</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pygenesig.file_formats</span> <span class="kn">import</span> <span class="n">write_expr</span><span class="p">,</span> <span class="n">read_expr</span>
+<span class="n">write_expr</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="s2">&quot;exprssion_matrix.npy&quot;</span><span class="p">)</span>
+
+<span class="c1"># later, read it with</span>
+<span class="n">expr</span> <span class="o">=</span> <span class="n">read_expr</span><span class="p">(</span><span class="s2">&quot;expression_matrix.npy&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -184,9 +209,11 @@ The annotation needs to be in the same order as the columns in the matrix.</p>
 </pre></div>
 </div>
 <p>You can again use <code class="docutils literal"><span class="pre">pandas</span></code> to extract the target annotation:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">meta</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;meta.tsv&quot;</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-<span class="n">target</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">meta</span><span class="o">.</span><span class="n">tissue</span><span class="p">)</span>
-<span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span><span class="s2">&quot;target.csv&quot;</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="kn">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">pygenesig.file_formats</span> <span class="kn">import</span> <span class="n">write_target</span>
+<span class="n">pheno_data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;meta.tsv&quot;</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">target</span> <span class="o">=</span> <span class="n">pheno_data</span><span class="o">.</span><span class="n">tissue</span><span class="o">.</span><span class="n">values</span>
+<span class="n">write_target</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="s2">&quot;target.txt&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 <div class="admonition important">
@@ -200,8 +227,9 @@ The annotation needs to be in the same order as the columns in the matrix.</p>
 </div>
 </div>
 <div class="section" id="for-testing-signatures">
-<span id="for-testing-signatures"></span><h2>for testing signatures<a class="headerlink" href="#for-testing-signatures" title="Permalink to this headline">¶</a></h2>
-<p>For testing signatures, we again need the <a class="reference external" href="#target-annotation">target annotation</a> as <em>ground truth</em>. Additionally we need to provide the signatures we want to test.</p>
+<span id="for-testing-signatures"></span><h2>For testing signatures<a class="headerlink" href="#for-testing-signatures" title="Permalink to this headline">¶</a></h2>
+<p>For testing signatures, we again need the <a class="reference external" href="#target-annotation">target annotation</a> as <em>ground truth</em>.
+Additionally we need to provide the signatures we want to test.</p>
 <div class="section" id="signature-dictionary">
 <span id="signature-dictionary"></span><h3>Signature Dictionary<a class="headerlink" href="#signature-dictionary" title="Permalink to this headline">¶</a></h3>
 <p>Signatures are represented as a simple dictionary, mapping the signature name to a list of genes. A gene is represented by it&#8217;s row-index in the gene expression matrix:</p>
@@ -221,11 +249,56 @@ The annotation needs to be in the same order as the columns in the matrix.</p>
 </pre></div>
 </div>
 <p>If you use <em>pygenesig</em> for generating the signatures, you will get such a dictionary by default.</p>
-<p>If you provide a <em>translation dictionary</em>, you can use the <a class="reference external" href="apidoc.html#pygenesig.tools.translate_signatures">translate_signatures</a> function
-to change the indices to something meaningful, e.g. gene symbols:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">gene_symbols</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;ADH1&#39;</span><span class="p">,</span> <span class="s1">&#39;p53&#39;</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>     <span class="c1"># list of gene symbols, same order as genes in the expression matrix</span>
-<span class="n">rosetta</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">enumerate</span><span class="p">(</span><span class="n">gene_symbols</span><span class="p">))</span>
-<span class="n">signatures_gene_symbols</span> <span class="o">=</span> <span class="n">translate_signatures</span><span class="p">(</span><span class="n">signatures</span><span class="p">,</span> <span class="n">rosetta</span><span class="p">)</span>
+<p>However, the indices are not meaningful outside the context of <em>pygenesig</em>, therefore you probably want
+to change them to something meaningful (e.g. gene symbols) instead before you export them as
+<a class="reference external" href="http://software.broadinstitute.org/cancer/software/genepattern/file-formats-guide#GMT">gmt</a>  file
+for further use in other software.</p>
+<p>This is accomplished using a &#8220;rosetta file&#8221;, containing one gene identifier per line in the same order
+as the rows in the gene expression matrix:</p>
+<p><em>rosetta.txt:</em></p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">HAS2</span>
+<span class="n">TSTA3</span>
+<span class="n">ADH1</span>
+<span class="o">...</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pygenesig.file_formats</span> <span class="kn">import</span> <span class="n">read_rosetta</span><span class="p">,</span> <span class="n">write_gmt</span>
+<span class="kn">from</span> <span class="nn">pygenesig.tools</span> <span class="kn">import</span> <span class="n">translate_signatures</span>
+<span class="n">rosetta</span> <span class="o">=</span> <span class="n">read_rosetta</span><span class="p">(</span><span class="s1">&#39;rosetta.txt&#39;</span><span class="p">)</span>
+<span class="n">signatures_symbol</span> <span class="o">=</span> <span class="n">translate_signatures</span><span class="p">(</span><span class="n">signatures</span><span class="p">,</span> <span class="n">rosetta</span><span class="p">)</span>
+
+<span class="c1"># export as gmt</span>
+<span class="n">write_gmt</span><span class="p">(</span><span class="n">signatures_symbol</span><span class="p">,</span> <span class="s1">&#39;my_signatures.gmt&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="reading-gmt-files">
+<span id="reading-gmt-files"></span><h3>Reading <code class="docutils literal"><span class="pre">.gmt</span></code> files.<a class="headerlink" href="#reading-gmt-files" title="Permalink to this headline">¶</a></h3>
+<p>This also works in the other direction:
+You can read gene signatures in <a class="reference external" href="http://software.broadinstitute.org/cancer/software/genepattern/file-formats-guide#GMT">gmt</a>
+format into a signature dictionary. Now the signature is gene-symbol based and we need to translate
+it into the index-based representation for use within <em>pygenesig</em></p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pygenesig.file_formats</span> <span class="kn">import</span> <span class="n">read_gmt</span>
+<span class="n">signatures</span> <span class="o">=</span> <span class="n">read_gmt</span><span class="p">(</span><span class="s2">&quot;my_signatures.gmt&quot;</span><span class="p">)</span>
+<span class="n">signatures</span>
+<span class="p">{</span>
+    <span class="s1">&#39;adipose tissue&#39;</span> <span class="p">:</span> <span class="p">[</span>
+        <span class="s1">&#39;HAS2&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;TSTA3&#39;</span><span class="p">,</span>
+        <span class="o">...</span> <span class="p">],</span>
+    <span class="s1">&#39;skeletal muscle&#39;</span> <span class="p">:</span> <span class="p">[</span>
+        <span class="s1">&#39;CXXC6&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;TNKS2&#39;</span><span class="p">,</span>
+        <span class="o">...</span> <span class="p">],</span>
+    <span class="o">...</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pygenesig.file_formats</span> <span class="kn">import</span> <span class="n">read_rosetta</span>
+<span class="kn">from</span> <span class="nn">pygenesig.tools</span> <span class="kn">import</span> <span class="n">translate_signatures</span>
+
+<span class="n">rosetta_inv</span> <span class="o">=</span> <span class="n">read_rosetta</span><span class="p">(</span><span class="s1">&#39;rosetta.txt&#39;</span><span class="p">,</span> <span class="n">inverse</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="n">signatures_ind</span> <span class="o">=</span> <span class="n">translate_signatures</span><span class="p">(</span><span class="n">signatures</span><span class="p">,</span> <span class="n">rosetta_inv</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>

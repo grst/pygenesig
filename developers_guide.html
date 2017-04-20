@@ -31,7 +31,7 @@
 
   
     <link rel="top" title="pygenesig 0.2.0 documentation" href="index.html"/>
-        <link rel="next" title="API documentation" href="apidoc.html"/>
+        <link rel="next" title="pygenesig core" href="apidoc.html"/>
         <link rel="prev" title="Creating signatures" href="use_pygenesig.html"/> 
 
   
@@ -101,7 +101,15 @@
 <li class="toctree-l2"><a class="reference internal" href="#beyond-signatures">Beyond signatures</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="apidoc.html">API documentation</a></li>
+</ul>
+<p class="caption"><span class="caption-text">API documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="apidoc.html"><em>pygenesig</em> core</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apidoc.html#module-pygenesig.file_formats">File input/output (<code class="docutils literal"><span class="pre">pygenesig.file_formats</span></code>)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apidoc.html#signature-generators">Signature Generators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apidoc.html#signature-testers">Signature Testers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apidoc.html#module-pygenesig.tools">Auxilary functions (<code class="docutils literal"><span class="pre">pygenesig.tools</span></code>)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apidoc.html#module-pygenesig.perfmeasures">Performance Measures (<code class="docutils literal"><span class="pre">pygenesig.perfmeasures</span></code>)</a></li>
 </ul>
 
             
@@ -148,12 +156,17 @@
             
   <div class="section" id="implement-own-methods">
 <span id="implement-own-methods"></span><h1>Implement own methods<a class="headerlink" href="#implement-own-methods" title="Permalink to this headline">¶</a></h1>
-<p>A major strength of <em>pygenesig</em> is its flexibility. Here, we show how you can implement own methods for generating and testing signatures.</p>
-<p>To standardize the API for creating and testing signatures, pygenesig provides two abstract classes, <code class="docutils literal"><span class="pre">SignatureGenerator</span></code> and <code class="docutils literal"><span class="pre">SignatureTester</span></code> which serve as template for the different methods.</p>
+<p>A major strength of <em>pygenesig</em> is its flexibility.
+Here, we show how you can implement own methods for generating and testing signatures.</p>
+<p>To standardize the API for creating and testing signatures, pygenesig provides two abstract classes,
+<code class="docutils literal"><span class="pre">SignatureGenerator</span></code> and <code class="docutils literal"><span class="pre">SignatureTester</span></code> which serve as template for the different methods.</p>
 <div class="section" id="implement-a-signaturegenerator">
 <span id="implement-a-signaturegenerator"></span><h2>Implement a SignatureGenerator<a class="headerlink" href="#implement-a-signaturegenerator" title="Permalink to this headline">¶</a></h2>
-<p>To get started, read the <a class="reference external" href="apidoc.html#pygenesig.validation.SignatureGenerator">apidoc</a> of <code class="docutils literal"><span class="pre">SignatureGenerator</span></code>. Essentially, all you have to do is creating a child class of <code class="docutils literal"><span class="pre">SignatureGenerator</span></code> and implement the method <code class="docutils literal"><span class="pre">_mk_signatures(expr,</span> <span class="pre">target)</span></code>.
-The method needs to return a signature dictionary as described in the <a class="reference external" href="prepare_data.html">data preparation tutorial</a>.</p>
+<p>To get started, read the <a class="reference external" href="apidoc.html#pygenesig.validation.SignatureGenerator">apidoc</a> of
+<code class="docutils literal"><span class="pre">SignatureGenerator</span></code>. Essentially, all you have to do is to create a child class of
+<code class="docutils literal"><span class="pre">SignatureGenerator</span></code> and implement the method <code class="docutils literal"><span class="pre">_mk_signatures(expr,</span> <span class="pre">target)</span></code>.
+The method needs to return a signature dictionary as described in the
+<a class="reference external" href="prepare_data.html#signature-dictionary">data preparation tutorial</a>.</p>
 <p>For example:</p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">MySignatureGenerator</span><span class="p">(</span><span class="n">SignatureGenerator</span><span class="p">):</span> 
     <span class="k">def</span> <span class="nf">_mk_signatures</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
@@ -167,8 +180,8 @@ The method needs to return a signature dictionary as described in the <a class="
 <p>You can also override the constructor <code class="docutils literal"><span class="pre">__init__()</span></code> to pass additional parameters to your class.
 Make always sure to call the parent constructor, though, as it performs some consistency checks on the data:</p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">MySignatureGenerator</span><span class="p">(</span><span class="n">SignatureGenerator</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">param1</span><span class="o">=</span><span class="mi">42</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">MySignatureGenerator</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">param1</span><span class="o">=</span><span class="mi">42</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">MySignatureGenerator</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">param1</span> <span class="o">=</span> <span class="n">param1</span> 
 
     <span class="k">def</span> <span class="nf">_mk_signatures</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
@@ -179,33 +192,41 @@ Make always sure to call the parent constructor, though, as it performs some con
 <span id="example-ginisignaturegenerator"></span><h3>Example: GiniSignatureGenerator<a class="headerlink" href="#example-ginisignaturegenerator" title="Permalink to this headline">¶</a></h3>
 <p>This is what our <code class="docutils literal"><span class="pre">GiniSignatureGenerator</span></code> looks like:</p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">GiniSignatureGenerator</span><span class="p">(</span><span class="n">SignatureGenerator</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">min_gini</span><span class="o">=.</span><span class="mi">7</span><span class="p">,</span> <span class="n">max_rk</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">min_expr</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">GiniSignatureGenerator</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">min_gini</span><span class="o">=.</span><span class="mi">7</span><span class="p">,</span> <span class="n">max_rk</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">min_expr</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">max_rel_rk</span><span class="o">=.</span><span class="mi">33</span><span class="p">,</span> <span class="n">aggregate_fun</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">GiniSignatureGenerator</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">min_gini</span> <span class="o">=</span> <span class="n">min_gini</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">max_rk</span> <span class="o">=</span> <span class="n">max_rk</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">min_expr</span> <span class="o">=</span> <span class="n">min_expr</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">aggregate_fun</span> <span class="o">=</span> <span class="n">aggregate_fun</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_rel_rk</span> <span class="o">=</span> <span class="n">max_rel_rk</span>
 
     <span class="k">def</span> <span class="nf">_mk_signatures</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
-        <span class="n">df_aggr</span> <span class="o">=</span> <span class="n">aggregate_expression</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">get_gini_signatures</span><span class="p">(</span><span class="n">df_aggr</span><span class="p">,</span> <span class="n">min_gini</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">min_gini</span><span class="p">,</span>
-                                   <span class="n">max_rk</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">max_rk</span><span class="p">,</span> <span class="n">min_expr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">min_expr</span><span class="p">)</span>
+        <span class="n">df_aggr</span> <span class="o">=</span> <span class="n">collapse_matrix</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">aggregate_fun</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">aggregate_fun</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">get_gini_signatures</span><span class="p">(</span><span class="n">df_aggr</span><span class="p">,</span> <span class="n">min_gini</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">min_gini</span><span class="p">,</span> <span class="n">max_rk</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">max_rk</span><span class="p">,</span> <span class="n">min_expr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">min_expr</span><span class="p">,</span>
+                                   <span class="n">max_rel_rk</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">max_rel_rk</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 </div>
 <div class="section" id="implement-a-signaturetester">
 <span id="implement-a-signaturetester"></span><h2>Implement a SignatureTester<a class="headerlink" href="#implement-a-signaturetester" title="Permalink to this headline">¶</a></h2>
-<p>To get started, read the <a class="reference external" href="apidoc.html#pygenesig.validation.SignatureTester">apidoc</a> of <code class="docutils literal"><span class="pre">SignatureTester</span></code>. Essentially, all you have to do is creating a child class of <code class="docutils literal"><span class="pre">SignatureTester</span></code> and implement the method <code class="docutils literal"><span class="pre">_score_signatures(expr,</span> <span class="pre">signatures)</span></code>.
-The method returns a list of the predicted labels for each samples.</p>
+<p>To get started, read the <a class="reference external" href="apidoc.html#pygenesig.validation.SignatureTester">apidoc</a> of
+<code class="docutils literal"><span class="pre">SignatureTester</span></code>. Essentially, all you have to do is to create a child class of
+<code class="docutils literal"><span class="pre">SignatureTester</span></code> and implement the method <code class="docutils literal"><span class="pre">_score_signatures(expr,</span> <span class="pre">signatures)</span></code>.
+The method returns a j x n score matrix with j signatures and n samples</p>
 <p>For example, a random predictor, being agnostic of the signatures could look like:</p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">random</span> 
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
 
 <span class="k">class</span> <span class="nc">MySignatureTester</span><span class="p">(</span><span class="n">SignatureTester</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">_score_signatures</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="n">signatures</span><span class="p">):</span>
-        <span class="n">tissues</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">signatures</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
-        <span class="k">return</span> <span class="p">[</span>
-            <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">tissues</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">expr</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
-        <span class="p">]</span>
+        <span class="n">n_tissues</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">signatures</span><span class="p">)</span> <span class="c1"># number of signatures (=j)</span>
+        <span class="n">n_samples</span> <span class="o">=</span> <span class="n">expr</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>   <span class="c1"># number of samples (=n)</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span> <span class="p">([</span>
+            <span class="p">[</span>
+                <span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_samples</span><span class="p">)</span>
+            <span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_tissues</span><span class="p">)</span>
+        <span class="p">])</span>
 
 </pre></div>
 </div>
@@ -213,7 +234,10 @@ The method returns a list of the predicted labels for each samples.</p>
 </div>
 <div class="section" id="beyond-signatures">
 <span id="beyond-signatures"></span><h2>Beyond signatures<a class="headerlink" href="#beyond-signatures" title="Permalink to this headline">¶</a></h2>
-<p>Actually, instead of passing signature dictionaries, you can pass whatever model between a <code class="docutils literal"><span class="pre">SignatureGenerator</span></code> and a <code class="docutils literal"><span class="pre">SignatureTester</span></code>, as long as the two implementations &#8216;speak the same language&#8217;. For example, one could imagine using a support vector machine for predicting the tissue. In that case you could pass the trained model instead of the signatures.</p>
+<p>Actually, instead of passing signature dictionaries, you can pass whatever model between a
+<code class="docutils literal"><span class="pre">SignatureGenerator</span></code> and a <code class="docutils literal"><span class="pre">SignatureTester</span></code>, as long as the two implementations
+&#8216;speak the same language&#8217;. For example, one could imagine using a support vector machine
+for predicting the tissue. In that case you could pass the trained model instead of the signatures.</p>
 </div>
 </div>
 
@@ -224,7 +248,7 @@ The method returns a list of the predicted labels for each samples.</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="apidoc.html" class="btn btn-neutral float-right" title="API documentation" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="apidoc.html" class="btn btn-neutral float-right" title="pygenesig core" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="use_pygenesig.html" class="btn btn-neutral" title="Creating signatures" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>

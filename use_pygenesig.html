@@ -93,7 +93,15 @@
 <p class="caption"><span class="caption-text">Developer&#8217;s Guide</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="developers_guide.html">Implement own methods</a></li>
-<li class="toctree-l1"><a class="reference internal" href="apidoc.html">API documentation</a></li>
+</ul>
+<p class="caption"><span class="caption-text">API documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="apidoc.html"><em>pygenesig</em> core</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apidoc.html#module-pygenesig.file_formats">File input/output (<code class="docutils literal"><span class="pre">pygenesig.file_formats</span></code>)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apidoc.html#signature-generators">Signature Generators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apidoc.html#signature-testers">Signature Testers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apidoc.html#module-pygenesig.tools">Auxilary functions (<code class="docutils literal"><span class="pre">pygenesig.tools</span></code>)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apidoc.html#module-pygenesig.perfmeasures">Performance Measures (<code class="docutils literal"><span class="pre">pygenesig.perfmeasures</span></code>)</a></li>
 </ul>
 
             
@@ -144,9 +152,9 @@
 <a class="reference external" href="apidoc.html#module-pygenesig.gini">GiniSignatureGenerator</a>.
 All methods are described in the <a class="reference external" href="apidoc.html">API documentation</a>.</p>
 <p>First, we load the expression data and target annotation we <a class="reference external" href="prepare_data.html">prepared earlier</a>:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
-<span class="n">expr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;expression_matrix.npy&quot;</span><span class="p">)</span>
-<span class="n">target</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">genfromtxt</span><span class="p">(</span><span class="s2">&quot;target.csv&quot;</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pygenesig.file_formats</span> <span class="kn">import</span> <span class="n">read_expr</span><span class="p">,</span> <span class="n">read_target</span> 
+<span class="n">expr</span> <span class="o">=</span> <span class="n">read_expr</span><span class="p">(</span><span class="s2">&quot;expression_matrix.npy&quot;</span><span class="p">)</span>
+<span class="n">target</span> <span class="o">=</span> <span class="n">read_target</span><span class="p">(</span><span class="s2">&quot;target.txt&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Now, we can generate signatures with the signature generator of our choice:</p>
@@ -168,27 +176,46 @@ All methods are described in the <a class="reference external" href="apidoc.html
 <div class="section" id="testing-signatures">
 <span id="testing-signatures"></span><h1>Testing signatures<a class="headerlink" href="#testing-signatures" title="Permalink to this headline">¶</a></h1>
 <p><em>pygenesig</em> shippes with the <code class="docutils literal"><span class="pre">BioQCSignatureTester</span></code>. The method is described in more
-detail <a class="reference external" href="apidoc.html#module-pygenesig.bioqc">here</a>.</p>
-<p>To test signatures, we initalize the tester with the gene expression data and the target labels.
-Then, we can test different signature sets on the data:</p>
+detail <a class="reference external" href="apidoc.html#signature-testers">here</a>.</p>
+<p>To test signatures, we initalize the tester with the gene expression data and the
+target labels. Then, we can test different signature sets on the data and retrieve a
+score matrix.</p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pygenesig.bioqc</span> <span class="kn">import</span> <span class="n">BioQCSignatureTester</span>
 <span class="n">st</span> <span class="o">=</span> <span class="n">BioQCSignatureTester</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
-<span class="n">actual</span><span class="p">,</span> <span class="n">predicted</span> <span class="o">=</span> <span class="n">st</span><span class="o">.</span><span class="n">test_signatures</span><span class="p">(</span><span class="n">signatures</span><span class="p">)</span>
+<span class="n">score_matrix</span> <span class="o">=</span> <span class="n">st</span><span class="o">.</span><span class="n">score_signatures</span><span class="p">(</span><span class="n">signatures</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>From the list of actual and predicted labels, we can for example create a confusion matrix. <em>Pygenesig</em> provides
-a convenient wrapper method to create the confusion matrix, but essentially you can use whatever performance measure from <a class="reference external" href="http://scikit-learn.org/stable/modules/classes.html#sklearn-metrics-metrics">scikit-learn</a>.</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">seaborn</span> <span class="kn">as</span> <span class="nn">sns</span>
-<span class="n">confmat</span> <span class="o">=</span> <span class="n">st</span><span class="o">.</span><span class="n">confusion_matrix</span><span class="p">(</span><span class="n">signatures</span><span class="p">,</span> <span class="n">actual</span><span class="p">,</span> <span class="n">predicted</span><span class="p">)</span>
+<p>This is a score matrix visualized as a heatmap:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pygenesig.visualization</span> <span class="kn">import</span> <span class="n">aggregate_scores</span><span class="p">,</span> <span class="n">plot_score_heatmap</span>
 <span class="n">sig_labels</span> <span class="o">=</span> <span class="n">st</span><span class="o">.</span><span class="n">sort_signatures</span><span class="p">(</span><span class="n">signatures</span><span class="p">)</span>
-<span class="n">sns</span><span class="o">.</span><span class="n">heatmap</span><span class="p">(</span><span class="n">confmat</span><span class="p">,</span> <span class="n">xticklabels</span><span class="o">=</span><span class="n">sig_labels</span><span class="p">,</span> <span class="n">yticklabels</span><span class="o">=</span><span class="n">sig_labels</span>
+<span class="n">heatmap</span> <span class="o">=</span> <span class="n">aggregate_scores</span><span class="p">(</span><span class="n">sig_labels</span><span class="p">,</span> <span class="n">score_matrix</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
+<span class="n">plot_score_heatmap</span><span class="p">(</span><span class="n">heatmap</span><span class="p">)</span>
 </pre></div>
 </div>
-<p><img alt="heatmap" src="_images/validate_single_heatmap.png" /></p>
+<p><img alt="score heatmap" src="_images/gtex_v6_xval_scores.png" /></p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">As python dictionaries have no particular order you can use <code class="docutils literal"><span class="pre">SignatureTester.sort_signatures()</span></code> to obtain a reproducable order of the signatures.</p>
 </div>
+<p>We can boil down signature testing to a classification task: A sample is
+classified as a certain tissue, if the corresponding signature scores highest.
+<em>pygenesig</em> provides a convenient method to predict class labels:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">actual</span><span class="p">,</span> <span class="n">predicted</span> <span class="o">=</span> <span class="n">st</span><span class="o">.</span><span class="n">classify</span><span class="p">(</span><span class="n">signatures</span><span class="p">,</span> <span class="n">score_matrix</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>From the list of actual and predicted labels, we can create a confusion matrix.
+<em>Pygenesig</em> provides convenient wrapper method to create the confusion matrix,
+but essentially you can use whatever performance measure from
+<a class="reference external" href="http://scikit-learn.org/stable/modules/classes.html#sklearn-metrics-metrics">scikit-learn</a>.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">confusion_matrix</span> <span class="o">=</span> <span class="n">st</span><span class="o">.</span><span class="n">confusion_matrix</span><span class="p">(</span><span class="n">signatures</span><span class="p">,</span> <span class="n">actual</span><span class="p">,</span> <span class="n">predicted</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This is the confusion matrix derived from the above score matrix:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pygenesig.visualization</span> <span class="kn">import</span> <span class="n">plot_confusion_matrix_heatmap</span>
+<span class="n">plot_confusion_matrix_heatmap</span><span class="p">(</span><span class="n">confusion_matrix</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span> <span class="n">sig_labels</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><img alt="confusion matrix" src="_images/gtex_v6_xval_classification.png" /></p>
 </div>
 <div class="section" id="putting-it-together-crossvalidation">
 <span id="putting-it-together-crossvalidation"></span><h1>Putting it together: crossvalidation<a class="headerlink" href="#putting-it-together-crossvalidation" title="Permalink to this headline">¶</a></h1>
@@ -198,57 +225,81 @@ To this end, we divide our data into 10 independent, <em>stratified</em> folds
 We always use 9 of the 10 folds for generating the signatures and apply them to
 the remaining fold for testing. This procedure is illustrated in the following flowchart:</p>
 <!-- edit flowchart on https://www.draw.io/?chrome=0&lightbox=1&edit=https%3A%2F%2Fwww.draw.io%2F%23G0BxECzhdeMGwJQXB5ZjNHckRWRzQ&nav=1#G0BxECzhdeMGwJQXB5ZjNHckRWRzQ --> <p><img alt="flowchart" src="_images/pygenesig_xval.svg" /></p>
-<p>You can use using scikit-learn <a class="reference external" href="http://scikit-learn.org/stable/modules/generated/sklearn.model_selection.StratifiedKFold.html#sklearn.model_selection.StratifiedKFold">StratifiedKFold</a> to split your data into folds and then apply a <code class="docutils literal"><span class="pre">SignatureGenerator</span></code> and a <code class="docutils literal"><span class="pre">SignatureTester</span></code> on the resulting testing and training sets.</p>
-<p>In <em>pygenesig</em> this is already implemented in <code class="docutils literal"><span class="pre">cross_validate_signatures</span></code> (<a class="reference external" href="apidoc.html#pygenesig.validation.cross_validate_signatures">documentation</a>). The method automatically performs the cross validation, given a gene expression matrix and target annotation:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pygenesig.validation</span> <span class="kn">import</span> <span class="n">cross_validate_signatures</span>
+<p>You can use scikit-learn <a class="reference external" href="http://scikit-learn.org/stable/modules/generated/sklearn.model_selection.StratifiedKFold.html#sklearn.model_selection.StratifiedKFold">StratifiedKFold</a>
+to split your data into folds and then apply a <code class="docutils literal"><span class="pre">SignatureGenerator</span></code> and a <code class="docutils literal"><span class="pre">SignatureTester</span></code>
+on the resulting testing and training sets.</p>
+<p>In <em>pygenesig</em> this is already implemented in <code class="docutils literal"><span class="pre">cv_score</span></code> (<a class="reference external" href="apidoc.html#pygenesig.validation.cv_score">documentation</a>.
+The method automatically performs the cross validation, given a gene expression matrix and target annotation:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pygenesig.validation</span> <span class="kn">import</span> <span class="n">cv_score</span>
 <span class="kn">from</span> <span class="nn">pygenesig.gini</span> <span class="kn">import</span> <span class="n">GiniSignatureGenerator</span>
 <span class="kn">from</span> <span class="nn">pygenesig.bioqc</span> <span class="kn">import</span> <span class="n">BioQCSignatureTester</span>
 
 <span class="n">expr_file</span> <span class="o">=</span> <span class="s2">&quot;exprs.npy&quot;</span>
 <span class="n">target_file</span> <span class="o">=</span> <span class="s2">&quot;target.csv&quot;</span>
 
-<span class="n">signature_graphs</span><span class="p">,</span> <span class="n">result_graphs</span> <span class="o">=</span> <span class="n">cross_validate_signatures</span><span class="p">(</span><span class="n">expr_file</span><span class="p">,</span>
-                                                        <span class="n">target_file</span><span class="p">,</span>
-                                                        <span class="n">GiniSignatureGenerator</span><span class="p">,</span>
-                                                        <span class="n">BioQCSignatureTester</span><span class="p">)</span>
+<span class="n">sig_list</span><span class="p">,</span> <span class="n">res_list</span><span class="p">,</span> <span class="n">train_list</span><span class="p">,</span> <span class="n">test_list</span> <span class="o">=</span> <span class="n">cv_score</span><span class="p">(</span><span class="n">expr_file</span><span class="p">,</span>
+                                                     <span class="n">target_file</span><span class="p">,</span>
+                                                     <span class="n">GiniSignatureGenerator</span><span class="p">,</span>
+                                                     <span class="n">BioQCSignatureTester</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>The cross-validation function uses <a class="reference external" href="http://dask.pydata.org">dask</a> for multiprocessing. It returns
-a list of <a class="reference external" href="http://dask.pydata.org/en/latest/custom-graphs.html">dask graphs</a> to compute the signatures and
-confusion matrices.</p>
-<p>Dask supports a <a class="reference external" href="http://dask.pydata.org/en/latest/scheduler-overview.html">bunch of schedulers</a>. The <a class="reference external" href="https://distributed.readthedocs.io/en/latest/quickstart.html">distributed</a> scheduler, for instance, allows you to run the cross-validation on a high performance cluster. To keep it simple, we use the <code class="docutils literal"><span class="pre">multiprocessing</span></code> scheduler here to compute the dask-graphs. Note, that for large gene expression matrices, this can be memory-intensive!</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">dask.multiprocessing</span>
-<span class="kn">from</span> <span class="nn">dask.base</span> <span class="kn">import</span> <span class="n">compute</span>
+<p>The cross-validation function uses <a class="reference external" href="http://dask.pydata.org">dask</a> for multiprocessing.
+Dask is a scalable, highly customizable framework for running python code in parallel.
+It supports different <em>schedulers</em> for code execution. We recommend using the
+<a class="reference external" href="https://distributed.readthedocs.io/en/latest/quickstart.html">distributed</a> scheduler.
+It allows you to run analyses in parallel on a high performance cluster, but also provides a convenient way
+to parallelize on a single machine.</p>
+<p>The objects returned by <code class="docutils literal"><span class="pre">cv_score</span></code> are so-called <em>dask-graphs</em>, i.e. instructions for <code class="docutils literal"><span class="pre">dask</span></code> how to
+obtain a result, which can be sent to a scheduer for actual computation. This is what we do in the next
+step using the <code class="docutils literal"><span class="pre">distributed</span></code> scheduler.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">dask</span> <span class="kn">import</span> <span class="n">compute</span>
+<span class="kn">from</span> <span class="nn">dask.distributed</span> <span class="kn">import</span> <span class="n">Client</span><span class="p">,</span> <span class="n">LocalCluster</span>
 
-<span class="n">signatures</span><span class="p">,</span> <span class="n">confusion_matrices</span> <span class="o">=</span> <span class="n">compute</span><span class="p">([</span><span class="n">signature_graphs</span><span class="p">,</span> <span class="n">result_graphs</span><span class="p">],</span>
-                                            <span class="n">get</span><span class="o">=</span><span class="n">dask</span><span class="o">.</span><span class="n">multiprocessing</span><span class="o">.</span><span class="n">get</span><span class="p">,</span>
-                                            <span class="n">num_workers</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>Now, we can easily compute and display the average confusion matrix of the 10 folds:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">seaborn</span> <span class="kn">as</span> <span class="nn">sns</span>
+<span class="n">cluster</span> <span class="o">=</span> <span class="n">LocalCluster</span><span class="p">(</span><span class="n">n_workers</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">threads_per_worker</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">client</span> <span class="o">=</span> <span class="n">Client</span><span class="p">(</span><span class="n">cluster</span><span class="p">)</span>
 
-<span class="n">conf_mat_mean</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">confusion_matrices</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-<span class="n">sig_labels</span> <span class="o">=</span> <span class="n">BioQCSignatureTester</span><span class="o">.</span><span class="n">sort_signatures</span><span class="p">(</span><span class="n">signatures</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">9</span><span class="p">))</span>
-<span class="n">sns</span><span class="o">.</span><span class="n">heatmap</span><span class="p">(</span><span class="n">conf_mat_mean</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> 
-            <span class="n">xticklabels</span><span class="o">=</span><span class="n">sig_labels</span><span class="p">,</span> <span class="n">yticklabels</span><span class="o">=</span><span class="n">sig_labels</span><span class="p">,</span>
-            <span class="n">annot</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">annot_kws</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="mi">9</span><span class="p">})</span>
+<span class="n">signatures</span><span class="p">,</span> <span class="n">scores</span><span class="p">,</span> <span class="n">train_inds</span><span class="p">,</span> <span class="n">test_inds</span> <span class="o">=</span> <span class="n">compute</span><span class="p">(</span><span class="n">sig_list</span><span class="p">,</span> <span class="n">res_list</span><span class="p">,</span> <span class="n">train_list</span><span class="p">,</span> <span class="n">test_list</span><span class="p">,</span>
+                                            <span class="n">get</span><span class="o">=</span><span class="n">client</span><span class="o">.</span><span class="n">get</span><span class="p">)</span>
 </pre></div>
 </div>
-<p><img alt="xval heatmap" src="_images/xval_heatmap.png" /></p>
+<p>Now we obtained a list of signatures, score matrices and the indicies of the samples used for training
+and testing in each fold. We can derive an average score matrix or an average confusion matrix from these
+results.</p>
+<p>In order to assess the quality of a signature it is also interesting to see, how much a signature varies
+between the different folds. To this end, we calculate the pairwise jaccard index of the signatures
+between all folds:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">seaborn</span> <span class="kn">as</span> <span class="nn">sns</span>
+<span class="kn">from</span> <span class="nn">pygenesig.tools</span> <span class="kn">import</span> <span class="n">pairwise_jaccard_ind</span>
+<span class="kn">from</span> <span class="nn">pylab</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="kn">as</span> <span class="nn">pd</span>
+
+<span class="n">pairwise_jaccard</span> <span class="o">=</span> <span class="n">pairwise_jaccard_ind</span><span class="p">(</span><span class="n">signatures</span><span class="p">)</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span><span class="mi">5</span><span class="p">))</span>
+<span class="n">data</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">pairwise_jaccard</span><span class="p">)</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">boxplot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Pairwise Jaccard Index&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span> <span class="n">rotation</span><span class="o">=</span><span class="mi">90</span><span class="p">);</span>
+</pre></div>
+</div>
+<p><img alt="pairwise_jaccard" src="_images/gtex_v6_pairwise_jaccard.png" /></p>
 </div>
 <div class="section" id="case-studies">
 <span id="case-studies"></span><h1>Case studies<a class="headerlink" href="#case-studies" title="Permalink to this headline">¶</a></h1>
-<p>We have performed several case studies using <em>pygenesig</em> on the <a class="reference external" href="http://www.gtexportal.org/home/">GTEx</a> dataset.
-These studies can be understood as &#8216;extended examples&#8217; of how to use <em>pygenesig</em> and are available
-on <a class="reference external" href="https://github.com/grst/gene-set-study/tree/master/notebooks">github</a>.</p>
+<p>We have successfully applied <em>pygenesig</em> and <a class="reference external" href="https://github.com/grst/pygenesig-pipeline"><em>pygenesig-pipeline</em></a>
+to evaluate methods for signature generation and to compare the performance of signatures on different datasets.
+Here are some of the results as <em>jupyter notebooks</em> which also serve well as an example on how to apply <em>pygenesig</em>.</p>
 <ul class="simple">
-<li><a class="reference external" href="https://github.com/grst/gene-set-study/blob/master/notebooks/validate_gini.ipynb">Cross validation</a>: Full working example of cross-validation on GTEx data.</li>
-<li><a class="reference external" href="https://github.com/grst/gene-set-study/blob/master/notebooks/gini-gridsearch.ipynb">Grid search for parameter optimization</a>: Systematic test of different parameters for the <a class="reference external" href="apidoc.html#module-pygenesig.gini">GiniSignatureGenerator</a>. We found, that gini-index is a robust method for signature generation over a wide range of parameters.</li>
-<li><a class="reference external" href="https://github.com/grst/gene-set-study/blob/master/notebooks/validate-mouse.ipynb">Cross-platform and cross-species validation</a>: Validation of signatures on a different platform and organism. We generated gene signatures on the GTEx dataset (human, next generation sequenceing) and applied them to a mouse dataset (Affymetrix microarray). For most of the tissues, the signatures are still able to identify their respective tissue.</li>
+<li><a class="reference external" href="https://github.com/grst/pygenesig-example/blob/80bfe2a388a5230b004c288cb2ea220f0394855d/old_notebooks/validate_gini.ipynb">Cross validation</a>:
+Full working example of cross-validation on GTEx data.</li>
+<li><a class="reference external" href="https://github.com/grst/pygenesig-example/blob/80bfe2a388a5230b004c288cb2ea220f0394855d/old_notebooks/gini-gridsearch.ipynb">Grid search for parameter optimization</a>: Systematic test of different parameters for the <a class="reference external" href="apidoc.html#module-pygenesig.gini">GiniSignatureGenerator</a>.
+We found, that gini-index is a robust method for signature generation over a wide range of parameters.</li>
+<li><a class="reference external" href="https://github.com/grst/pygenesig-example/blob/80bfe2a388a5230b004c288cb2ea220f0394855d/notebooks/gtex_vs_mouse_gnf.ipynb">Cross-platform and cross-species validation</a>:
+Validation of signatures on a different platform and organism. We generated gene signatures on the GTEx dataset
+(human, next generation sequenceing) and applied them to a mouse dataset (Affymetrix microarray).
+For most of the tissues, the signatures are still able to identify their respective tissue.</li>
+<li><a class="reference external" href="https://github.com/grst/pygenesig-example/blob/80bfe2a388a5230b004c288cb2ea220f0394855d/notebooks/gtex_vs_fantom5.ipynb">GTEx vs. FANTOM5</a>: Validate signatures generated on the GTEx dataset on data from FANTOM5.</li>
 </ul>
+<p>More examples are available from the <a class="reference external" href="https://github.com/grst/pygenesig-example"><em>pygenesig-example</em></a> repository.</p>
 </div>
 
 

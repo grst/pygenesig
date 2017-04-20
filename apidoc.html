@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>API documentation &mdash; pygenesig 0.2.0 documentation</title>
+  <title>pygenesig core &mdash; pygenesig 0.2.0 documentation</title>
   
 
   
@@ -90,28 +90,29 @@
 <li class="toctree-l1"><a class="reference internal" href="use_pygenesig.html#case-studies">Case studies</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Developer&#8217;s Guide</span></p>
-<ul class="current">
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="developers_guide.html">Implement own methods</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">API documentation</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#pygenesig-core">pygenesig core</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#module-pygenesig.validation">Abstract classes and cross validation (<code class="docutils literal"><span class="pre">pygenesig.validation</span></code>)</a></li>
+</ul>
+<p class="caption"><span class="caption-text">API documentation</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#"><em>pygenesig</em> core</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#module-pygenesig.validation">Abstract classes and cross validation (<code class="docutils literal"><span class="pre">pygenesig.validation</span></code>)</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#methods">Methods</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#module-pygenesig.gini">Gini Index</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#differential-expression-limma">Differential Expression (Limma)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#module-pygenesig.bioqc">BioQC</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#module-pygenesig.mcp_counter">MCPCounter</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#module-pygenesig.file_formats">File input/output (<code class="docutils literal"><span class="pre">pygenesig.file_formats</span></code>)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#signature-generators">Signature Generators</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#module-pygenesig.gini">Gini Index (<code class="docutils literal"><span class="pre">pygenesig.gini</span></code>)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pygenesig.limma">Differential Expression (<code class="docutils literal"><span class="pre">pygenesig.limma</span></code>)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pygenesig.mcp_counter">MCPCounter (<code class="docutils literal"><span class="pre">pygenesig.mcp_counter</span></code>)</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#tools">Tools</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#module-pygenesig.file_formats">File input output (<code class="docutils literal"><span class="pre">pygenesig.file_formats</span></code>)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#module-pygenesig.tools">Auxilary functions related to gene signatures (<code class="docutils literal"><span class="pre">pygenesig.tools</span></code>)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#module-pygenesig.perfmeasures">Performance Measures (<code class="docutils literal"><span class="pre">pygenesig.perfmeasures</span></code>)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#signature-testers">Signature Testers</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#module-pygenesig.bioqc">BioQC (<code class="docutils literal"><span class="pre">pygenesig.bioqc</span></code>)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#mcpcounter-pygenesig-mcp-counter">MCPCounter (<code class="docutils literal"><span class="pre">pygenesig.mcp_counter</span></code>)</a></li>
 </ul>
 </li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="#module-pygenesig.tools">Auxilary functions (<code class="docutils literal"><span class="pre">pygenesig.tools</span></code>)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#module-pygenesig.perfmeasures">Performance Measures (<code class="docutils literal"><span class="pre">pygenesig.perfmeasures</span></code>)</a></li>
 </ul>
 
             
@@ -142,7 +143,7 @@
   <ul class="wy-breadcrumbs">
     <li><a href="index.html">Docs</a> &raquo;</li>
       
-    <li>API documentation</li>
+    <li><em>pygenesig</em> core</li>
       <li class="wy-breadcrumbs-aside">
         
           
@@ -156,12 +157,10 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="api-documentation">
-<span id="api-documentation"></span><h1>API documentation<a class="headerlink" href="#api-documentation" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="pygenesig-core">
-<span id="pygenesig-core"></span><h2>pygenesig core<a class="headerlink" href="#pygenesig-core" title="Permalink to this headline">¶</a></h2>
+  <div class="section" id="pygenesig-core">
+<span id="pygenesig-core"></span><h1><em>pygenesig</em> core<a class="headerlink" href="#pygenesig-core" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="module-pygenesig.validation">
-<span id="abstract-classes-and-cross-validation-pygenesig-validation"></span><span id="abstract-classes-and-cross-validation-pygenesig-validation"></span><h3>Abstract classes and cross validation (<code class="docutils literal"><span class="pre">pygenesig.validation</span></code>)<a class="headerlink" href="#module-pygenesig.validation" title="Permalink to this headline">¶</a></h3>
+<span id="abstract-classes-and-cross-validation-pygenesig-validation"></span><span id="abstract-classes-and-cross-validation-pygenesig-validation"></span><h2>Abstract classes and cross validation (<code class="docutils literal"><span class="pre">pygenesig.validation</span></code>)<a class="headerlink" href="#module-pygenesig.validation" title="Permalink to this headline">¶</a></h2>
 <p>pygenesig&#8217;s main module: Contains the abstract base classes for signature
 generation and testing and provides tools for cross-validation.</p>
 <dl class="class">
@@ -175,7 +174,7 @@ You can override the <code class="docutils literal"><span class="pre">__init__</
 to pass additional parameters, however, make always sure to call this method
 in your <code class="docutils literal"><span class="pre">__init__</span></code> function to take advantage of the consistency check:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">your_param</span><span class="p">):</span>
-    <span class="nb">super</span><span class="p">(</span><span class="n">YourSignatureGenerator</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
+    <span class="nb">super</span><span class="p">(</span><span class="n">YourSignatureGenerator</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
     <span class="c1"># your code goes here</span>
 </pre></div>
 </div>
@@ -191,6 +190,38 @@ in your <code class="docutils literal"><span class="pre">__init__</span></code> 
 </tr>
 </tbody>
 </table>
+<dl class="method">
+<dt id="pygenesig.validation.SignatureGenerator._mk_signatures">
+<code class="descname">_mk_signatures</code><span class="sig-paren">(</span><em>expr</em>, <em>target</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pygenesig/validation.html#SignatureGenerator._mk_signatures"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pygenesig.validation.SignatureGenerator._mk_signatures" title="Permalink to this definition">¶</a></dt>
+<dd><p>Implement this method.
+Generates signatures for a list of tissues given a gene expression matrix.
+This method is called internally by the public method <cite>mk_signatures</cite>, which
+takes care of subsetting the expression data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>expr</strong> &#8211; m x n matrix with m samples and n genes</li>
+<li><strong>target</strong> &#8211; vector with true tissue for each sample</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">tissue_name -&gt; [list, of, enriched, genes]. The indices correspond to expr.index.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">dict</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">When implementing this method, make sure, that every tissue in <cite>this.target</cite> has an entry in the
+dictionary, even when the signature does not contain any genes.</p>
+</div>
+</dd></dl>
+
 <dl class="method">
 <dt id="pygenesig.validation.SignatureGenerator.mk_signatures">
 <code class="descname">mk_signatures</code><span class="sig-paren">(</span><em>subset=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pygenesig/validation.html#SignatureGenerator.mk_signatures"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pygenesig.validation.SignatureGenerator.mk_signatures" title="Permalink to this definition">¶</a></dt>
@@ -241,7 +272,7 @@ You can override the <code class="docutils literal"><span class="pre">__init__</
 to pass additional parameters, however, make always sure to call this method
 in your <code class="docutils literal"><span class="pre">__init__</span></code> function to take advantage of the consistency check:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">your_param</span><span class="p">):</span>
-    <span class="nb">super</span><span class="p">(</span><span class="n">YourSignatureTester</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
+    <span class="nb">super</span><span class="p">(</span><span class="n">YourSignatureTester</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
     <span class="c1"># your code goes here</span>
 </pre></div>
 </div>
@@ -257,6 +288,40 @@ in your <code class="docutils literal"><span class="pre">__init__</span></code> 
 </tr>
 </tbody>
 </table>
+<dl class="method">
+<dt id="pygenesig.validation.SignatureTester._score_signatures">
+<code class="descname">_score_signatures</code><span class="sig-paren">(</span><em>expr</em>, <em>signatures</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pygenesig/validation.html#SignatureTester._score_signatures"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pygenesig.validation.SignatureTester._score_signatures" title="Permalink to this definition">¶</a></dt>
+<dd><p>Implement this method.</p>
+<p>Generates a score for each sample and signature.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>expr</strong> (<em>np.ndarray</em>) &#8211; m x n gene expression matrix with m genes and n samples</li>
+<li><strong>signatures</strong> (<em>dict of list</em>) &#8211; Signatures dictionary with j signatures.
+Dictionary: tissue_name -&gt; [list, of, enriched, genes].</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">j x n score matrix with j signatures and n samples containing the
+scores generated by this method for each sample and signature. The rows are sorted by
+<code class="docutils literal"><span class="pre">SignatureGenerator.sort_signatures</span></code>.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">np.ndarray</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition important">
+<p class="first admonition-title">Important</p>
+<p class="last">Make sure the rows in the result matrix are sorted by <code class="docutils literal"><span class="pre">SignatureGenerator.sort_signatures</span></code>.
+Make sure that a row for each signature in <code class="docutils literal"><span class="pre">signatures</span></code> is included in the matrix, even
+<em>if the signatures is empty</em> (number of genes = 0).</p>
+</div>
+</dd></dl>
+
 <dl class="method">
 <dt id="pygenesig.validation.SignatureTester.classify">
 <code class="descname">classify</code><span class="sig-paren">(</span><em>signatures</em>, <em>score_matrix</em>, <em>subset=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pygenesig/validation.html#SignatureTester.classify"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pygenesig.validation.SignatureTester.classify" title="Permalink to this definition">¶</a></dt>
@@ -332,13 +397,9 @@ Dictionary: tissue_name -&gt; [list, of, enriched, genes].</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><dl class="docutils">
-<dt>j x n score matrix with j signatures and n samples containing the</dt>
-<dd><p class="first last">scores generated by this method for each sample and signature. The rows are sorted by
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">j x n score matrix with j signatures and n samples containing the
+scores generated by this method for each sample and signature. The rows are sorted by
 <code class="docutils literal"><span class="pre">SignatureGenerator.sort_signatures</span></code>.</p>
-</dd>
-</dl>
-</p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">np.ndarray</p>
@@ -402,181 +463,15 @@ also sorted with <code class="docutils literal"><span class="pre">sort_signature
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">list of signature dictionaries containing the signatures generated
-on each fold, list of confusion matrices containing the confusion matrices calculated on each fold.</p>
+on each fold, list of confusion matrices containing the confusion matrices calculated on each fold,
+list of indices used for training for each fold, list of indices used for testing for each fold.</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">(list, list)</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="pygenesig.validation.delayed">
-<code class="descclassname">pygenesig.validation.</code><code class="descname">delayed</code><a class="headerlink" href="#pygenesig.validation.delayed" title="Permalink to this definition">¶</a></dt>
-<dd><p>Wraps a function or object to produce a <code class="docutils literal"><span class="pre">Delayed</span></code>.</p>
-<p><code class="docutils literal"><span class="pre">Delayed</span></code> objects act as proxies for the object they wrap, but all
-operations on them are done lazily by building up a dask graph internally.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>obj</strong> (<em>object</em>) &#8211; The function or object to wrap</li>
-<li><strong>name</strong> (<em>string or hashable, optional</em>) &#8211; The key to use in the underlying graph for the wrapped object. Defaults
-to hashing content.</li>
-<li><strong>pure</strong> (<em>bool, optional</em>) &#8211; Indicates whether calling the resulting <code class="docutils literal"><span class="pre">Delayed</span></code> object is a pure
-operation. If True, arguments to the call are hashed to produce
-deterministic keys. Default is False.</li>
-<li><strong>nout</strong> (<em>int, optional</em>) &#8211; The number of outputs returned from calling the resulting <code class="docutils literal"><span class="pre">Delayed</span></code>
-object. If provided, the <code class="docutils literal"><span class="pre">Delayed</span></code> output of the call can be iterated
-into <code class="docutils literal"><span class="pre">nout</span></code> objects, allowing for unpacking of results. By default
-iteration over <code class="docutils literal"><span class="pre">Delayed</span></code> objects will error. Note, that <code class="docutils literal"><span class="pre">nout=1</span></code>
-expects <code class="docutils literal"><span class="pre">obj</span></code>, to return a tuple of length 1, and consequently for
-<cite>nout=0`</cite>, <code class="docutils literal"><span class="pre">obj</span></code> should return an empty tuple.</li>
-<li><strong>traverse</strong> (<em>bool, optional</em>) &#8211; By default dask traverses builtin python collections looking for dask
-objects passed to <code class="docutils literal"><span class="pre">delayed</span></code>. For large collections this can be
-expensive. If <code class="docutils literal"><span class="pre">obj</span></code> doesn&#8217;t contain any dask objects, set
-<code class="docutils literal"><span class="pre">traverse=False</span></code> to avoid doing this traversal.</li>
-</ul>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">(list, list, list, list)</p>
 </td>
 </tr>
 </tbody>
 </table>
-<p class="rubric">Examples</p>
-<p>Apply to functions to delay execution:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">inc</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
-<span class="gp">... </span>    <span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span>
-</pre></div>
-</div>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">inc</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
-<span class="go">11</span>
-</pre></div>
-</div>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">delayed</span><span class="p">(</span><span class="n">inc</span><span class="p">,</span> <span class="n">pure</span><span class="o">=</span><span class="kc">True</span><span class="p">)(</span><span class="mi">10</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">==</span> <span class="n">Delayed</span>
-<span class="go">True</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
-<span class="go">11</span>
-</pre></div>
-</div>
-<p>Can be used as a decorator:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nd">@delayed</span><span class="p">(</span><span class="n">pure</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="gp">... </span><span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
-<span class="gp">... </span>    <span class="k">return</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">add</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
-<span class="go">3</span>
-</pre></div>
-</div>
-<p><code class="docutils literal"><span class="pre">delayed</span></code> also accepts an optional keyword <code class="docutils literal"><span class="pre">pure</span></code>. If False (default),
-then subsequent calls will always produce a different <code class="docutils literal"><span class="pre">Delayed</span></code>. This is
-useful for non-pure functions (such as <code class="docutils literal"><span class="pre">time</span></code> or <code class="docutils literal"><span class="pre">random</span></code>).</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">random</span> <span class="k">import</span> <span class="n">random</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">out1</span> <span class="o">=</span> <span class="n">delayed</span><span class="p">(</span><span class="n">random</span><span class="p">,</span> <span class="n">pure</span><span class="o">=</span><span class="kc">False</span><span class="p">)()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">out2</span> <span class="o">=</span> <span class="n">delayed</span><span class="p">(</span><span class="n">random</span><span class="p">,</span> <span class="n">pure</span><span class="o">=</span><span class="kc">False</span><span class="p">)()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">out1</span><span class="o">.</span><span class="n">key</span> <span class="o">==</span> <span class="n">out2</span><span class="o">.</span><span class="n">key</span>
-<span class="go">False</span>
-</pre></div>
-</div>
-<p>If you know a function is pure (output only depends on the input, with no
-global state), then you can set <code class="docutils literal"><span class="pre">pure=True</span></code>. This will attempt to apply a
-consistent name to the output, but will fallback on the same behavior of
-<code class="docutils literal"><span class="pre">pure=False</span></code> if this fails.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nd">@delayed</span><span class="p">(</span><span class="n">pure</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="gp">... </span><span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
-<span class="gp">... </span>    <span class="k">return</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">out1</span> <span class="o">=</span> <span class="n">add</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">out2</span> <span class="o">=</span> <span class="n">add</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">out1</span><span class="o">.</span><span class="n">key</span> <span class="o">==</span> <span class="n">out2</span><span class="o">.</span><span class="n">key</span>
-<span class="go">True</span>
-</pre></div>
-</div>
-<p>The key name of the result of calling a delayed object is determined by
-hashing the arguments by default. To explicitly set the name, you can use
-the <code class="docutils literal"><span class="pre">dask_key_name</span></code> keyword when calling the function:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">add</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>    
-<span class="go">Delayed(&#39;add-3dce7c56edd1ac2614add714086e950f&#39;)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">add</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">dask_key_name</span><span class="o">=</span><span class="s1">&#39;three&#39;</span><span class="p">)</span>
-<span class="go">Delayed(&#39;three&#39;)</span>
-</pre></div>
-</div>
-<p>Note that objects with the same key name are assumed to have the same
-result. If you set the names explicitly you should make sure your key names
-are different for different results.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">add</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">dask_key_name</span><span class="o">=</span><span class="s1">&#39;three&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">add</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">dask_key_name</span><span class="o">=</span><span class="s1">&#39;three&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">add</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">dask_key_name</span><span class="o">=</span><span class="s1">&#39;four&#39;</span><span class="p">)</span>
-</pre></div>
-</div>
-<p><code class="docutils literal"><span class="pre">delayed</span></code> can also be applied to objects to make operations on them lazy:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">delayed</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">isinstance</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">Delayed</span><span class="p">)</span>
-<span class="go">True</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
-<span class="go">[1, 2, 3]</span>
-</pre></div>
-</div>
-<p>The key name of a delayed object is hashed by default if <code class="docutils literal"><span class="pre">pure=True</span></code> or
-is generated randomly if <code class="docutils literal"><span class="pre">pure=False</span></code> (default).  To explicitly set the
-name, you can use the <code class="docutils literal"><span class="pre">name</span></code> keyword:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">delayed</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;mylist&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span>
-<span class="go">Delayed(&#39;mylist&#39;)</span>
-</pre></div>
-</div>
-<p>Delayed results act as a proxy to the underlying object. Many operators
-are supported:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="p">(</span><span class="n">a</span> <span class="o">+</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
-<span class="go">[1, 2, 3, 1, 2]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
-<span class="go">2</span>
-</pre></div>
-</div>
-<p>Method and attribute access also works:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
-<span class="go">1</span>
-</pre></div>
-</div>
-<p>Note that if a method doesn&#8217;t exist, no error will be thrown until runtime:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">res</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">not_a_real_method</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">res</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>  
-<span class="go">AttributeError(&quot;&#39;list&#39; object has no attribute &#39;not_a_real_method&#39;&quot;)</span>
-</pre></div>
-</div>
-<p>&#8220;Magic&#8221; methods (e.g. operators and attribute access) are assumed to be
-pure, meaning that subsequent calls must return the same results.  This is
-not overrideable. To invoke an impure attribute or operator, you&#8217;d need to
-use it in a delayed function with <code class="docutils literal"><span class="pre">pure=False</span></code>.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">Incrementer</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-<span class="gp">... </span>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="gp">... </span>        <span class="bp">self</span><span class="o">.</span><span class="n">_n</span> <span class="o">=</span> <span class="mi">0</span>
-<span class="gp">... </span>    <span class="nd">@property</span>
-<span class="gp">... </span>    <span class="k">def</span> <span class="nf">n</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="gp">... </span>        <span class="bp">self</span><span class="o">.</span><span class="n">_n</span> <span class="o">+=</span> <span class="mi">1</span>
-<span class="gp">... </span>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_n</span>
-<span class="gp">...</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">delayed</span><span class="p">(</span><span class="n">Incrementer</span><span class="p">())</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">n</span><span class="o">.</span><span class="n">key</span> <span class="o">==</span> <span class="n">x</span><span class="o">.</span><span class="n">n</span><span class="o">.</span><span class="n">key</span>
-<span class="go">True</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">get_n</span> <span class="o">=</span> <span class="n">delayed</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">n</span><span class="p">,</span> <span class="n">pure</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">get_n</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">key</span> <span class="o">==</span> <span class="n">get_n</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">key</span>
-<span class="go">False</span>
-</pre></div>
-</div>
-<p>In contrast, methods are assumed to be impure by default, meaning that
-subsequent calls may return different results. To assume purity, set
-<cite>pure=True</cite>. This allows sharing of any intermediate values.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">pure</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">key</span> <span class="o">==</span> <span class="n">a</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">pure</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">key</span>
-<span class="go">True</span>
-</pre></div>
-</div>
-<p>As with function calls, method calls also support the <code class="docutils literal"><span class="pre">dask_key_name</span></code>
-keyword:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">dask_key_name</span><span class="o">=</span><span class="s2">&quot;count_2&quot;</span><span class="p">)</span>
-<span class="go">Delayed(&quot;count_2&quot;)</span>
-</pre></div>
-</div>
 </dd></dl>
 
 <dl class="function">
@@ -610,10 +505,205 @@ samples per category.</p>
 
 </div>
 </div>
-<div class="section" id="methods">
-<span id="methods"></span><h2>Methods<a class="headerlink" href="#methods" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-pygenesig.file_formats">
+<span id="file-input-output-pygenesig-file-formats"></span><span id="file-input-output-pygenesig-file-formats"></span><h1>File input/output (<code class="docutils literal"><span class="pre">pygenesig.file_formats</span></code>)<a class="headerlink" href="#module-pygenesig.file_formats" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="pygenesig.file_formats.load_gmt">
+<code class="descclassname">pygenesig.file_formats.</code><code class="descname">load_gmt</code><span class="sig-paren">(</span><em>file</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pygenesig/file_formats.html#load_gmt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pygenesig.file_formats.load_gmt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deprecated.
+Alias for read_gmt.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pygenesig.file_formats.make_rosetta_dict">
+<code class="descclassname">pygenesig.file_formats.</code><code class="descname">make_rosetta_dict</code><span class="sig-paren">(</span><em>array</em>, <em>inverse=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pygenesig/file_formats.html#make_rosetta_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pygenesig.file_formats.make_rosetta_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>convert an array to a dictonary mapping the index to the corresponding array entry.
+Use <cite>inverse</cite> to reverse the mapping, i.e. the array entry to the index.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>array</strong> (<em>array-like</em>) &#8211; </li>
+<li><strong>inverse</strong> (<em>boolean</em>) &#8211; </li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">the map</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">dict</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pygenesig.file_formats.read_expr">
+<code class="descclassname">pygenesig.file_formats.</code><code class="descname">read_expr</code><span class="sig-paren">(</span><em>expr_file</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pygenesig/file_formats.html#read_expr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pygenesig.file_formats.read_expr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read a m x n gene expression matrix from a numpy object.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pygenesig.file_formats.read_gct">
+<code class="descclassname">pygenesig.file_formats.</code><code class="descname">read_gct</code><span class="sig-paren">(</span><em>file</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pygenesig/file_formats.html#read_gct"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pygenesig.file_formats.read_gct" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read a <a class="reference external" href="http://software.broadinstitute.org/cancer/software/genepattern/file-formats-guide#gct">GCT file</a> to a gene expression matrix.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>file</strong> (<em>str</em>) &#8211; path to GCT file</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">gene expression matrix.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">np.array</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pygenesig.file_formats.read_gmt">
+<code class="descclassname">pygenesig.file_formats.</code><code class="descname">read_gmt</code><span class="sig-paren">(</span><em>file</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pygenesig/file_formats.html#read_gmt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pygenesig.file_formats.read_gmt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read a <a class="reference external" href="http://software.broadinstitute.org/cancer/software/gsea/wiki/index.php/Data_formats#GMT:_Gene_Matrix_Transposed_file_format_.28.2A.gmt.29">GMT file</a> into a signature dictionary.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>file</strong> &#8211; path to GMT file</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">signature dictionary<p>Example:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;tissue1&quot;</span> <span class="p">:</span> <span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="n">of</span><span class="p">,</span> <span class="n">gene</span><span class="p">,</span> <span class="n">ids</span><span class="p">],</span>
+    <span class="s2">&quot;tissue2&quot;</span> <span class="p">:</span> <span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="n">of</span><span class="p">,</span> <span class="n">other</span><span class="p">,</span> <span class="n">genes</span><span class="p">],</span>
+    <span class="o">...</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">dict of list</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pygenesig.file_formats.read_rosetta">
+<code class="descclassname">pygenesig.file_formats.</code><code class="descname">read_rosetta</code><span class="sig-paren">(</span><em>rosetta_file</em>, <em>as_dict=True</em>, <em>inverse=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pygenesig/file_formats.html#read_rosetta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pygenesig.file_formats.read_rosetta" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a m x n gene expression matrix with m genes and n samples. Read an m-array
+with one identifier for each gene.</p>
+<p>If <cite>as_dict</cite> is True, this will be converted into a dictionary mapping the gene-index
+to the gene identifier. This can be used to map the index-based signatures
+back to gene symbols.</p>
+<p>If <cite>inverse</cite> is True, the mapping is inverse, and the gene-symbol will be mapped to the
+gene-index.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>rosetta_file</strong> (<em>str</em>) &#8211; path to file</li>
+<li><strong>as_dict</strong> (<em>boolean</em>) &#8211; If True, a dictionary will be returned. Else it will be a flat numpy.array.</li>
+<li><strong>inverse</strong> (<em>boolean</em>) &#8211; If true, map gene-symbol to index.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition important">
+<p class="first admonition-title">Important</p>
+<p class="last">Be carefule when using <cite>inverse = True</cite> when the list in
+rosetta_file is not unique. In that case only the last
+entry makes it into the list!</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">mapping or numpy array.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">dict or np.array</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pygenesig.file_formats.read_target">
+<code class="descclassname">pygenesig.file_formats.</code><code class="descname">read_target</code><span class="sig-paren">(</span><em>target_file</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pygenesig/file_formats.html#read_target"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pygenesig.file_formats.read_target" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a m x n gene expression matrix with m genes and n samples. Read an n-array with
+one target annotation for each sample.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pygenesig.file_formats.write_expr">
+<code class="descclassname">pygenesig.file_formats.</code><code class="descname">write_expr</code><span class="sig-paren">(</span><em>expression_matrix</em>, <em>file</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pygenesig/file_formats.html#write_expr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pygenesig.file_formats.write_expr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Store a m x n gene expression matrix as numpy object.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pygenesig.file_formats.write_gct">
+<code class="descclassname">pygenesig.file_formats.</code><code class="descname">write_gct</code><span class="sig-paren">(</span><em>file</em>, <em>exprs</em>, <em>samples=None</em>, <em>description=None</em>, <em>name=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pygenesig/file_formats.html#write_gct"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pygenesig.file_formats.write_gct" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write a gct file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>file</strong> (<em>str</em>) &#8211; path to output file</li>
+<li><strong>exprs</strong> (<em>np.array</em>) &#8211; m x n matrix with m genes and n samples</li>
+<li><strong>samples</strong> &#8211; n-array with the labels for the n samples</li>
+<li><strong>description</strong> &#8211; m array with a description for each gene (e.g. gene symbol)</li>
+<li><strong>name</strong> &#8211; m array with the name for each gene (e.g. gene index)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pygenesig.file_formats.write_gmt">
+<code class="descclassname">pygenesig.file_formats.</code><code class="descname">write_gmt</code><span class="sig-paren">(</span><em>signatures</em>, <em>file</em>, <em>description='na'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pygenesig/file_formats.html#write_gmt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pygenesig.file_formats.write_gmt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Writes signatures to a <a class="reference external" href="http://software.broadinstitute.org/cancer/software/gsea/wiki/index.php/Data_formats#GMT:_Gene_Matrix_Transposed_file_format_.28.2A.gmt.29">GMT file</a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>signatures</strong> (<em>dict of list</em>) &#8211; signature dictionary</li>
+<li><strong>file</strong> &#8211; path to output file</li>
+<li><strong>description</strong> &#8211; text to fill in the gmt description field.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pygenesig.file_formats.write_rosetta">
+<code class="descclassname">pygenesig.file_formats.</code><code class="descname">write_rosetta</code><span class="sig-paren">(</span><em>rosetta_array</em>, <em>rosetta_file</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pygenesig/file_formats.html#write_rosetta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pygenesig.file_formats.write_rosetta" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for <cite>write_feature</cite>.</p>
+<p>Given a m x n gene expression matrix with m genes and n samples. Write a m-array
+with one identifier for each gene.</p>
+<p>This can be used to map the index-based signature back to gene symbols.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pygenesig.file_formats.write_target">
+<code class="descclassname">pygenesig.file_formats.</code><code class="descname">write_target</code><span class="sig-paren">(</span><em>target_array</em>, <em>file</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pygenesig/file_formats.html#write_target"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pygenesig.file_formats.write_target" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a m x n gene expression matrix with m genes and n samples. Write an n-array with
+one target annotation for each sample.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="signature-generators">
+<span id="signature-generators"></span><h1>Signature Generators<a class="headerlink" href="#signature-generators" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="module-pygenesig.gini">
-<span id="gini-index"></span><span id="gini-index"></span><h3>Gini Index<a class="headerlink" href="#module-pygenesig.gini" title="Permalink to this headline">¶</a></h3>
+<span id="gini-index-pygenesig-gini"></span><span id="gini-index-pygenesig-gini"></span><h2>Gini Index (<code class="docutils literal"><span class="pre">pygenesig.gini</span></code>)<a class="headerlink" href="#module-pygenesig.gini" title="Permalink to this headline">¶</a></h2>
 <p>The Gini-coefficient (gini index) measures the inequality among values of
 a frequency distribution. Originally applied to measure income inequality
 we can also use it on gene expression data to find genes that are
@@ -759,28 +849,22 @@ in the current sample.</li>
 </dd></dl>
 
 </div>
-<div class="section" id="differential-expression-limma">
-<span id="differential-expression-limma"></span><h3>Differential Expression (Limma)<a class="headerlink" href="#differential-expression-limma" title="Permalink to this headline">¶</a></h3>
-</div>
-<div class="section" id="module-pygenesig.bioqc">
-<span id="bioqc"></span><span id="bioqc"></span><h3>BioQC<a class="headerlink" href="#module-pygenesig.bioqc" title="Permalink to this headline">¶</a></h3>
-<p><a class="reference external" href="https://accio.github.io/BioQC">BioQC</a> is a R/Bioconductor package to detect tissue heterogeneity in gene expression data. It ships with a set
-of 150 tissue signatures and implements a computationally efficient Wilcoxon-Mann-Whitney (WMW) test.</p>
-<p>The WMW-test can be applied to check for an over-representation of an arbitrary gene set
-in a gene expression sample.</p>
-<p>This module implements a python bridge to the R package using <code class="docutils literal"><span class="pre">rpy2</span></code> and implements a
-<code class="docutils literal"><span class="pre">SignatureTester</span></code> based on BioQC.</p>
+<div class="section" id="module-pygenesig.limma">
+<span id="differential-expression-pygenesig-limma"></span><span id="differential-expression-pygenesig-limma"></span><h2>Differential Expression (<code class="docutils literal"><span class="pre">pygenesig.limma</span></code>)<a class="headerlink" href="#module-pygenesig.limma" title="Permalink to this headline">¶</a></h2>
+<p>With Differential Expression (DE)-Analysis one can find genes that
+are significantly differentially expressed between different conditions.</p>
+<p>This module provides a python bridge to the R packages <a class="reference external" href="https://bioconductor.org/packages/release/bioc/html/limma.html">limma</a> and <a class="reference external" href="https://www.bioconductor.org/packages/release/bioc/html/edgeR.html">edgeR</a>
+using <code class="docutils literal"><span class="pre">rpy2</span></code> and implements a <code class="docutils literal"><span class="pre">SignatureGenerator</span></code> based on DE.</p>
 <dl class="class">
-<dt id="pygenesig.bioqc.BioQCSignatureTester">
-<em class="property">class </em><code class="descclassname">pygenesig.bioqc.</code><code class="descname">BioQCSignatureTester</code><span class="sig-paren">(</span><em>expr</em>, <em>target</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pygenesig/bioqc.html#BioQCSignatureTester"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pygenesig.bioqc.BioQCSignatureTester" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#pygenesig.validation.SignatureTester" title="pygenesig.validation.SignatureTester"><code class="xref py py-class docutils literal"><span class="pre">pygenesig.validation.SignatureTester</span></code></a></p>
-<p>Use BioQC to check the validity of gene signatures.</p>
-<p>We use the WMW-test implemented by BioQC to generate a p-value for
-each signature in each sample. If a signature is enriched in a specific sample
-the WMW-test will result in a small p-value.</p>
-<p>We define a sample as <cite>correctly classified</cite> by the signature
-if the signature corresponding to the <cite>true tissue of origin</cite>
-has the lowest p-value of all tested signatures.</p>
+<dt id="pygenesig.limma.LimmaSignatureGenerator">
+<em class="property">class </em><code class="descclassname">pygenesig.limma.</code><code class="descname">LimmaSignatureGenerator</code><span class="sig-paren">(</span><em>expr</em>, <em>target</em>, <em>covariates</em>, <em>fold_change=100</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pygenesig/limma.html#LimmaSignatureGenerator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pygenesig.limma.LimmaSignatureGenerator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pygenesig.validation.SignatureGenerator" title="pygenesig.validation.SignatureGenerator"><code class="xref py py-class docutils literal"><span class="pre">pygenesig.validation.SignatureGenerator</span></code></a></p>
+<p>Use Differntial Expression (DE) Analysis to generate signatures.</p>
+<p>The LimmaSignatureGenerator uses <cite>Limma</cite> and <cite>voom</cite> to find significantly differentially
+expressed genes. Genes, which are specific for a tissue have a high fold-change and a low
+p-value, whereas genes equally present in all tissues will not be significant.</p>
+<p>The idea is, that genes which are significantly different between different tissues
+will reliably identify their tissue of origin.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -788,94 +872,17 @@ has the lowest p-value of all tested signatures.</p>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>expr</strong> (<em>np.ndarray</em>) &#8211; m x n matrix with m samples and n genes</li>
 <li><strong>target</strong> (<em>array-like</em>) &#8211; m-vector with true tissue for each sample</li>
+<li><strong>fold_change</strong> (<em>int</em>) &#8211; minimal fold change for a gene to be considered as <cite>differentially expressed</cite>.</li>
 </ul>
 </td>
 </tr>
 </tbody>
 </table>
-<dl class="staticmethod">
-<dt id="pygenesig.bioqc.BioQCSignatureTester.run_bioqc">
-<em class="property">static </em><code class="descname">run_bioqc</code><span class="sig-paren">(</span><em>expr</em>, <em>gene_symbols</em>, <em>gmt</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pygenesig/bioqc.html#BioQCSignatureTester.run_bioqc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pygenesig.bioqc.BioQCSignatureTester.run_bioqc" title="Permalink to this definition">¶</a></dt>
-<dd><p>Apply BioQC to a gene expression matrix.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>expr</strong> &#8211; m x n gene expression matrix with m genes and n samples.</li>
-<li><strong>gene_symbols</strong> &#8211; m vector containing gene symbols</li>
-<li><strong>gmt</strong> &#8211; GMTList object containing k signatures. Generate with <code class="docutils literal"><span class="pre">signatures2gmt()</span></code>.</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">k x n p-value matrix.</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">np.array</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="staticmethod">
-<dt id="pygenesig.bioqc.BioQCSignatureTester.signatures2gmt">
-<em class="property">static </em><code class="descname">signatures2gmt</code><span class="sig-paren">(</span><em>signatures</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pygenesig/bioqc.html#BioQCSignatureTester.signatures2gmt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pygenesig.bioqc.BioQCSignatureTester.signatures2gmt" title="Permalink to this definition">¶</a></dt>
-<dd><p>Convert signature dictionary into an R GMTList object.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>signatures</strong> (<em>dict</em>) &#8211; signature dictionary</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">R GMTList object containing the signatures.</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">GMTList</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="data">
-<dt id="pygenesig.bioqc.mk_eset">
-<code class="descclassname">pygenesig.bioqc.</code><code class="descname">mk_eset</code><em class="property"> = R object with classes: ('function',) mapped to: &lt;SignatureTranslatedFunction - Python:0x2aaad09f3248 / R:0x4ad5980&gt;</em><a class="headerlink" href="#pygenesig.bioqc.mk_eset" title="Permalink to this definition">¶</a></dt>
-<dd><p>Generate an R ExpressionSet with <code class="docutils literal"><span class="pre">exprs()</span></code> and <code class="docutils literal"><span class="pre">fData()</span></code> annotation.
-fData will contain one single column named GeneSymbol.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>exprs</strong> &#8211; <code class="docutils literal"><span class="pre">numpy.array</span></code> m x n expression matrix. <code class="docutils literal"><span class="pre">np.matrix</span></code> does NOT work!</li>
-<li><strong>gene_symbols</strong> &#8211; <code class="docutils literal"><span class="pre">numpy.array</span></code> m vector containing gene symbols.</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="data">
-<dt id="pygenesig.bioqc.read_gmt">
-<code class="descclassname">pygenesig.bioqc.</code><code class="descname">read_gmt</code><em class="property"> = R object with classes: ('function',) mapped to: &lt;DocumentedSTFunction - Python:0x2aaad0ab46c8 / R:0x55598d0&gt;</em><a class="headerlink" href="#pygenesig.bioqc.read_gmt" title="Permalink to this definition">¶</a></dt>
-<dd><p>Alias to R function <code class="docutils literal"><span class="pre">BioQC::readGmt</span></code> using rpy2.</p>
-<p>Check the <a class="reference external" href="https://bioconductor.org/packages/release/bioc/manuals/BioQC/man/BioQC.pdf">BioQC Documentation</a>
-for more details.</p>
-</dd></dl>
-
-<dl class="data">
-<dt id="pygenesig.bioqc.wmw_test">
-<code class="descclassname">pygenesig.bioqc.</code><code class="descname">wmw_test</code><em class="property"> = R object with classes: ('standardGeneric',) mapped to: &lt;DocumentedSTFunction - Python:0x2aaad0a481c8 / R:0x4b631d0&gt;</em><a class="headerlink" href="#pygenesig.bioqc.wmw_test" title="Permalink to this definition">¶</a></dt>
-<dd><p>Alias to R function <code class="docutils literal"><span class="pre">BioQC::wmwTest</span></code> using rpy2.</p>
-<p>Check the <a class="reference external" href="https://bioconductor.org/packages/release/bioc/manuals/BioQC/man/BioQC.pdf">BioQC Documentation</a>
-for more details.</p>
 </dd></dl>
 
 </div>
 <div class="section" id="module-pygenesig.mcp_counter">
-<span id="mcpcounter"></span><span id="mcpcounter"></span><h3>MCPCounter<a class="headerlink" href="#module-pygenesig.mcp_counter" title="Permalink to this headline">¶</a></h3>
+<span id="mcpcounter-pygenesig-mcp-counter"></span><span id="mcpcounter-pygenesig-mcp-counter"></span><h2>MCPCounter (<code class="docutils literal"><span class="pre">pygenesig.mcp_counter</span></code>)<a class="headerlink" href="#module-pygenesig.mcp_counter" title="Permalink to this headline">¶</a></h2>
 <p><a class="reference external" href="http://dx.doi.org/10.1186/s13059-016-1070-5">MCPCounter</a> is a method described by Becht et al., Genome Biology (2015)
 for deconvolution of tissue-infiltrating immune and stromal cell populations.</p>
 <p>Besides presenting a method for gene-expression based deconvolution they put a
@@ -911,15 +918,6 @@ A gene is considered a valid <cite>Transcription Marker</cite> (TM) if it meets 
 </tr>
 </tbody>
 </table>
-</dd></dl>
-
-<dl class="class">
-<dt id="pygenesig.mcp_counter.MCPSignatureTester">
-<em class="property">class </em><code class="descclassname">pygenesig.mcp_counter.</code><code class="descname">MCPSignatureTester</code><span class="sig-paren">(</span><em>expr</em>, <em>target</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pygenesig/mcp_counter.html#MCPSignatureTester"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pygenesig.mcp_counter.MCPSignatureTester" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#pygenesig.validation.SignatureTester" title="pygenesig.validation.SignatureTester"><code class="xref py py-class docutils literal"><span class="pre">pygenesig.validation.SignatureTester</span></code></a></p>
-<p>Implements the <a class="reference external" href="http://dx.doi.org/10.1186/s13059-016-1070-5">MCPCounter</a> described by Becht et al. in python.</p>
-<p>The principle is super-simple: take the mean of all marker genes as indicator.
-Also see their <a class="reference external" href="https://github.com/ebecht/MCPcounter/blob/a79614eee002c88c64725d69140c7653e7c379b4/Source/R/MCPcounter.R">R script</a>.</p>
 </dd></dl>
 
 <dl class="function">
@@ -1032,95 +1030,96 @@ to the different negative classes.</li>
 
 </div>
 </div>
-<div class="section" id="tools">
-<span id="tools"></span><h2>Tools<a class="headerlink" href="#tools" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="module-pygenesig.file_formats">
-<span id="file-input-output-pygenesig-file-formats"></span><span id="file-input-output-pygenesig-file-formats"></span><h3>File input output (<code class="docutils literal"><span class="pre">pygenesig.file_formats</span></code>)<a class="headerlink" href="#module-pygenesig.file_formats" title="Permalink to this headline">¶</a></h3>
-<dl class="function">
-<dt id="pygenesig.file_formats.load_gmt">
-<code class="descclassname">pygenesig.file_formats.</code><code class="descname">load_gmt</code><span class="sig-paren">(</span><em>file</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pygenesig/file_formats.html#load_gmt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pygenesig.file_formats.load_gmt" title="Permalink to this definition">¶</a></dt>
-<dd><p>Read a <a class="reference external" href="http://software.broadinstitute.org/cancer/software/gsea/wiki/index.php/Data_formats#GMT:_Gene_Matrix_Transposed_file_format_.28.2A.gmt.29">GMT file</a> into a signature dictionary.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>file</strong> &#8211; path to GMT file</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">signature dictionary<p>Example:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="s2">&quot;tissue1&quot;</span> <span class="p">:</span> <span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="n">of</span><span class="p">,</span> <span class="n">gene</span><span class="p">,</span> <span class="n">ids</span><span class="p">],</span>
-    <span class="s2">&quot;tissue2&quot;</span> <span class="p">:</span> <span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="n">of</span><span class="p">,</span> <span class="n">other</span><span class="p">,</span> <span class="n">genes</span><span class="p">],</span>
-    <span class="o">...</span>
-<span class="p">}</span>
-</pre></div>
-</div>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">dict of list</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="pygenesig.file_formats.read_expr">
-<code class="descclassname">pygenesig.file_formats.</code><code class="descname">read_expr</code><span class="sig-paren">(</span><em>expr_file</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pygenesig/file_formats.html#read_expr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pygenesig.file_formats.read_expr" title="Permalink to this definition">¶</a></dt>
-<dd><p>Read a m x n gene expression matrix from a numpy object.</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="pygenesig.file_formats.read_gct">
-<code class="descclassname">pygenesig.file_formats.</code><code class="descname">read_gct</code><span class="sig-paren">(</span><em>file</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pygenesig/file_formats.html#read_gct"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pygenesig.file_formats.read_gct" title="Permalink to this definition">¶</a></dt>
-<dd><p>Read a <a class="reference external" href="http://software.broadinstitute.org/cancer/software/genepattern/file-formats-guide#gct">GCT file</a> to a gene expression matrix.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>file</strong> &#8211; path to GCT file</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">gene expression matrix as 2d numpy array. (rows = genes, cols = samples)</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">np.array</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="pygenesig.file_formats.read_rosetta">
-<code class="descclassname">pygenesig.file_formats.</code><code class="descname">read_rosetta</code><span class="sig-paren">(</span><em>rosetta_file</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pygenesig/file_formats.html#read_rosetta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pygenesig.file_formats.read_rosetta" title="Permalink to this definition">¶</a></dt>
-<dd><p>Given a m x n gene expression matrix with m genes and n samples. Read an m-array
-with one identifier for each gene.</p>
-<p>This will be converted into a dictionary mapping the gene-index
-to the gene identifier. This can be used to map the index-based signatures
-back to gene symbols.</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="pygenesig.file_formats.read_target">
-<code class="descclassname">pygenesig.file_formats.</code><code class="descname">read_target</code><span class="sig-paren">(</span><em>target_file</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pygenesig/file_formats.html#read_target"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pygenesig.file_formats.read_target" title="Permalink to this definition">¶</a></dt>
-<dd><p>Given a m x n gene expression matrix with m genes and n samples. Read an n-array with
-one target annotation for each sample.</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="pygenesig.file_formats.write_expr">
-<code class="descclassname">pygenesig.file_formats.</code><code class="descname">write_expr</code><span class="sig-paren">(</span><em>expression_matrix</em>, <em>file</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pygenesig/file_formats.html#write_expr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pygenesig.file_formats.write_expr" title="Permalink to this definition">¶</a></dt>
-<dd><p>Store a m x n gene expression matrix as numpy object.</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="pygenesig.file_formats.write_gmt">
-<code class="descclassname">pygenesig.file_formats.</code><code class="descname">write_gmt</code><span class="sig-paren">(</span><em>signatures</em>, <em>file</em>, <em>description='na'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pygenesig/file_formats.html#write_gmt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pygenesig.file_formats.write_gmt" title="Permalink to this definition">¶</a></dt>
-<dd><p>Writes signatures to a <a class="reference external" href="http://software.broadinstitute.org/cancer/software/gsea/wiki/index.php/Data_formats#GMT:_Gene_Matrix_Transposed_file_format_.28.2A.gmt.29">GMT file</a>.</p>
+<div class="section" id="signature-testers">
+<span id="signature-testers"></span><h1>Signature Testers<a class="headerlink" href="#signature-testers" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-pygenesig.bioqc">
+<span id="bioqc-pygenesig-bioqc"></span><span id="bioqc-pygenesig-bioqc"></span><h2>BioQC (<code class="docutils literal"><span class="pre">pygenesig.bioqc</span></code>)<a class="headerlink" href="#module-pygenesig.bioqc" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference external" href="https://accio.github.io/BioQC">BioQC</a> is a R/Bioconductor package to detect tissue heterogeneity in gene expression data. It ships with a set
+of 150 tissue signatures and implements a computationally efficient Wilcoxon-Mann-Whitney (WMW) test.</p>
+<p>The WMW-test can be applied to check for an over-representation of an arbitrary gene set
+in a gene expression sample.</p>
+<p>This module implements a python bridge to the R package using <code class="docutils literal"><span class="pre">rpy2</span></code> and implements a
+<code class="docutils literal"><span class="pre">SignatureTester</span></code> based on BioQC.</p>
+<dl class="class">
+<dt id="pygenesig.bioqc.BioQCSignatureTester">
+<em class="property">class </em><code class="descclassname">pygenesig.bioqc.</code><code class="descname">BioQCSignatureTester</code><span class="sig-paren">(</span><em>expr</em>, <em>target</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pygenesig/bioqc.html#BioQCSignatureTester"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pygenesig.bioqc.BioQCSignatureTester" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pygenesig.validation.SignatureTester" title="pygenesig.validation.SignatureTester"><code class="xref py py-class docutils literal"><span class="pre">pygenesig.validation.SignatureTester</span></code></a></p>
+<p>Use BioQC to check the validity of gene signatures.</p>
+<p>We use the WMW-test implemented by BioQC to generate a p-value for
+each signature in each sample. If a signature is enriched in a specific sample
+the WMW-test will result in a small p-value.</p>
+<p>We define a sample as <cite>correctly classified</cite> by the signature
+if the signature corresponding to the <cite>true tissue of origin</cite>
+has the lowest p-value of all tested signatures.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>signatures</strong> (<em>dict of list</em>) &#8211; signature dictionary</li>
-<li><strong>file</strong> &#8211; path to output file</li>
-<li><strong>description</strong> &#8211; text to fill in the gmt description field.</li>
+<li><strong>expr</strong> (<em>np.ndarray</em>) &#8211; m x n matrix with m samples and n genes</li>
+<li><strong>target</strong> (<em>array-like</em>) &#8211; m-vector with true tissue for each sample</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="staticmethod">
+<dt id="pygenesig.bioqc.BioQCSignatureTester.run_bioqc">
+<em class="property">static </em><code class="descname">run_bioqc</code><span class="sig-paren">(</span><em>expr</em>, <em>gene_symbols</em>, <em>gmt</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pygenesig/bioqc.html#BioQCSignatureTester.run_bioqc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pygenesig.bioqc.BioQCSignatureTester.run_bioqc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply BioQC to a gene expression matrix.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>expr</strong> &#8211; m x n gene expression matrix with m genes and n samples.</li>
+<li><strong>gene_symbols</strong> &#8211; m vector containing gene symbols</li>
+<li><strong>gmt</strong> &#8211; GMTList object containing k signatures. Generate with <code class="docutils literal"><span class="pre">signatures2gmt()</span></code>.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">k x n p-value matrix.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">np.array</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="pygenesig.bioqc.BioQCSignatureTester.signatures2gmt">
+<em class="property">static </em><code class="descname">signatures2gmt</code><span class="sig-paren">(</span><em>signatures</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pygenesig/bioqc.html#BioQCSignatureTester.signatures2gmt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pygenesig.bioqc.BioQCSignatureTester.signatures2gmt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert signature dictionary into an R GMTList object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>signatures</strong> (<em>dict</em>) &#8211; signature dictionary</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">R GMTList object containing the signatures.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">GMTList</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="data">
+<dt id="pygenesig.bioqc.mk_eset">
+<code class="descclassname">pygenesig.bioqc.</code><code class="descname">mk_eset</code><em class="property"> = R object with classes: ('function',) mapped to: &lt;SignatureTranslatedFunction - Python:0x2aaacebfbc08 / R:0x8093778&gt;</em><a class="headerlink" href="#pygenesig.bioqc.mk_eset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate an R ExpressionSet with <code class="docutils literal"><span class="pre">exprs()</span></code> and <code class="docutils literal"><span class="pre">fData()</span></code> annotation.
+fData will contain one single column named GeneSymbol.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>exprs</strong> &#8211; <code class="docutils literal"><span class="pre">numpy.array</span></code> m x n expression matrix. <code class="docutils literal"><span class="pre">np.matrix</span></code> does NOT work!</li>
+<li><strong>gene_symbols</strong> &#8211; <code class="docutils literal"><span class="pre">numpy.array</span></code> m vector containing gene symbols.</li>
 </ul>
 </td>
 </tr>
@@ -1128,24 +1127,37 @@ one target annotation for each sample.</p>
 </table>
 </dd></dl>
 
-<dl class="function">
-<dt id="pygenesig.file_formats.write_rosetta">
-<code class="descclassname">pygenesig.file_formats.</code><code class="descname">write_rosetta</code><span class="sig-paren">(</span><em>rosetta_array</em>, <em>rosetta_file</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pygenesig/file_formats.html#write_rosetta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pygenesig.file_formats.write_rosetta" title="Permalink to this definition">¶</a></dt>
-<dd><p>Given a m x n gene expression matrix with m genes and n samples. Write a m-array
-with one identifier for each gene.</p>
-<p>This can be used to map the index-based signature back to gene symbols.</p>
+<dl class="data">
+<dt id="pygenesig.bioqc.read_gmt">
+<code class="descclassname">pygenesig.bioqc.</code><code class="descname">read_gmt</code><em class="property"> = R object with classes: ('function',) mapped to: &lt;DocumentedSTFunction - Python:0x2aaaced77848 / R:0x7cf4d60&gt;</em><a class="headerlink" href="#pygenesig.bioqc.read_gmt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias to R function <code class="docutils literal"><span class="pre">BioQC::readGmt</span></code> using rpy2.</p>
+<p>Check the <a class="reference external" href="https://bioconductor.org/packages/release/bioc/manuals/BioQC/man/BioQC.pdf">BioQC Documentation</a>
+for more details.</p>
 </dd></dl>
 
-<dl class="function">
-<dt id="pygenesig.file_formats.write_target">
-<code class="descclassname">pygenesig.file_formats.</code><code class="descname">write_target</code><span class="sig-paren">(</span><em>target_array</em>, <em>file</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pygenesig/file_formats.html#write_target"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pygenesig.file_formats.write_target" title="Permalink to this definition">¶</a></dt>
-<dd><p>Given a m x n gene expression matrix with m genes and n samples. Write an n-array with
-one target annotation for each sample.</p>
+<dl class="data">
+<dt id="pygenesig.bioqc.wmw_test">
+<code class="descclassname">pygenesig.bioqc.</code><code class="descname">wmw_test</code><em class="property"> = R object with classes: ('standardGeneric',) mapped to: &lt;DocumentedSTFunction - Python:0x2aaaced89a88 / R:0x84f3200&gt;</em><a class="headerlink" href="#pygenesig.bioqc.wmw_test" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias to R function <code class="docutils literal"><span class="pre">BioQC::wmwTest</span></code> using rpy2.</p>
+<p>Check the <a class="reference external" href="https://bioconductor.org/packages/release/bioc/manuals/BioQC/man/BioQC.pdf">BioQC Documentation</a>
+for more details.</p>
 </dd></dl>
 
 </div>
+<div class="section" id="mcpcounter-pygenesig-mcp-counter">
+<span id="id1"></span><h2>MCPCounter (<code class="docutils literal"><span class="pre">pygenesig.mcp_counter</span></code>)<a class="headerlink" href="#mcpcounter-pygenesig-mcp-counter" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="pygenesig.mcp_counter.MCPSignatureTester">
+<em class="property">class </em><code class="descclassname">pygenesig.mcp_counter.</code><code class="descname">MCPSignatureTester</code><span class="sig-paren">(</span><em>expr</em>, <em>target</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pygenesig/mcp_counter.html#MCPSignatureTester"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pygenesig.mcp_counter.MCPSignatureTester" title="Permalink to this definition">¶</a></dt>
+<dd><p>Implements the <a class="reference external" href="http://dx.doi.org/10.1186/s13059-016-1070-5">MCPCounter</a> described by Becht et al. in python.</p>
+<p>The principle is super-simple: take the mean of all marker genes as indicator.
+Also see their <a class="reference external" href="https://github.com/ebecht/MCPcounter/blob/a79614eee002c88c64725d69140c7653e7c379b4/Source/R/MCPcounter.R">R script</a>.</p>
+</dd></dl>
+
+</div>
+</div>
 <div class="section" id="module-pygenesig.tools">
-<span id="auxilary-functions-related-to-gene-signatures-pygenesig-tools"></span><span id="auxilary-functions-related-to-gene-signatures-pygenesig-tools"></span><h3>Auxilary functions related to gene signatures (<code class="docutils literal"><span class="pre">pygenesig.tools</span></code>)<a class="headerlink" href="#module-pygenesig.tools" title="Permalink to this headline">¶</a></h3>
+<span id="auxilary-functions-pygenesig-tools"></span><span id="auxilary-functions-pygenesig-tools"></span><h1>Auxilary functions (<code class="docutils literal"><span class="pre">pygenesig.tools</span></code>)<a class="headerlink" href="#module-pygenesig.tools" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="pygenesig.tools.collapse_matrix">
 <code class="descclassname">pygenesig.tools.</code><code class="descname">collapse_matrix</code><span class="sig-paren">(</span><em>mat</em>, <em>group_by</em>, <em>axis=0</em>, <em>aggregate_fun=&lt;function median&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pygenesig/tools.html#collapse_matrix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pygenesig.tools.collapse_matrix" title="Permalink to this definition">¶</a></dt>
@@ -1250,7 +1262,7 @@ one target annotation for each sample.</p>
 &gt;&gt;&gt; import seaborn as sns
 &gt;&gt;&gt; signatures = load_gmt(&#8220;tests/bioqc/test_bioqc_log_pvalue.gmt&#8221;)
 &gt;&gt;&gt; df = jaccard_mat(signatures, signatures)
-&gt;&gt;&gt; sns.heatmap(df.pivot(<a href="#id7"><span class="problematic" id="id8">*</span></a>df.columns))  # doctest: +ELLIPSIS
+&gt;&gt;&gt; sns.heatmap(df.pivot(<a href="#id6"><span class="problematic" id="id7">*</span></a>df.columns))  # doctest: +ELLIPSIS
 &lt;matplotlib.axes._subplots.AxesSubplot object at ...&gt;</p>
 </dd></dl>
 
@@ -1348,7 +1360,7 @@ the translation dictionary. Respective entries will be skipped.</li>
 
 </div>
 <div class="section" id="module-pygenesig.perfmeasures">
-<span id="performance-measures-pygenesig-perfmeasures"></span><span id="performance-measures-pygenesig-perfmeasures"></span><h3>Performance Measures (<code class="docutils literal"><span class="pre">pygenesig.perfmeasures</span></code>)<a class="headerlink" href="#module-pygenesig.perfmeasures" title="Permalink to this headline">¶</a></h3>
+<span id="performance-measures-pygenesig-perfmeasures"></span><span id="performance-measures-pygenesig-perfmeasures"></span><h1>Performance Measures (<code class="docutils literal"><span class="pre">pygenesig.perfmeasures</span></code>)<a class="headerlink" href="#module-pygenesig.perfmeasures" title="Permalink to this headline">¶</a></h1>
 <p>Collection of functions to compute various performance measures from a 2x2 confusion matrix.
 As an introduction to evaluating classificators, we recommend reading this <a class="reference external" href="http://dx.doi.org/10.1016/j.patrec.2005.10.010.">paper</a> about ROC analysis.</p>
 <p>TP = true positive</p>
@@ -1409,8 +1421,6 @@ As an introduction to evaluating classificators, we recommend reading this <a cl
 <dd><p>Specificity</p>
 </dd></dl>
 
-</div>
-</div>
 </div>
 
 
