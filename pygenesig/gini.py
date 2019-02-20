@@ -174,7 +174,7 @@ class GiniSignatureGenerator(SignatureGenerator):
         aggregate_fun (function): function used to aggregate samples of the same tissue.
     """
     def __init__(self, expr, target, min_gini=.7, max_rk=3, min_expr=1, max_rel_rk=.33, aggregate_fun=np.median):
-        super(GiniSignatureGenerator, self).__init__(expr, target)
+        super().__init__(expr, target)
         self.min_gini = min_gini
         self.max_rk = max_rk
         self.min_expr = min_expr

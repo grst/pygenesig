@@ -141,7 +141,7 @@ class MCPSignatureGenerator(SignatureGenerator):
     """
 
     def __init__(self, expr, target, min_fc=2, min_sfc=1.5, min_auc=.97):
-        super(MCPSignatureGenerator, self).__init__(expr, target)
+        super().__init__(expr, target)
         self.min_fc = min_fc
         self.min_sfc = min_sfc
         self.min_auc = min_auc
@@ -181,7 +181,7 @@ class MCPSignatureTester(SignatureTester):
         result = np.empty((len(signatures), expr.shape[1]))
         classes = self.sort_signatures(signatures)
         for i, cls in enumerate(classes):
-            inds = np.array(signatures[cls])
+            inds = np.array(list(signatures[cls]))
             for j in range(expr.shape[1]):
                 result[i, j] = np.mean(expr[inds, j]) if len(inds) > 0 else np.NAN
         return result
