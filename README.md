@@ -2,7 +2,7 @@
 
 Gene signatures are sets of genes derived from gene expression data, which identify a certain tissue, cell type, pathway, etc. This package provides a framework to create and validate such signatures. The package is easily extensible to add new methods for signature creation and testing.
 
-Documentaion is available [here](http://grst.github.io/gene-set-study). 
+Documentaion is available [here](http://grst.github.io/pygenesig). 
 
 ### Signature Checker Pipeline
 A wrapper around the *pygenesig* library for
