@@ -159,7 +159,7 @@ class MCPSignatureGenerator(SignatureGenerator):
             sfc = specific_fold_change(expr, masks[cls], [mask for k, mask in masks.items() if k != cls])
             for i in range(expr.shape[0]):
                 auc = roc_auc(expr[i, :], masks[cls])
-                if fc >= self.min_fc and sfc >= self.min_sfc and auc >= self.min_auc:
+                if fc[i] >= self.min_fc and sfc[i] >= self.min_sfc and auc >= self.min_auc:
                     signatures[cls].append(i)
 
         return signatures
