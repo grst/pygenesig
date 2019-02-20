@@ -39,16 +39,16 @@ def fold_change(expr, positive_mask):
     Returns:
         float: fold change
 
-    >>> expr = np.array([2, 3, 5, 4, 9, 15])
+    >>> expr = np.array([[2, 3, 5, 4, 9, 15]])
     >>> target = np.array(["A", "B", "C", "A", "B", "C"])
     >>> fold_change(expr, target == "A")
-    -5.0
+    array([-5.])
 
     .. _Becht et al.:
         http://dx.doi.org/10.1186/s13059-016-1070-5
 
     """
-    return np.subtract(np.mean(expr[positive_mask]), np.mean(expr[~positive_mask]))
+    return np.mean(expr[:, positive_mask], axis=1) - np.mean(expr[:, ~positive_mask], axis=1)
 
 
 def specific_fold_change(expr, positive_mask, negative_masks):
@@ -74,21 +74,21 @@ def specific_fold_change(expr, positive_mask, negative_masks):
     Returns:
         float: specific fold change
 
-    >>> expr = np.array([2, 3, 5, 4, 9, 15])
+    >>> expr = np.array([[2, 3, 5, 4, 9, 15], [2, 3, 5, 4, 9, 15]])
     >>> target = np.array(["A", "B", "C", "A", "B", "C"])
     >>> specific_fold_change(expr, target == 'A', [target == "B", target == "C"])
-    -0.75
+    array([-0.75, -0.75])
 
     .. _Becht et al.:
         http://dx.doi.org/10.1186/s13059-016-1070-5
 
     """
-    mean_per_class = [np.mean(expr[class_inds]) for class_inds in negative_masks]
-    x_min = np.min(mean_per_class)
-    x_max = np.max(mean_per_class)
+    mean_per_class = np.hstack([np.mean(expr[:, class_inds], axis=1)[:, np.newaxis] for class_inds in negative_masks])
+    x_min = np.min(mean_per_class, axis=1)
+    x_max = np.max(mean_per_class, axis=1)
     return np.divide(
-        np.subtract(np.mean(expr[positive_mask]), x_min),
-        np.subtract(x_max, x_min)
+        np.mean(expr[:, positive_mask], axis=1) - x_min,
+        x_max - x_min
     )
 
 
@@ -150,15 +150,14 @@ class MCPSignatureGenerator(SignatureGenerator):
         classes = list(set(target))
         masks = {
             cls: target == cls for cls in classes
-            }
+        }
         signatures = {
             cls: [] for cls in classes
-            }
-        # TODO: this could be sped up significantly by precomputing the means for each class.
-        for i in range(expr.shape[0]):
-            for cls in classes:
-                fc = fold_change(expr[i, :], masks[cls])
-                sfc = specific_fold_change(expr[i, :], masks[cls], [mask for k, mask in masks.items() if k != cls])
+        }
+        for cls in classes:
+            fc = fold_change(expr, masks[cls])
+            sfc = specific_fold_change(expr, masks[cls], [mask for k, mask in masks.items() if k != cls])
+            for i in range(expr.shape[0]):
                 auc = roc_auc(expr[i, :], masks[cls])
                 if fc >= self.min_fc and sfc >= self.min_sfc and auc >= self.min_auc:
                     signatures[cls].append(i)
