@@ -4,15 +4,6 @@ Gene signatures are sets of genes derived from gene expression data, which ident
 
 Documentaion is available [here](http://grst.github.io/pygenesig). 
 
-### Signature Checker Pipeline
-A wrapper around the *pygenesig* library for
- * generating signatures
- * cross-validatin signatures
- * applying signatures to real-world data
- * exploring the results in a browser
-
-can be found in a [dedicated github repository](https://github.com/grst/pygenesig-pipeline). 
-
 ### Case studies
 can be found in [pygenesig-example](https://github.com/grst/pygenesig-example)
 
