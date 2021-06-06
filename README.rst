@@ -69,7 +69,7 @@ There are several alternative options to install pygenesig:
 
      pip install pygenesig
 
-   Then, in an R:
+   Then, in R:
 
    .. code-block:: r
 
