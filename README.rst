@@ -58,7 +58,9 @@ There are several alternative options to install pygenesig:
 
    .. code-block::
 
-      conda create -n pygenesig python=3.8 pip bioconductor-edger bioconductor-bioqc
+      # use `mamba` instead of `conda` for more speed
+      mamba create -n pygenesig python=3.8 pip bioconductor-edger bioconductor-bioqc
+      conda activate pygenesig
       pip install pygenesig
 
 2) Install pygenesig via pip and R packages manually
