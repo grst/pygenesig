@@ -8,13 +8,13 @@ from pygenesig.gini import *
 
 
 def sort_dict_of_lists(the_dict):
-    """Make dict of unordered lists compareable. """
+    """Make dict of unordered lists compareable."""
     return {key: sorted(value) for key, value in the_dict.items()}
 
 
 class TestGini(unittest.TestCase):
     def test_gini_numeric_identity(self):
-        """Check that the results are consistent with the rogini implementation up to four decimal digits. """
+        """Check that the results are consistent with the rogini implementation up to four decimal digits."""
         df_aggr = pd.read_csv(
             TESTDATA / "./gini/input/expression_data.tsv", index_col=0, sep="\t"
         )
@@ -79,7 +79,7 @@ class TestGini(unittest.TestCase):
         )
 
     def test_get_rogini_format_rank(self):
-        """Check ranks in rogini format. """
+        """Check ranks in rogini format."""
         df_aggr = pd.read_csv(
             TESTDATA / "./gini/input/test_rank.tsv", index_col=0, sep="\t"
         )
@@ -110,7 +110,7 @@ class TestGini(unittest.TestCase):
         )
 
     def test_gini_gene_rank(self):
-        """Check if row rank cutoff works. """
+        """Check if row rank cutoff works."""
         df_aggr = pd.read_csv(
             TESTDATA / "./gini/input/test_rank.tsv", index_col=0, sep="\t"
         )

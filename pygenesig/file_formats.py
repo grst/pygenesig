@@ -21,12 +21,12 @@ def _write_flatfile(output_file, input_array):
 # expression
 #################################################################
 def write_expr(expression_matrix, file):
-    """Store a m x n gene expression matrix as numpy object. """
+    """Store a m x n gene expression matrix as numpy object."""
     np.save(file, expression_matrix)
 
 
 def read_expr(expr_file):
-    """Read a m x n gene expression matrix from a numpy object. """
+    """Read a m x n gene expression matrix from a numpy object."""
     return np.load(expr_file)
 
 
