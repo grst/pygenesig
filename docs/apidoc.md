@@ -23,21 +23,21 @@
 
 ## Gini Index (`pygenesig.gini`)
 
-<!-- ```eval_rst
+```eval_rst
 .. automodule:: pygenesig.gini
     :members:
     :undoc-members:
     :show-inheritance:
-``` -->
+```
 
 ## Differential Expression (`pygenesig.limma`)
 
-<!-- ```eval_rst
+```eval_rst
 .. automodule:: pygenesig.limma
     :members:
     :undoc-members:
     :show-inheritance:
-``` -->
+```
 
 ## MCPCounter (`pygenesig.mcp_counter`)
 
@@ -53,16 +53,16 @@
 
 ## BioQC (`pygenesig.bioqc`)
 
-<!-- ```eval_rst
+```eval_rst
 .. automodule:: pygenesig.bioqc
-    :members:
-    :undoc-members:
-    :show-inheritance:
-``` -->
+.. autoclass:: pygenesig.bioqc.BioQCSignatureTester
+```
 
 ## MCPCounter (`pygenesig.mcp_counter`)
 
 ```eval_rst
+.. automodule:: pygenesig.mcp_counter
+    :noindex:
 .. autoclass:: pygenesig.mcp_counter.MCPSignatureTester
 ```
 
@@ -74,7 +74,6 @@
     :undoc-members:
     :show-inheritance:
 ```
-
 
 ```eval_rst
 .. automodule:: pygenesig.perfmeasures

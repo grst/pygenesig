@@ -24,7 +24,8 @@ setup(
         "distributed",
     ],
     extras_require=dict(
-        tests=["nose"], docs=["recommonmark", "sphinx", "sphinx_rtd_theme"]
+        tests=["nose", "black"],
+        docs=["recommonmark", "sphinx", "sphinx_rtd_theme"],
     ),
     classifiers=[],
     include_package_data=True,
