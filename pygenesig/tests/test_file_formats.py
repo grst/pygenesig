@@ -11,7 +11,7 @@ np.random.seed(42)
 
 
 def sort_dict_of_lists(the_dict):
-    """Make dict of unordered lists compareable. """
+    """Make dict of unordered lists compareable."""
     return {key: sorted(value) for key, value in the_dict.items()}
 
 

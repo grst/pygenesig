@@ -30,7 +30,7 @@ class TestTools(unittest.TestCase):
         pdt.assert_frame_equal(actual, expected)
 
     def test_collapse_matrix_1_example2(self):
-        """test collapse matrix along axis 1 with selecting a subset of columns. """
+        """test collapse matrix along axis 1 with selecting a subset of columns."""
         expr = np.matrix("0 0 0 0;" "2 4 2 4;" "8 4 6 2")
         target = np.array(["A", "B", "A", "B"])
         expr_aggr = collapse_matrix(expr, target, axis=1)
@@ -42,7 +42,7 @@ class TestTools(unittest.TestCase):
         np.testing.assert_array_equal(expr_aggr_subset_expected, expr_aggr_subset)
 
     def test_collapse_matrix_chain(self):
-        """re-aggregating an already aggregated matrix should return the identity. """
+        """re-aggregating an already aggregated matrix should return the identity."""
         nrow = 2000
         ncol = 1000
         expr = np.random.rand(nrow, ncol)

@@ -80,7 +80,7 @@ class TestBioQC(unittest.TestCase):
             "0 0 0 0 0 0"
         )
         for i in range(10):
-            """test in loop to have random permutations of the dictionary. """
+            """test in loop to have random permutations of the dictionary."""
             new_dict = {k: v for k, v in signatures_all.items()}
             actual, predicted = tester._test_signatures(new_dict, np.array(range(4)))
             cm = tester.confusion_matrix(signatures_all, actual, predicted)
@@ -114,7 +114,7 @@ class TestBioQC(unittest.TestCase):
             "0 0 0 0 0 0"
         )
         for i in range(10):
-            """test in loop to have random permutations of the dictionary. """
+            """test in loop to have random permutations of the dictionary."""
             new_dict = {k: v for k, v in signatures_all.items()}
             actual, predicted = tester._test_signatures(new_dict, np.array(range(4)))
             cm = tester.confusion_matrix(signatures_all, actual, predicted)

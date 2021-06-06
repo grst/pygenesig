@@ -9,7 +9,7 @@ import os
 
 
 def sort_dict_of_lists(the_dict):
-    """Make dict of unordered lists compareable. """
+    """Make dict of unordered lists compareable."""
     return {key: sorted(value) for key, value in the_dict.items()}
 
 
@@ -40,7 +40,7 @@ class TestGini(unittest.TestCase):
             )
 
     def test_gini_with_aggegation(self):
-        """ it should not make a difference to generate signatures on an already aggregated matrix."""
+        """it should not make a difference to generate signatures on an already aggregated matrix."""
         mat_aggr = collapse_matrix(self.expr, self.target, axis=1)
         sg1 = GiniSignatureGenerator(self.expr, self.target)
         sig1 = sort_dict_of_lists(sg1.mk_signatures())
