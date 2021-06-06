@@ -2,6 +2,7 @@ import numpy as np
 import itertools
 import pandas as pd
 from pprint import pprint
+from .tests import TESTDATA
 from pygenesig.file_formats import load_gmt
 
 
@@ -148,7 +149,7 @@ def jaccard_mat(sigs1, sigs2, colname1="set_1", colname2="set_2", as_matrix=Fals
 
     Plot the overlap of signatures:
     >>> import seaborn as sns
-    >>> signatures = load_gmt("tests/bioqc/test_bioqc_log_pvalue.gmt")
+    >>> signatures = load_gmt(TESTDATA / "bioqc/test_bioqc_log_pvalue.gmt")
     >>> df = jaccard_mat(signatures, signatures)
     >>> sns.heatmap(df.pivot(*df.columns))  # doctest: +ELLIPSIS
     <AxesSubplot:...>

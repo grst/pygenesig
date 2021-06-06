@@ -42,4 +42,4 @@ jobs:
           black --check .
       - name: Test with nosetest
         run: |
-          nosetests
+          nosetests --with-doctest -e "_extended"
