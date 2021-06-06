@@ -1,4 +1,4 @@
-_pygenesig_, a framework to generate and validate tissue-specific gene signatures.
+Pygenesig, a framework to generate and validate tissue-specific gene signatures.
 ===================================================================================
 
 |tests| |docs| |pypi| |black|
@@ -52,45 +52,45 @@ There are several alternative options to install pygenesig:
 
 1) Install pygenesig in a self-contained conda environment:
 
-This is the most reliable option to make both R and Python work. Make sure you
-have the `conda-forge` and the `bioconda` channels set-up with the correct priorities
-as `described in the Bioconda documentation <https://bioconda.github.io/user/install.html#set-up-channels>`_.
+   This is the most reliable option to make both R and Python work. Make sure you
+   have the `conda-forge` and the `bioconda` channels set-up with the correct priorities
+   as `described in the Bioconda documentation <https://bioconda.github.io/user/install.html#set-up-channels>`_.
 
-.. code-block::
+   .. code-block::
 
-  conda create -n pygenesig python=3.8 pip bioconductor-edger bioconductor-bioqc
-  pip install pygenesig
+      conda create -n pygenesig python=3.8 pip bioconductor-edger bioconductor-bioqc
+      pip install pygenesig
 
 2) Install pygenesig via pip and R packages manually
 
-.. code-block::
+   .. code-block::
 
-  pip install pygenesig
+     pip install pygenesig
 
-Then, in an R:
+   Then, in an R:
 
-.. code-block::r
+   .. code-block:: r
 
-  install.packages("BiocManager")
-  BiocManager::install(c("edgeR", "BioQC"))
+     install.packages("BiocManager")
+     BiocManager::install(c("edgeR", "BioQC"))
 
-Usually, if `R` is in your `PATH`, `rpy2 <https://rpy2.github.io/>`_ automatically
-detects your R installation. If you get an error message while importing `pygensig`,
-try setting the `R_HOME` environment variable before importing pygenesig:
+   Usually, if `R` is in your `PATH`, `rpy2 <https://rpy2.github.io/>`_ automatically
+   detects your R installation. If you get an error message while importing `pygensig`,
+   try setting the `R_HOME` environment variable before importing pygenesig:
 
-.. code-block::python
+   .. code-block:: python
 
-  import os
-  os.environ["R_HOME"] = "/usr/lib/R"
-  import pygenesig
+    import os
+    os.environ["R_HOME"] = "/usr/lib/R"
+    import pygenesig
 
 3) Install the latest development version from GitHub:
 
-.. code-block::
+   .. code-block::
 
-  pip install git+https://github.com/grst/pygenesig.git@master
+     pip install git+https://github.com/grst/pygenesig.git@master
 
-You'll need to separately install R packages as described above.
+   You'll need to separately install R packages as described above.
 
 
 Release notes
