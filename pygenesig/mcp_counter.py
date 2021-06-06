@@ -48,7 +48,9 @@ def fold_change(expr, positive_mask):
         http://dx.doi.org/10.1186/s13059-016-1070-5
 
     """
-    return np.mean(expr[:, positive_mask], axis=1) - np.mean(expr[:, ~positive_mask], axis=1)
+    return np.mean(expr[:, positive_mask], axis=1) - np.mean(
+        expr[:, ~positive_mask], axis=1
+    )
 
 
 def specific_fold_change(expr, positive_mask, negative_masks):
@@ -83,13 +85,15 @@ def specific_fold_change(expr, positive_mask, negative_masks):
         http://dx.doi.org/10.1186/s13059-016-1070-5
 
     """
-    mean_per_class = np.hstack([np.mean(expr[:, class_inds], axis=1)[:, np.newaxis] for class_inds in negative_masks])
+    mean_per_class = np.hstack(
+        [
+            np.mean(expr[:, class_inds], axis=1)[:, np.newaxis]
+            for class_inds in negative_masks
+        ]
+    )
     x_min = np.min(mean_per_class, axis=1)
     x_max = np.max(mean_per_class, axis=1)
-    return np.divide(
-        np.mean(expr[:, positive_mask], axis=1) - x_min,
-        x_max - x_min
-    )
+    return np.divide(np.mean(expr[:, positive_mask], axis=1) - x_min, x_max - x_min)
 
 
 def roc_auc(expr, positive_mask):
@@ -140,7 +144,7 @@ class MCPSignatureGenerator(SignatureGenerator):
 
     """
 
-    def __init__(self, expr, target, min_fc=2, min_sfc=1.5, min_auc=.97):
+    def __init__(self, expr, target, min_fc=2, min_sfc=1.5, min_auc=0.97):
         super().__init__(expr, target)
         self.min_fc = min_fc
         self.min_sfc = min_sfc
@@ -148,18 +152,20 @@ class MCPSignatureGenerator(SignatureGenerator):
 
     def _mk_signatures(self, expr, target):
         classes = list(set(target))
-        masks = {
-            cls: target == cls for cls in classes
-        }
-        signatures = {
-            cls: [] for cls in classes
-        }
+        masks = {cls: target == cls for cls in classes}
+        signatures = {cls: [] for cls in classes}
         for cls in classes:
             fc = fold_change(expr, masks[cls])
-            sfc = specific_fold_change(expr, masks[cls], [mask for k, mask in masks.items() if k != cls])
+            sfc = specific_fold_change(
+                expr, masks[cls], [mask for k, mask in masks.items() if k != cls]
+            )
             for i in range(expr.shape[0]):
                 auc = roc_auc(expr[i, :], masks[cls])
-                if fc[i] >= self.min_fc and sfc[i] >= self.min_sfc and auc >= self.min_auc:
+                if (
+                    fc[i] >= self.min_fc
+                    and sfc[i] >= self.min_sfc
+                    and auc >= self.min_auc
+                ):
                     signatures[cls].append(i)
 
         return signatures

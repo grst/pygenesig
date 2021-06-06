@@ -37,10 +37,15 @@ def filter_samples(exprs, target, n_splits):
     return exprs[:, target_mask], target[target_mask]
 
 
-def cv_score(expr_file, target_file,
-             signature_generator, signature_tester,
-             splitter=sklearn.model_selection.StratifiedKFold(n_splits=10),
-             sg_kwargs={}, st_kwargs={}):
+def cv_score(
+    expr_file,
+    target_file,
+    signature_generator,
+    signature_tester,
+    splitter=sklearn.model_selection.StratifiedKFold(n_splits=10),
+    sg_kwargs={},
+    st_kwargs={},
+):
     """
     Perform a crossvalidation by generating and testing signatures on a given expression matrix.
 
@@ -53,8 +58,8 @@ def cv_score(expr_file, target_file,
 
     Returns:
         (list, list, list, list): list of signature dictionaries containing the signatures generated
-        on each fold, list of confusion matrices containing the confusion matrices calculated on each fold, 
-        list of indices used for training for each fold, list of indices used for testing for each fold. 
+        on each fold, list of confusion matrices containing the confusion matrices calculated on each fold,
+        list of indices used for training for each fold, list of indices used for testing for each fold.
 
     .. _scikit-learn:
         http://scikit-learn.org/stable/modules/classes.html#module-sklearn.model_selection
@@ -105,13 +110,15 @@ class SignatureGenerator(metaclass=ABCMeta):
     Args:
         expr (np.ndarray): m x n matrix with m samples and n genes
         target (array-like): m-vector with true tissue for each sample
-        
+
     .. automethod:: _mk_signatures
     """
 
     def __init__(self, expr, target):
         if not expr.shape[1] == len(target):
-            raise ValueError("The length of target must equal the number of samples (columns) in the expr matrix. ")
+            raise ValueError(
+                "The length of target must equal the number of samples (columns) in the expr matrix. "
+            )
         if not np.issubdtype(expr.dtype, int) and not np.issubdtype(expr.dtype, float):
             raise TypeError("Expression needs to be numeric. (dtype=int | dtype=float)")
 
@@ -194,13 +201,15 @@ class SignatureTester(metaclass=ABCMeta):
     Args:
         expr (np.ndarray): m x n gene expression matrix with m samples and n genes
         target (array-like): m-vector with true tissue for each sample (`ground truth`)
-        
+
     .. automethod:: _score_signatures
     """
 
     def __init__(self, expr, target):
         if not expr.shape[1] == len(target):
-            raise ValueError("The length of target must equal the number of samples (columns) in the expr matrix. ")
+            raise ValueError(
+                "The length of target must equal the number of samples (columns) in the expr matrix. "
+            )
         if not np.issubdtype(expr.dtype, int) and not np.issubdtype(expr.dtype, float):
             raise TypeError("Expression needs to be numeric. (dtype=int | dtype=float)")
         self.expr = expr
@@ -274,7 +283,9 @@ class SignatureTester(metaclass=ABCMeta):
 
         """
         if all([len(genes) == 0 for genes in signatures.values()]):
-            raise SignatureTesterException("Signature Set contains only empty signatures. ")
+            raise SignatureTesterException(
+                "Signature Set contains only empty signatures. "
+            )
 
         if subset is None:
             # take all
@@ -327,8 +338,9 @@ class SignatureTester(metaclass=ABCMeta):
             numpy.matrix: confusion matrix
 
         """
-        return sklearn.metrics.confusion_matrix(actual, predicted,
-                                                labels=self.sort_signatures(signatures))
+        return sklearn.metrics.confusion_matrix(
+            actual, predicted, labels=self.sort_signatures(signatures)
+        )
 
     def _test_signatures(self, signatures, subset):
         """
@@ -340,4 +352,3 @@ class SignatureTester(metaclass=ABCMeta):
 
 class SignatureTesterException(Exception):
     pass
-

@@ -24,6 +24,7 @@ import sklearn.metrics
 import numpy as np
 from pygenesig.validation import SignatureGenerator
 import tempfile
+
 numpy2ri.activate()
 pandas2ri.activate()
 
@@ -55,7 +56,9 @@ class LimmaSignatureGenerator(SignatureGenerator):
 
     def __init__(self, expr, target, covariates, fold_change=100):
         super(LimmaSignatureGenerator, self).__init__(expr, target)
-        assert covariates.shape[0] == expr.shape[1], "nrow(covariates) must equal ncol(expr)"
+        assert (
+            covariates.shape[0] == expr.shape[1]
+        ), "nrow(covariates) must equal ncol(expr)"
         self.fold_change = fold_change
         self.covariates = covariates
 
@@ -64,8 +67,12 @@ class LimmaSignatureGenerator(SignatureGenerator):
         genes = np.array([str(i) for i in range(expr.shape[0])])
         dg_list = edge_r.DGEList(counts=expr, genes=genes)
 
-        assert all([True if not col.startswith(self._TARGET_COL) else False for col in self.covariates.columns]), \
-            "covariates must not contain a column named target. "
+        assert all(
+            [
+                True if not col.startswith(self._TARGET_COL) else False
+                for col in self.covariates.columns
+            ]
+        ), "covariates must not contain a column named target. "
         fmla = Formula("~ target + " + " + ".join(self.covariates.columns))
         env = fmla.environment
         env[self._TARGET_COL] = self.target
@@ -91,16 +98,20 @@ class LimmaSignatureGenerator(SignatureGenerator):
         lm_fit = limma.lmFit(voom_res, design_mat)
 
         # filter based on pvalue and logfoldchange
-        p_adj = .01 / base.nrow(lm_fit)[0]
+        p_adj = 0.01 / base.nrow(lm_fit)[0]
         fit_e = limma.treat(lm_fit, lfc=np.log2(self.fold_change))
         rslt = limma.decideTests(fit_e, p_value=p_adj)
 
         # make signatures
         colnames = np.array(base.colnames(rslt))
         np_rslt = np.array(rslt)
-        tissue_cols = np.array([True if col.startswith('target') else False for col in colnames])
+        tissue_cols = np.array(
+            [True if col.startswith("target") else False for col in colnames]
+        )
         np_rslt = np_rslt[:, tissue_cols]
-        tissues = np.array([col[len(self._TARGET_COL):] for col in colnames[tissue_cols]])
+        tissues = np.array(
+            [col[len(self._TARGET_COL) :] for col in colnames[tissue_cols]]
+        )
         assert len(tissues) == np_rslt.shape[1]
         row_inds = np.where(cpm_inds)[0]
         signatures = {}

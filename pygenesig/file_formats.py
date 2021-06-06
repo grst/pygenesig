@@ -12,9 +12,9 @@ def _read_flatfile(input_file):
 
 def _write_flatfile(output_file, input_array):
     """write array to file, one entry per line"""
-    with open(output_file, 'w') as f:
+    with open(output_file, "w") as f:
         for e in input_array:
-            f.write(e + '\n')
+            f.write(e + "\n")
 
 
 #################################################################
@@ -38,7 +38,7 @@ def read_gct(file):
         file (str): path to GCT file
 
     Returns:
-        np.array: gene expression matrix. 
+        np.array: gene expression matrix.
 
     .. _GCT file:
         http://software.broadinstitute.org/cancer/software/genepattern/file-formats-guide#gct
@@ -72,15 +72,15 @@ def write_gct(file, exprs, samples=None, description=None, name=None):
 
     gct = pd.DataFrame(exprs)
     gct.columns = samples
-    fdata = pd.DataFrame({'NAME': name, 'Description': description})
+    fdata = pd.DataFrame({"NAME": name, "Description": description})
     gct = pd.concat((fdata, gct), axis=1)
-    gct.set_index('NAME', inplace=True)
+    gct.set_index("NAME", inplace=True)
 
-    with open(file, 'w') as f:
+    with open(file, "w") as f:
         f.write("#1.2\n")
         f.write("{} {}\n".format(*exprs.shape))
 
-    gct.to_csv(file, mode='a', sep="\t")
+    gct.to_csv(file, mode="a", sep="\t")
 
 
 ##################################################################
@@ -88,13 +88,13 @@ def write_gct(file, exprs, samples=None, description=None, name=None):
 ##################################################################
 def write_target(target_array, file):
     """Given a m x n gene expression matrix with m genes and n samples. Write an n-array with
-    one target annotation for each sample. """
+    one target annotation for each sample."""
     _write_flatfile(file, target_array)
 
 
 def read_target(target_file):
     """Given a m x n gene expression matrix with m genes and n samples. Read an n-array with
-    one target annotation for each sample. """
+    one target annotation for each sample."""
     return _read_flatfile(target_file)
 
 
@@ -107,7 +107,7 @@ def write_rosetta(rosetta_array, rosetta_file):
     Given a m x n gene expression matrix with m genes and n samples. Write a m-array
     with one identifier for each gene.
 
-    This can be used to map the index-based signature back to gene symbols. """
+    This can be used to map the index-based signature back to gene symbols."""
     _write_flatfile(rosetta_file, rosetta_array)
 
 
@@ -159,8 +159,10 @@ def make_rosetta_dict(array, inverse=False):
     if inverse:
         return {
             # '-' is an artifact from ribiosAnnotation
-            gene_symbol: i for i, gene_symbol in enumerate(array) if gene_symbol != '-'
-            }
+            gene_symbol: i
+            for i, gene_symbol in enumerate(array)
+            if gene_symbol != "-"
+        }
     else:
         return dict(enumerate(array))
 
@@ -181,7 +183,7 @@ def write_gmt(signatures, file, description="na"):
         http://software.broadinstitute.org/cancer/software/gsea/wiki/index.php/Data_formats#GMT:_Gene_Matrix_Transposed_file_format_.28.2A.gmt.29
 
     """
-    with open(file, 'w') as f:
+    with open(file, "w") as f:
         for sig, genes in sorted(signatures.items()):
             genes = sorted([str(g) for g in signatures[sig]])
             f.write("\t".join(itertools.chain([sig, description], genes)) + "\n")
@@ -226,5 +228,3 @@ def read_gmt(file):
             genes = cols[2:]
             signatures[name] = genes
     return signatures
-
-

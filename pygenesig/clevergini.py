@@ -12,7 +12,7 @@ from pygenesig.tools import collapse_matrix
 from pygenesig.gini import gini
 
 
-def get_gini_signatures(df_aggr, min_gini=.7, max_rk=3, min_expr=1):
+def get_gini_signatures(df_aggr, min_gini=0.7, max_rk=3, min_expr=1):
     """
     Generate gene signatures using gini index.
 
@@ -36,18 +36,14 @@ def get_gini_signatures(df_aggr, min_gini=.7, max_rk=3, min_expr=1):
             }
 
     """
-    signatures = {
-        tissue: [] for tissue in df_aggr
-    }
+    signatures = {tissue: [] for tissue in df_aggr}
     for i in range(df_aggr.shape[0]):
         row = df_aggr.iloc[i, :].sort(inplace=False, ascending=False)
         if row.iloc[0] >= min_expr:
             while gini(row) >= min_gini:
                 signatures[row.index[0]].append(i)
                 row.drop(row.index[0], inplace=True)
-    signatures = {
-        tissue: set(genes) for tissue, genes in signatures.items()
-    }
+    signatures = {tissue: set(genes) for tissue, genes in signatures.items()}
     return signatures
 
 
@@ -69,7 +65,10 @@ class CleverGiniSignatureGenerator(SignatureGenerator):
         min_expr (float): genes need to have at least an expression ``>= min_expr`` to be included.
         aggregate_fun (function): function used to aggregate samples of the same tissue.
     """
-    def __init__(self, expr, target, min_gini=.7, max_rk=3, min_expr=1, aggregate_fun=np.median):
+
+    def __init__(
+        self, expr, target, min_gini=0.7, max_rk=3, min_expr=1, aggregate_fun=np.median
+    ):
         super(CleverGiniSignatureGenerator, self).__init__(expr, target)
         self.min_gini = min_gini
         self.max_rk = max_rk
@@ -77,5 +76,9 @@ class CleverGiniSignatureGenerator(SignatureGenerator):
         self.aggregate_fun = aggregate_fun
 
     def _mk_signatures(self, expr, target):
-        df_aggr = collapse_matrix(self.expr, self.target, axis=1, aggregate_fun=self.aggregate_fun)
-        return get_gini_signatures(df_aggr, min_gini=self.min_gini, max_rk=self.max_rk, min_expr=self.min_expr)
+        df_aggr = collapse_matrix(
+            self.expr, self.target, axis=1, aggregate_fun=self.aggregate_fun
+        )
+        return get_gini_signatures(
+            df_aggr, min_gini=self.min_gini, max_rk=self.max_rk, min_expr=self.min_expr
+        )

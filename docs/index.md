@@ -1,3 +1,7 @@
+```eval_rst
+.. include:: ../README.md
+```
+
 # Getting started with pygenesig
 *Pygenesig* is a python package to create and validate gene signatures. 
 

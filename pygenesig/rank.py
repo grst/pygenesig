@@ -24,7 +24,15 @@ class RankSignatureGenerator(SignatureGenerator):
         min_expr (float): genes need to have at least an expression ``>= min_expr`` to be included.
         aggregate_fun (function): function used to aggregate samples of the same tissue.
     """
-    def __init__(self, expr, target, include_fraction=.1, not_in_fraction=.5, max_signatures_per_gene=1):
+
+    def __init__(
+        self,
+        expr,
+        target,
+        include_fraction=0.1,
+        not_in_fraction=0.5,
+        max_signatures_per_gene=1,
+    ):
         super(RankSignatureGenerator, self).__init__(expr, target)
         self.include_fraction = include_fraction
         self.not_in_fraction = not_in_fraction
@@ -38,10 +46,16 @@ class RankSignatureGenerator(SignatureGenerator):
             tissue: series.sort_values() for tissue, series in df_aggr.iteritems()
         }
         signatures = {
-            tissue: series.iloc[include_index].index for tissue, series in tissue_series.items()
+            tissue: series.iloc[include_index].index
+            for tissue, series in tissue_series.items()
         }
-        gene_count = Counter(itertools.chain.from_iterable(series.iloc[not_in_index].index for series in tissue_series.values()))
+        gene_count = Counter(
+            itertools.chain.from_iterable(
+                series.iloc[not_in_index].index for series in tissue_series.values()
+            )
+        )
         signatures_filtered = {
-            tissue: [i for i in genes if gene_count[i] <= self.max_signatures_per_gene] for tissue, genes in signatures.items()
+            tissue: [i for i in genes if gene_count[i] <= self.max_signatures_per_gene]
+            for tissue, genes in signatures.items()
         }
         return signatures_filtered

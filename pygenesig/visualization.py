@@ -33,7 +33,7 @@ def aggregate_scores(sig_labels, scores, target):
     scores_df = pd.DataFrame(np.transpose(scores))
     scores_df.columns = sig_labels
     scores_df = scores_df.assign(tissue=pd.Series(target))
-    return scores_df.groupby('tissue').mean().transpose()
+    return scores_df.groupby("tissue").mean().transpose()
 
 
 def plot_score_heatmap(heatmap_df, clip=30):
@@ -49,9 +49,18 @@ def plot_score_heatmap(heatmap_df, clip=30):
         ax: axis object
 
     """
-    fig, ax = subplots(figsize=heatmap_figsize(heatmap_df.shape[0], heatmap_df.shape[1]))
-    sns.heatmap(heatmap_df, ax=ax, annot=False, vmin=0, linewidths=.2, vmax=clip,
-                cbar_kws={'label': 'BioQC score'});
+    fig, ax = subplots(
+        figsize=heatmap_figsize(heatmap_df.shape[0], heatmap_df.shape[1])
+    )
+    sns.heatmap(
+        heatmap_df,
+        ax=ax,
+        annot=False,
+        vmin=0,
+        linewidths=0.2,
+        vmax=clip,
+        cbar_kws={"label": "BioQC score"},
+    )
     ax.set_ylabel("signatures")
     ax.set_xlabel("mean of samples")
     return fig, ax
@@ -71,9 +80,19 @@ def plot_confusion_matrix_heatmap(confusion_matrix, labels):
 
     """
     fig, ax = subplots(figsize=heatmap_figsize(confusion_matrix.shape[0]))
-    sns.heatmap(confusion_matrix, ax=ax, xticklabels=labels, yticklabels=labels,
-                annot=True, annot_kws={"size": 9}, fmt=".0f", linewidths=.2,
-                vmin=0, vmax=100, cbar_kws={"label": 'percent of class'});
+    sns.heatmap(
+        confusion_matrix,
+        ax=ax,
+        xticklabels=labels,
+        yticklabels=labels,
+        annot=True,
+        annot_kws={"size": 9},
+        fmt=".0f",
+        linewidths=0.2,
+        vmin=0,
+        vmax=100,
+        cbar_kws={"label": "percent of class"},
+    )
     ax.set_xlabel("predicted")
     ax.set_ylabel("actual")
 

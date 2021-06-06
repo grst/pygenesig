@@ -2,6 +2,8 @@
 data
 results
 .idea
+*.code-workspace
+.vscode
 
 R/R_tmp
 

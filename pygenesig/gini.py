@@ -37,15 +37,17 @@ def gini(array):
     # based on bottom eq: http://www.statsdirect.com/help/content/image/stat0206_wmf.gif
     # from: http://www.statsdirect.com/help/default.htm#nonparametric_methods/gini.htm
     if np.amin(array) < 0:
-        array -= np.amin(array)             # values cannot be negative
-    array += 1e-12                           # values cannot be 0
-    array = np.sort(array)                  # values must be sorted
-    index = np.arange(1, array.shape[0]+1)  # index per array element
-    n = array.shape[0]                      # number of array elements
-    return (np.sum((2 * index - n - 1) * array)) / (n * np.sum(array))  # Gini coefficient
+        array -= np.amin(array)  # values cannot be negative
+    array += 1e-12  # values cannot be 0
+    array = np.sort(array)  # values must be sorted
+    index = np.arange(1, array.shape[0] + 1)  # index per array element
+    n = array.shape[0]  # number of array elements
+    return (np.sum((2 * index - n - 1) * array)) / (
+        n * np.sum(array)
+    )  # Gini coefficient
 
 
-def get_rogini_format(df_aggr, min_gini=.7, max_rk=None, min_expr=1):
+def get_rogini_format(df_aggr, min_gini=0.7, max_rk=None, min_expr=1):
     """
     Imitate the *rogini* output format.
 
@@ -84,26 +86,26 @@ def get_rogini_format(df_aggr, min_gini=.7, max_rk=None, min_expr=1):
         expr_row = df_aggr.iloc[i]
         gini_row = expr_gini.iloc[i]
         rk_row = expr_rank.iloc[i]
-        which_cols = np.flatnonzero((rk_row <= max_rk) & (gini_row >= min_gini) & (expr_row >= min_expr))
+        which_cols = np.flatnonzero(
+            (rk_row <= max_rk) & (gini_row >= min_gini) & (expr_row >= min_expr)
+        )
         for j in which_cols:
-            rogini_rows.append([
-                geneid,
-                df_aggr.columns[j],
-                expr_row[j],
-                rk_row[j],
-                gini_row
-            ])
+            rogini_rows.append(
+                [geneid, df_aggr.columns[j], expr_row[j], rk_row[j], gini_row]
+            )
     columns = ["GENEID", "CATEGORY", "VALUE", "RANKING", "GINI_IDX"]
     df = pd.DataFrame(rogini_rows)
     df.columns = columns
-    df.sort_values(['GENEID', 'RANKING'], inplace=True)
+    df.sort_values(["GENEID", "RANKING"], inplace=True)
 
     # the index does not have any meaning, we therefore want a consecutive index in the final data frame
     df.reset_index(drop=True, inplace=True)
     return df
 
 
-def get_gini_signatures(df_aggr, min_gini=.7, max_rk=3, max_rel_rk=None, min_expr=None):
+def get_gini_signatures(
+    df_aggr, min_gini=0.7, max_rk=3, max_rel_rk=None, min_expr=None
+):
     """
     Generate gene signatures using gini index.
 
@@ -142,10 +144,20 @@ def get_gini_signatures(df_aggr, min_gini=.7, max_rk=3, max_rel_rk=None, min_exp
     max_gene_rk = max_rel_rk * df_aggr.shape[0]
 
     expr_gini = df_aggr.apply(gini, axis=1)
-    expr_rank_sample = df_aggr.rank(axis=1, ascending=False)    # rank across samples (along row)
-    expr_rank_gene = df_aggr.rank(axis=0, ascending=False)      # rank across genes (along column)
-    sig_mask = (expr_rank_sample <= max_rk) & (df_aggr >= min_expr) & (expr_rank_gene <= max_gene_rk)
-    sig_mask.loc[expr_gini < min_gini, ] = False
+    expr_rank_sample = df_aggr.rank(
+        axis=1, ascending=False
+    )  # rank across samples (along row)
+    expr_rank_gene = df_aggr.rank(
+        axis=0, ascending=False
+    )  # rank across genes (along column)
+    sig_mask = (
+        (expr_rank_sample <= max_rk)
+        & (df_aggr >= min_expr)
+        & (expr_rank_gene <= max_gene_rk)
+    )
+    sig_mask.loc[
+        expr_gini < min_gini,
+    ] = False
 
     signatures = {}
     for tissue, sig_series in sig_mask.iteritems():
@@ -173,7 +185,17 @@ class GiniSignatureGenerator(SignatureGenerator):
         min_expr (float): genes need to have at least an expression ``>= min_expr`` to be included.
         aggregate_fun (function): function used to aggregate samples of the same tissue.
     """
-    def __init__(self, expr, target, min_gini=.7, max_rk=3, min_expr=1, max_rel_rk=.33, aggregate_fun=np.median):
+
+    def __init__(
+        self,
+        expr,
+        target,
+        min_gini=0.7,
+        max_rk=3,
+        min_expr=1,
+        max_rel_rk=0.33,
+        aggregate_fun=np.median,
+    ):
         super().__init__(expr, target)
         self.min_gini = min_gini
         self.max_rk = max_rk
@@ -182,13 +204,21 @@ class GiniSignatureGenerator(SignatureGenerator):
         self.max_rel_rk = max_rel_rk
 
     def _mk_signatures(self, expr, target):
-        df_aggr = collapse_matrix(expr, target, axis=1, aggregate_fun=self.aggregate_fun)
-        return get_gini_signatures(df_aggr, min_gini=self.min_gini, max_rk=self.max_rk, min_expr=self.min_expr,
-                                   max_rel_rk=self.max_rel_rk)
+        df_aggr = collapse_matrix(
+            expr, target, axis=1, aggregate_fun=self.aggregate_fun
+        )
+        return get_gini_signatures(
+            df_aggr,
+            min_gini=self.min_gini,
+            max_rk=self.max_rk,
+            min_expr=self.min_expr,
+            max_rel_rk=self.max_rel_rk,
+        )
 
     def get_rogini_format(self):
-        df_aggr = collapse_matrix(self.expr, self.target, axis=1, aggregate_fun=self.aggregate_fun)
-        return get_rogini_format(df_aggr, min_gini=self.min_gini, max_rk=self.max_rk,
-                                 min_expr=self.min_expr)
-
-
+        df_aggr = collapse_matrix(
+            self.expr, self.target, axis=1, aggregate_fun=self.aggregate_fun
+        )
+        return get_rogini_format(
+            df_aggr, min_gini=self.min_gini, max_rk=self.max_rk, min_expr=self.min_expr
+        )

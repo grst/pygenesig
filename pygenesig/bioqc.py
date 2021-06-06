@@ -22,6 +22,7 @@ from pygenesig.file_formats import write_gmt
 import sklearn.metrics
 import numpy as np
 import tempfile
+
 numpy2ri.activate()
 
 base = importr("base")
@@ -52,15 +53,17 @@ for more details.
 """
 
 
-ro.r('''
+ro.r(
+    """
     mk_eset = function(exprs, gene_symbols) {
         return(new("ExpressionSet",
             exprs=exprs,
             featureData=new("AnnotatedDataFrame",
                             data.frame(GeneSymbol=gene_symbols))))
      }
-     ''')
-mk_eset = ro.r['mk_eset']
+     """
+)
+mk_eset = ro.r["mk_eset"]
 """
 Generate an R ExpressionSet with ``exprs()`` and ``fData()`` annotation.
 fData will contain one single column named GeneSymbol.
@@ -165,7 +168,3 @@ class BioQCSignatureTester(SignatureTester):
             result[i_result, :] = bioqc_res_log[i_bioqc, :]
 
         return result
-
-
-
-

@@ -14,10 +14,7 @@ class TestValidation(unittest.TestCase):
     N_SAMPELS = 200
 
     class DummySignatureGenerator(SignatureGenerator):
-        DUMMY_SIGS = {
-            "A": ("A", "B", "C"),
-            "B": ("B", "C", "D")
-        }
+        DUMMY_SIGS = {"A": ("A", "B", "C"), "B": ("B", "C", "D")}
 
         def _mk_signatures(self, expr, target):
             return self.DUMMY_SIGS
@@ -25,12 +22,14 @@ class TestValidation(unittest.TestCase):
     class DummySignatureTester(SignatureTester):
         def _score_signatures(self, expr, signatures):
             scores = np.zeros((len(signatures), expr.shape[1]))
-            scores[0, :] = 1.
+            scores[0, :] = 1.0
             return scores
 
     def setUp(self):
         expr = np.random.random_sample((self.N_GENES, self.N_SAMPELS))
-        target = np.array(["A" if x < .3 else "B" for x in np.random.random_sample(self.N_SAMPELS)])
+        target = np.array(
+            ["A" if x < 0.3 else "B" for x in np.random.random_sample(self.N_SAMPELS)]
+        )
         self.expr_file = tempfile.NamedTemporaryFile()
         self.target_file = tempfile.NamedTemporaryFile()
         np.save(self.expr_file, expr)
@@ -43,31 +42,47 @@ class TestValidation(unittest.TestCase):
         self.target_file.close()
 
     def test_cross_validation(self):
-        sig_list, res_list, train_list, test_list = cv_score(self.expr_file.name, self.target_file.name,
-                                  self.DummySignatureGenerator, self.DummySignatureTester,
-                                  splitter=sklearn.model_selection.StratifiedKFold(n_splits=10))
+        sig_list, res_list, train_list, test_list = cv_score(
+            self.expr_file.name,
+            self.target_file.name,
+            self.DummySignatureGenerator,
+            self.DummySignatureTester,
+            splitter=sklearn.model_selection.StratifiedKFold(n_splits=10),
+        )
         # use the non-parallel scheduler for debugging.
-        r_sig, r_res, r_train, r_test = compute(sig_list, res_list, train_list, test_list, get=dask.async.get_sync)
+        r_sig, r_res, r_train, r_test = compute(
+            sig_list, res_list, train_list, test_list, get=dask.async.get_sync
+        )
         self.assertEqual(10, len(r_sig))
         self.assertEqual(10, len(r_res))
         for i in range(10):
             self.assertEqual(self.DummySignatureGenerator.DUMMY_SIGS, r_sig[i])
             sm = r_res[i]
-            self.assertEqual(sm.shape, (len(self.DummySignatureGenerator.DUMMY_SIGS), len(r_test[i])))
+            self.assertEqual(
+                sm.shape, (len(self.DummySignatureGenerator.DUMMY_SIGS), len(r_test[i]))
+            )
             self.assertGreater(np.sum(sm), 0)
 
     def test_cross_validation_parallel(self):
-        sig_list, res_list, train_list, test_list = cv_score(self.expr_file.name, self.target_file.name,
-                                                       self.DummySignatureGenerator, self.DummySignatureTester,
-                                                       splitter=sklearn.model_selection.StratifiedKFold(n_splits=10))
+        sig_list, res_list, train_list, test_list = cv_score(
+            self.expr_file.name,
+            self.target_file.name,
+            self.DummySignatureGenerator,
+            self.DummySignatureTester,
+            splitter=sklearn.model_selection.StratifiedKFold(n_splits=10),
+        )
         # use the threaded scheduler
-        r_sig, r_res, r_train, r_test = compute(sig_list, res_list, train_list, test_list, get=dask.threaded.get)
+        r_sig, r_res, r_train, r_test = compute(
+            sig_list, res_list, train_list, test_list, get=dask.threaded.get
+        )
         self.assertEqual(10, len(r_sig))
         self.assertEqual(10, len(r_res))
         for i in range(10):
             self.assertEqual(self.DummySignatureGenerator.DUMMY_SIGS, r_sig[i])
             sm = r_res[i]
-            self.assertEqual(sm.shape, (len(self.DummySignatureGenerator.DUMMY_SIGS), len(r_test[i])))
+            self.assertEqual(
+                sm.shape, (len(self.DummySignatureGenerator.DUMMY_SIGS), len(r_test[i]))
+            )
             self.assertGreater(np.sum(sm), 0)
 
     def test_filter_samples(self):

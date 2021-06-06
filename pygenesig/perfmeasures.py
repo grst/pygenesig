@@ -20,7 +20,9 @@ from math import sqrt
 
 def mcc(TP, FN, FP, TN):
     """Matthews Correlation Coefficient"""
-    return np.divide(TP * TN + FP * FN, sqrt((TP+FP) * (TP+FN) * (TN+FP) * (TN+FN)))
+    return np.divide(
+        TP * TN + FP * FN, sqrt((TP + FP) * (TP + FN) * (TN + FP) * (TN + FN))
+    )
 
 
 def sens(TP, FN, FP, TN):
@@ -55,11 +57,15 @@ def recall_neg(TP, FN, FP, TN):
 
 def f1_pos(TP, FN, FP, TN):
     """f1-measure on positive instances"""
-    return np.divide(2 * prec_pos(TP, FN, FP, TN) * recall_pos(TP, FN, FP, TN),
-                     (prec_pos(TP, FN, FP, TN) + recall_pos(TP, FN, FP, TN)))
+    return np.divide(
+        2 * prec_pos(TP, FN, FP, TN) * recall_pos(TP, FN, FP, TN),
+        (prec_pos(TP, FN, FP, TN) + recall_pos(TP, FN, FP, TN)),
+    )
 
 
 def f1_neg(TP, FN, FP, TN):
     """f1-measure on negative instances. """
-    return np.divide(2 * prec_neg(TP, FN, FP, TN) * recall_neg(TP, FN, FP, TN),
-                     (prec_neg(TP, FN, FP, TN) + recall_neg(TP, FN, FP, TN)))
+    return np.divide(
+        2 * prec_neg(TP, FN, FP, TN) * recall_neg(TP, FN, FP, TN),
+        (prec_neg(TP, FN, FP, TN) + recall_neg(TP, FN, FP, TN)),
+    )

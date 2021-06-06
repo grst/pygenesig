@@ -24,14 +24,12 @@ def translate_signatures(signatures, rosetta, ignore_missing=False):
     if ignore_missing:
         # remove genes from signature which is not in rosetta.
         signatures = {
-            tissue: [
-                gene for gene in genes if gene in rosetta
-            ] for tissue, genes in signatures.items()
+            tissue: [gene for gene in genes if gene in rosetta]
+            for tissue, genes in signatures.items()
         }
     return {
-        tissue: [
-            rosetta[gene] for gene in genes
-        ] for tissue, genes in signatures.items()
+        tissue: [rosetta[gene] for gene in genes]
+        for tissue, genes in signatures.items()
     }
 
 
@@ -55,10 +53,7 @@ def combine_signatures(*args, function=set.intersection):
     for sig in args:
         assert sig.keys() == keys, "All signature dictonaries must have identical keys."
 
-    return {
-        k: function(*[set(sig[k]) for sig in args])
-            for k in keys
-    }
+    return {k: function(*[set(sig[k]) for sig in args]) for k in keys}
 
 
 def jaccard_ind(set1, set2, *args):
@@ -101,8 +96,12 @@ def pairwise_jaccard_ind(list_of_signatures):
     pairwise_jacc = {}
     for signame in list_of_signatures[0]:
         pairwise_jacc[signame] = []
-        for sigset1, sigset2 in itertools.product(list_of_signatures, list_of_signatures):
-            pairwise_jacc[signame].append(jaccard_ind(sigset1[signame], sigset2[signame]))
+        for sigset1, sigset2 in itertools.product(
+            list_of_signatures, list_of_signatures
+        ):
+            pairwise_jacc[signame].append(
+                jaccard_ind(sigset1[signame], sigset2[signame])
+            )
     return pairwise_jacc
 
 
@@ -195,11 +194,11 @@ def normalize(array):
     amin = float(np.nanmin(array))
     if amax - amin == 0:
         return [0] * len(array)
-    array = [(x-amin)/(amax-amin) for x in array]
+    array = [(x - amin) / (amax - amin) for x in array]
     return array
 
 
 def normalize_sum(array):
     """normalize a vector to sum to 1"""
     s = sum(array)
-    return [x/s for x in array]
+    return [x / s for x in array]
