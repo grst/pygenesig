@@ -48,5 +48,5 @@ class TestTools(unittest.TestCase):
         expr = np.random.rand(nrow, ncol)
         target = np.random.choice(list("ABCDEFGHIJ"), ncol)
         mat_aggr = collapse_matrix(expr, target, axis=1)
-        mat_aggr2 = collapse_matrix(mat_aggr.as_matrix(), mat_aggr.columns, axis=1)
+        mat_aggr2 = collapse_matrix(mat_aggr.values, mat_aggr.columns, axis=1)
         pdt.assert_frame_equal(mat_aggr, mat_aggr2)

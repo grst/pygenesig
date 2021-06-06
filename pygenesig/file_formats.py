@@ -45,7 +45,7 @@ def read_gct(file):
 
     """
     gct = pd.read_csv(file, sep="\t", skiprows=2, index_col=0)
-    exprs = gct.iloc[:, 1:].as_matrix()  # get rid of description column
+    exprs = gct.iloc[:, 1:].values  # get rid of description column
     return exprs
 
 

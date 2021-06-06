@@ -1,6 +1,6 @@
 ##### Custom Rules
-data
-results
+./data
+./results
 .idea
 *.code-workspace
 .vscode

@@ -3,9 +3,8 @@ from pygenesig.bioqc import *
 from pygenesig.validation import *
 from pygenesig.tools import load_gmt
 from rpy2.robjects.packages import importr
-import logging
-import pickle
 import random
+from . import TESTDATA
 
 base = importr("base")
 
@@ -32,12 +31,12 @@ class TestBioQC(unittest.TestCase):
         Testcase generated with test_bioqc_log_pvalue.R
         """
         log_p_expected = np.loadtxt(
-            "./bioqc/test_bioqc_log_pvalue.csv",
+            TESTDATA / "./bioqc/test_bioqc_log_pvalue.csv",
             delimiter=",",
             skiprows=1,
             usecols=range(1, 5),
         )
-        gmt = bioqc.readGmt("./bioqc/test_bioqc_log_pvalue.gmt")
+        gmt = bioqc.readGmt(str(TESTDATA / "./bioqc/test_bioqc_log_pvalue.gmt"))
         gene_symbols = [str(x) for x in range(self.expr.shape[0])]
         p_actual = BioQCSignatureTester.run_bioqc(self.expr, gene_symbols, gmt)
         log_p_actual = -np.log10(p_actual)
@@ -45,7 +44,7 @@ class TestBioQC(unittest.TestCase):
 
     def test_score_signatures(self):
         log_p_expected = np.loadtxt(
-            "./bioqc/test_bioqc_log_pvalue.csv",
+            TESTDATA / "./bioqc/test_bioqc_log_pvalue.csv",
             delimiter=",",
             skiprows=1,
             usecols=range(1, 5),
