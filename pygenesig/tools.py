@@ -151,7 +151,7 @@ def jaccard_mat(sigs1, sigs2, colname1="set_1", colname2="set_2", as_matrix=Fals
     >>> signatures = load_gmt("tests/bioqc/test_bioqc_log_pvalue.gmt")
     >>> df = jaccard_mat(signatures, signatures)
     >>> sns.heatmap(df.pivot(*df.columns))  # doctest: +ELLIPSIS
-    <matplotlib.axes._subplots.AxesSubplot object at ...>
+    <AxesSubplot:...>
     """
     jaccard_list = []
     for name1, genes1 in sigs1.items():

@@ -2,7 +2,6 @@ from pygenesig.validation import *
 import unittest
 import tempfile
 import numpy as np
-import dask.async
 from dask.delayed import compute
 import dask.threaded
 import sklearn.model_selection
@@ -51,7 +50,7 @@ class TestValidation(unittest.TestCase):
         )
         # use the non-parallel scheduler for debugging.
         r_sig, r_res, r_train, r_test = compute(
-            sig_list, res_list, train_list, test_list, get=dask.async.get_sync
+            sig_list, res_list, train_list, test_list
         )
         self.assertEqual(10, len(r_sig))
         self.assertEqual(10, len(r_res))

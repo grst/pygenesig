@@ -1,5 +1,7 @@
-# *pygenesig* core
+# _pygenesig_ core
+
 ## Abstract classes and cross validation (`pygenesig.validation`)
+
 ```eval_rst
 .. automodule:: pygenesig.validation
     :members:
@@ -9,6 +11,7 @@
 ```
 
 # File input/output (`pygenesig.file_formats`)
+
 ```eval_rst
 .. automodule:: pygenesig.file_formats
     :members:
@@ -17,25 +20,27 @@
 ```
 
 # Signature Generators
+
 ## Gini Index (`pygenesig.gini`)
 
-```eval_rst
+<!-- ```eval_rst
 .. automodule:: pygenesig.gini
     :members:
     :undoc-members:
     :show-inheritance:
-```
+``` -->
 
 ## Differential Expression (`pygenesig.limma`)
 
-```eval_rst
+<!-- ```eval_rst
 .. automodule:: pygenesig.limma
     :members:
     :undoc-members:
     :show-inheritance:
-```
+``` -->
 
 ## MCPCounter (`pygenesig.mcp_counter`)
+
 ```eval_rst
 .. automodule:: pygenesig.mcp_counter
     :members:
@@ -45,14 +50,15 @@
 ```
 
 # Signature Testers
+
 ## BioQC (`pygenesig.bioqc`)
 
-```eval_rst
+<!-- ```eval_rst
 .. automodule:: pygenesig.bioqc
     :members:
     :undoc-members:
     :show-inheritance:
-```
+``` -->
 
 ## MCPCounter (`pygenesig.mcp_counter`)
 
@@ -60,8 +66,8 @@
 .. autoclass:: pygenesig.mcp_counter.MCPSignatureTester
 ```
 
-
 # Auxilary functions (`pygenesig.tools`)
+
 ```eval_rst
 .. automodule:: pygenesig.tools
     :members:
@@ -70,13 +76,9 @@
 ```
 
 
-# Performance Measures (`pygenesig.perfmeasures`)
 ```eval_rst
 .. automodule:: pygenesig.perfmeasures
     :members:
     :undoc-members:
     :show-inheritance:
 ```
-
-
-
