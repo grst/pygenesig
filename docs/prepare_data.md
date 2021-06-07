@@ -12,7 +12,7 @@ Depending on the method, we may need additional covariates, but let's focus on t
 ### Gene expression matrix
 
 A `` $`m \times n`$ `` gene expression matrix with `` $`m`$ `` genes and `` $`n`$ `` samples.
-Depending on the method you may want to use either RPKM or raw counts. The `expr` object
+Depending on the method you may want to use either TPM/RPKM or raw counts. The `expr` object
 needs to be a 2d `numpy.array`.
 
 _pygenesig_ provides functions to read the standardized [gct](http://software.broadinstitute.org/cancer/software/genepattern/file-formats-guide#_Creating_Input_Files_GCT)
