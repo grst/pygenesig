@@ -44,7 +44,6 @@ jobs:
 
       - name: Test with nosetest
         run: |
-          conda deactivate
-          conda activate pygenesig
+          export LD_LIBRARY_PATH=/usr/local/miniconda/envs/pygenesig/lib/R/lib:${LD_LIBRARY_PATH}
           nosetests --with-doctest -e "_extended"
           
