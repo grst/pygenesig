@@ -10,7 +10,7 @@ with open(path.join(this_directory, "README.rst"), encoding="utf-8") as f:
 
 setup(
     name="pygenesig",
-    version="0.2.1",
+    version="0.2.2",
     packages=find_packages(),
     description="Create and Validate Gene Signatures",
     author="Gregor Sturm",
