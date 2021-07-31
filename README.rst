@@ -52,8 +52,8 @@ There are several alternative options to install pygenesig:
 
 1) Install pygenesig in a self-contained conda environment:
 
-   This is the most reliable option to make both R and Python work. Make sure you
-   have the `conda-forge` and the `bioconda` channels set-up with the correct priorities
+   This is the most reliable option to make both R and Python work. **Make sure you
+   have the `conda-forge` and the `bioconda` channels set-up with the correct priorities**
    as `described in the Bioconda documentation <https://bioconda.github.io/user/install.html#set-up-channels>`_.
 
    .. code-block::
