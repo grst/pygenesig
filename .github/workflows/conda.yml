@@ -36,7 +36,7 @@ jobs:
 
       - name: install dependencies
         run: |
-          mamba install -y pip bioconductor-edger bioconductor-bioqc r-r.methodss3
+          mamba install -y pip bioconductor-edger bioconductor-bioqc
 
       - name: install package
         run: |
@@ -44,5 +44,7 @@ jobs:
 
       - name: Test with nosetest
         run: |
+          conda deactivate
+          conda activate pygenesig
           nosetests --with-doctest -e "_extended"
           
