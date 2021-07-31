@@ -16,7 +16,7 @@ class TestTools(unittest.TestCase):
         expected.index = ["A", "B", "C"]
 
         actual = collapse_matrix(mat, group_by, axis=0)
-        pdt.assert_frame_equal(actual, expected)
+        pdt.assert_frame_equal(actual, expected, check_dtype=False)
 
     def test_collapse_matrix_1(self):
         """test collapse matrix along axis 1"""
@@ -27,7 +27,7 @@ class TestTools(unittest.TestCase):
         expected.columns = ["A", "B"]
 
         actual = collapse_matrix(mat, group_by, axis=1, aggregate_fun=np.sum)
-        pdt.assert_frame_equal(actual, expected)
+        pdt.assert_frame_equal(actual, expected, check_dtype=False)
 
     def test_collapse_matrix_1_example2(self):
         """test collapse matrix along axis 1 with selecting a subset of columns."""
