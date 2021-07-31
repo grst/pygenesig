@@ -36,7 +36,7 @@ jobs:
 
       - name: install dependencies
         run: |
-          mamba install -y pip bioconductor-edger bioconductor-bioqc
+          mamba install -y pip bioconductor-edger bioconductor-bioqc r-r.methodss3
 
       - name: install package
         run: |
