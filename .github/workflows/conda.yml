@@ -24,6 +24,7 @@ jobs:
       - name: Setup Miniconda
         uses: conda-incubator/setup-miniconda@v2
         with:
+          activate-environment: pygenesig
           auto-update-conda: true
           mamba-version: "*"
           channels: conda-forge,bioconda,defaults
@@ -33,11 +34,12 @@ jobs:
       - name: install dependencies
         run: |
           mamba install -y pip bioconductor-edger bioconductor-bioqc
+
+      - name: install package
+        run: |
           pip install .[tests]
-        shell: bash
 
       - name: Test with nosetest
         run: |
           nosetests --with-doctest -e "_extended"
           
-        shell: bash
