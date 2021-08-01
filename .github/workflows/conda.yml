@@ -44,6 +44,6 @@ jobs:
 
       - name: Test with nosetest
         run: |
-          export LD_LIBRARY_PATH=/usr/local/miniconda/envs/pygenesig/lib/R/library:${LD_LIBRARY_PATH}
+          export LD_LIBRARY_PATH=${CONDA_PREFIX}/lib
           nosetests --with-doctest -e "_extended"
           
