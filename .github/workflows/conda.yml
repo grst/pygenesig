@@ -44,6 +44,8 @@ jobs:
 
       - name: Test with nosetest
         run: |
+          echo $CONDA_PREFIX
+          R CMD ldd ${CONDA_PREFIX}/lib/R/library/methods/libs/methods.so
           export LD_LIBRARY_PATH=${CONDA_PREFIX}/lib:${CONDA_PREFIX}/lib/R/lib
           nosetests --with-doctest -e "_extended"
           
